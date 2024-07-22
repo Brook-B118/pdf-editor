@@ -16,15 +16,15 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-# db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///final_project.db")
 
 @app.route("/")
 @login_required
 def index():
     return apology("TODO")
 
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0') 
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True) 
     # debug=True enables debug mode which provides more detailed error messages when something goes wrong. Also allows for "hot-reloading" which means the server will automatically update when making changes to the code. It is important to turn this off when the project is finished and we are ready to deploy.
 
     # debug=True was not working so using the unix command export FLASK_DEBUG=1 turns debugger on and unset FLASK_DEBUG turns it off.
@@ -47,18 +47,18 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        # rows = db.execute(
-        #     "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        # )
+        rows = db.execute(
+            "SELECT * FROM users WHERE username = ?", request.form.get("username")
+        )
 
         # Ensure username exists and password is correct
-        # if len(rows) != 1 or not check_password_hash(
-        #     rows[0]["hash"], request.form.get("password")
-        # ):
-        #     return apology("invalid username and/or password", 403)
+        if len(rows) != 1 or not check_password_hash(
+            rows[0]["hash"], request.form.get("password")
+        ):
+            return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        # session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
         return redirect("/")
