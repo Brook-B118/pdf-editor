@@ -2,3 +2,4 @@ Flask
 gunicorn # This is what you use as a production server for flask apps apparently
 cs50
 werkzeug
+python-magic

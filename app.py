@@ -1,10 +1,12 @@
 import os
+import magic
+import sqlite3
 
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from functools import wraps
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from helpers import login_required, apology
 
 
@@ -27,7 +29,8 @@ db = SQL("sqlite:///final_project.db")
 
 @app.after_request
 def after_request(response): # The @app.after_request part means this code runs after the server gets a request.
-    # Ensure responses aren't cached (This part of the code is telling the browser not to remember (or "cache") any information from the server. This is done so that every time a user makes a request, they get the most up-to-date information from the server. Example: if you want to update number of users on your site, a cached webpage would show old information. Therefore this is common practice to ensure up to date information is displayed.)
+    # Ensure responses aren't cached 
+    # (This part of the code is telling the browser not to remember (or "cache") any information from the server. This is done so that every time a user makes a request, they get the most up-to-date information from the server. Example: if you want to update number of users on your site, a cached webpage would show old information. Therefore this is common practice to ensure up to date information is displayed.)
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" # tells the client's browser not to cache the response, not to store it, and to validate it every time before using it.
 
     response.headers["Expires"] = 0 # tells the browser that the response is already expired and should not be cached
@@ -122,6 +125,58 @@ def register():
     else:
         return render_template("register.html")
     return render_template("/login.html")
+
+
+
+@app.route("/documents", methods=["GET", "POST"])
+def documents():
+
+    print(os.getcwd())
+    
+    if request.method == "POST":
+        # File Upload: Flask has a request.files object that you can use to access uploaded files. You can use the werkzeug.utils.secure_filename() function to ensure the filename is safe.
+
+        # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
+        uploaded_file = request.files.get("document")
+
+        # Ensure the filename is safe:
+        filename = secure_filename(uploaded_file.filename)
+
+        # Save the file
+        upload_folder = 'uploaded_pdfs' # Creates the folder to send uploads to (this is local for now)
+
+        if not os.path.exists('uploaded_pdfs'):
+            os.makedirs('uploaded_pdfs')
+
+        uploaded_file.save(os.path.join(upload_folder, filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
+
+        # Check the MIME type of the file
+        mime = magic.from_file(os.path.join(upload_folder, filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
+        if mime == 'application/pdf':
+            # The file is a PDF
+            
+            try:
+                db.execute("INSERT INTO documents (user_id, filename, file_path) VALUES(?, ?, ?)", session['user_id'], filename, os.path.join(upload_folder, filename)) # os.path.join(upload_folder, filename) is the full path to the file and not just the directory.
+                flash("upload successfull!")
+            except sqlite3.Error as e:
+                print(e)
+                return apology("An error occurred while uploading the document.", 400)
+    
+            return redirect("/documents/edit")
+        
+        else:
+            # The file is not a PDF
+
+            return apology("file is not a pdf", 403)
+
+    else:
+        return render_template("documents.html")
+    
+
+
+
+
+
 
 
 

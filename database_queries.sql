@@ -4,3 +4,12 @@ CREATE TABLE users (
     hash TEXT NOT NULL
 );
 
+CREATE TABLE documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER,
+    filename TEXT UNIQUE NOT NULL,
+    file_path TEXT NOT NULL,
+    edited_filename TEXT,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
