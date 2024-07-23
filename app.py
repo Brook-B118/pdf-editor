@@ -11,12 +11,32 @@ from helpers import login_required, apology
 app = Flask(__name__)
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+app.config["SESSION_PERMANENT"] = False # This is setting the session to not be permanent, meaning it will end when the browser is closed.
+
+app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to "filesystem". This means that session data will be stored on the server's file system. This is a simple and effective way to handle session data, but it wouldn't be suitable for a large-scale application. When you're running your application on a development server, the session data is stored on the file system of the machine where the server is running. This could be your local machine if you're running the server locally, or a remote server if you're running it there.
+
+Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///final_project.db")
+
+
+# If you have a "remember me" feature on your site, you might set SESSION_PERMANENT to True for users who check that box. This would make their session survive even if they close their browser. However, you'd also need to set PERMANENT_SESSION_LIFETIME to specify how long the session should last.
+
+
+
+@app.after_request
+def after_request(response): # The @app.after_request part means this code runs after the server gets a request.
+    # Ensure responses aren't cached (This part of the code is telling the browser not to remember (or "cache") any information from the server. This is done so that every time a user makes a request, they get the most up-to-date information from the server. Example: if you want to update number of users on your site, a cached webpage would show old information. Therefore this is common practice to ensure up to date information is displayed.)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" # tells the client's browser not to cache the response, not to store it, and to validate it every time before using it.
+
+    response.headers["Expires"] = 0 # tells the browser that the response is already expired and should not be cached
+
+    response.headers["Pragma"] = "no-cache" # This is an older directive to prevent caching, mostly for older HTTP 1.0 servers.
+
+    # The response.headers lines are instructions to the browser. They all say in different ways, "Don't remember this information for next time."
+
+    return response # return response sends these instructions back to the browser.
 
 @app.route("/")
 @login_required
@@ -62,6 +82,46 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    # Log user out
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    # Register user
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+        # Validate that inputs are not empty when form is submitted
+        if not username:
+            return apology("Must provide username, 403")
+        elif not password:
+            return apology("Must provide password, 403")
+        elif not confirmation:
+            return apology("Must confirm password, 403")
+        elif password != confirmation:
+            return apology("Passwords do not match, 403")
+
+        # Generate password hash
+        password_hash = generate_password_hash(password)
+        # Check if username already exists in database
+        try:
+            db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", username, password_hash)
+            flash("Registration successfull!")
+        except ValueError:
+            return apology("Username already exists", 400)
+
+    else:
+        return render_template("register.html")
+    return render_template("/login.html")
 
 
 

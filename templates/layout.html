@@ -49,6 +49,16 @@
                         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
+                {% if session["user_id"] %}
+                <ul class="navbar-nav ms-auto mt-2">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+                {% else %}
                 <ul class="navbar-nav ms-auto mt-2">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/login">Login</a>
@@ -57,10 +67,18 @@
                         <a class="nav-link" href="/register">Register</a>
                     </li>
                 </ul>
+                {% endif %}
             </div>
         </div>
     </nav>
 
+    {% if get_flashed_messages() %}
+    <header>
+        <div class="alert alert-primary mb-0 text-center" role="alert">
+            {{ get_flashed_messages() | join(" ") }}
+        </div>
+    </header>
+    {% endif %}
 
     <main class="container py-5 text-center">
         {% block main %}{% endblock %}
