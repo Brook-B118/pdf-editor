@@ -23,11 +23,6 @@ db = SQL("sqlite:///final_project.db")
 def index():
     return apology("TODO")
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True) 
-    # debug=True enables debug mode which provides more detailed error messages when something goes wrong. Also allows for "hot-reloading" which means the server will automatically update when making changes to the code. It is important to turn this off when the project is finished and we are ready to deploy.
-
-    # debug=True was not working so using the unix command export FLASK_DEBUG=1 turns debugger on and unset FLASK_DEBUG turns it off.
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -66,3 +61,15 @@ def login():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
+
+
+
+
+# Runner and Debugger
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True)
+    # debug=True enables debug mode which provides more detailed error messages when something goes wrong. Also allows for "hot-reloading" which means the server will automatically update when making changes to the code. It is important to turn this off when the project is finished and we are ready to deploy.
+
+    # debug=True was not working so using the unix command export FLASK_DEBUG=1 turns debugger on and unset FLASK_DEBUG turns it off.
+
+    # Note: I finally got this line of code to work by moving it to the bottom of my code. I forgot this is where it needs to be.
