@@ -2,7 +2,8 @@ import os
 import magic
 import sqlite3
 
-from cs50 import SQL
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError, DataError
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -19,8 +20,21 @@ app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to 
 
 Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
 
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///final_project.db")
+# Configure SQL ALchemy
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///final_project.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # This is just so if you change for example a user's email in user database, sql alchemy won't track this and send a signal saying "users email was changed". The email will still be updated, there just wont be a signal for it. Turning this to True is resource intensive and generally it is a good idea to keep this off. 
+db = SQLAlchemy(app)
+# db = SQL("sqlite:///final_project.db")
+
+ # Database Class Model (Create tables through this, a model represents a single row in the table)
+
+class Users(db.Model): # Creates a table of the lower case class name by default. If you want to create a new user you are creating a new Users object which will create a new row.
+    # Class Variables
+    id = db.Column(db.Integer, primary_key=True) # Because this has an integer and primary key, it will automatically have auto increment.)
+    username = db.Column(db.String(25), unique=True, nullable=False)
+    hash = db.Column(db.String(150), nullable=False)
+
+
 
 
 # If you have a "remember me" feature on your site, you might set SESSION_PERMANENT to True for users who check that box. This would make their session survive even if they close their browser. However, you'd also need to set PERMANENT_SESSION_LIFETIME to specify how long the session should last.
@@ -65,18 +79,16 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+        user = Users.query.filter_by(username=request.form.get("username")).first() # SQL Alchemy: This will return the first Users object (i.e., row from the users table) where the username matches the username from the form.
+        # Then, you can access the hash and id attributes of the user object directly, like user.hash and user.id.
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
-        ):
+        if user is None or not check_password_hash(user.hash, request.form.get("password")):
             return apology("invalid username and/or password", 403)
+        # In this case, user is not a list or a result set like rows was. It's a single instance of the Users class (representing a single row from the users table) or None. So, you can't use len(user) because user isn't a collection of items. Instead, you can simply check if user is None to see if a user was found.
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = user.id 
 
         # Redirect user to home page
         return redirect("/")
@@ -112,15 +124,28 @@ def register():
             return apology("Must confirm password, 403")
         elif password != confirmation:
             return apology("Passwords do not match, 403")
-
-        # Generate password hash
-        password_hash = generate_password_hash(password)
+        
         # Check if username already exists in database
-        try:
-            db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", username, password_hash)
-            flash("Registration successfull!")
-        except ValueError:
+        user = Users.query.filter_by(username=username).first()
+        if user:
             return apology("Username already exists", 400)
+        
+        try:
+            # Create new user
+            new_user = Users(username=username, hash=generate_password_hash(password))
+
+            # Add new user to session
+            db.session.add(new_user)
+
+            # Commit session to save changes
+            db.session.commit()
+        except (IntegrityError, DataError) as e:
+            print(e)
+            db.session.rollback()
+            return apology("Error entering user into database", 400)
+        except Exception as e:
+            print(f"Exception error: {e}")
+            return apology("An unexpected error occurred", 500)
 
     else:
         return render_template("register.html")
@@ -138,6 +163,7 @@ def documents():
 
         # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
         uploaded_file = request.files.get("document")
+        print(type(uploaded_file))
 
         # Ensure the filename is safe:
         filename = secure_filename(uploaded_file.filename)
@@ -182,6 +208,8 @@ def documents():
 
 # Runner and Debugger
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(host='0.0.0.0', debug=True)
     # debug=True enables debug mode which provides more detailed error messages when something goes wrong. Also allows for "hot-reloading" which means the server will automatically update when making changes to the code. It is important to turn this off when the project is finished and we are ready to deploy.
 
