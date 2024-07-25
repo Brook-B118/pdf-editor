@@ -10,6 +10,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
 
+# To prevent XSS (Cross-site scripting) attacks:
+from wtforms import Form, StringField, PasswordField, validators
+import bleach
 
 app = Flask(__name__)
 
