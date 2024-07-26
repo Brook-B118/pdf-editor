@@ -22,8 +22,8 @@ Register
             <!-- <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password"> -->
         </div>
         <div class="mb-3">
-            {{ form.confirm(id="register-confirm", class="form-control mx-auto w-auto", placeholder="Confirm
-            Password")}}
+            {% set placeholder_text = "Confirm password" %}
+            {{ form.confirm(id="register-confirm", class="form-control mx-auto w-auto", placeholder=placeholder_text)}}
             <!-- <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm Password"
                 type="password"> -->
         </div>
@@ -35,6 +35,9 @@ Register
 </div>
 <div class="container">
     <p id="register-error-message"></p>
+</div>
+<div id="recaptcha-container" class="container">
+    {{ form.recaptcha }}
 </div>
 <script src="{{ url_for('static', filename='js/formValidation.js') }}"></script>
 {% endblock %}

@@ -1,5 +1,6 @@
+# To ignore a directory, use "/" at the end, to ignore a file, just type the file name.
 __pycache__/
 uploaded_pdfs/
 flask_session/
 instance/
-.env/
+.env
