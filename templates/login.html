@@ -9,15 +9,27 @@ Login
     <h1 class="display-4">Login</h1>
 </div>
 <div class="container">
-    <form action="/login" method="post">
+    <form id="login-form" action="/login" method="post" novalidate>
+        {{ form.hidden_tag() }}
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username"
-                placeholder="Username" type="text">
+            {{ form.username(id="login-username", autofocus=True, class="form-control mx-auto w-auto",
+            placeholder="Username")
+            }}
+            <!-- <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username"
+                placeholder="Username" type="text"> -->
         </div>
         <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+            {{form.password(id="login-password", class="form-control mx-auto w-auto", placeholder="Password") }}
+            <!-- <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password"> -->
         </div>
-        <button class="btn btn-primary" type="submit">Log In</button>
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+            <!-- <button class="btn btn-primary" type="submit">Log In</button> -->
+        </div>
     </form>
 </div>
+<div class="container">
+    <p id="login-error-message"></p>
+</div>
+<script src="{{ url_for('static', filename='js/formValidation.js') }}"></script>
 {% endblock %}

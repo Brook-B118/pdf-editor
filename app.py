@@ -1,20 +1,23 @@
 import os
 import magic
 import sqlite3
+import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
 
-from flask_sqlalchemy import SQLAlchemy
+
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
+from models import db, Users # Database models sheet
+from forms import RegistrationForm, LoginForm
+from dotenv import load_dotenv
 
-# To prevent XSS (Cross-site scripting) attacks:
-from wtforms import Form, StringField, PasswordField, validators
-import bleach
+load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False # This is setting the session to not be permanent, meaning it will end when the browser is closed.
@@ -23,22 +26,12 @@ app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to 
 
 Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
 
+
 # Configure SQL ALchemy
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///final_project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # This is just so if you change for example a user's email in user database, sql alchemy won't track this and send a signal saying "users email was changed". The email will still be updated, there just wont be a signal for it. Turning this to True is resource intensive and generally it is a good idea to keep this off. 
-db = SQLAlchemy(app)
+db.init_app(app)
 # db = SQL("sqlite:///final_project.db")
-
- # Database Class Model (Create tables through this, a model represents a single row in the table)
-
-class Users(db.Model): # Creates a table of the lower case class name by default. If you want to create a new user you are creating a new Users object which will create a new row.
-    # Class Variables
-    id = db.Column(db.Integer, primary_key=True) # Because this has an integer and primary key, it will automatically have auto increment.)
-    username = db.Column(db.String(25), unique=True, nullable=False)
-    hash = db.Column(db.String(150), nullable=False)
-
-
-
 
 # If you have a "remember me" feature on your site, you might set SESSION_PERMANENT to True for users who check that box. This would make their session survive even if they close their browser. However, you'd also need to set PERMANENT_SESSION_LIFETIME to specify how long the session should last.
 
@@ -68,27 +61,23 @@ def index():
 def login():
     """Log user in"""
 
-    # Forget any user_id
-    session.clear()
-
     # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
+    form = LoginForm(request.form)
+    if form.validate_on_submit(): # shortcut for if request.method == "POST" and form.validate():
+        username = bleach.clean(form.username.data)
+        password = bleach.clean(form.password.data)
 
         # Query database for username
-        user = Users.query.filter_by(username=request.form.get("username")).first() # SQL Alchemy: This will return the first Users object (i.e., row from the users table) where the username matches the username from the form.
+        user = Users.query.filter_by(username=username).first() # SQL Alchemy: This will return the first Users object (i.e., row from the users table) where the username matches the username from the form.
         # Then, you can access the hash and id attributes of the user object directly, like user.hash and user.id.
 
         # Ensure username exists and password is correct
-        if user is None or not check_password_hash(user.hash, request.form.get("password")):
+        if user is None or not check_password_hash(user.hash, password):
             return apology("invalid username and/or password", 403)
         # In this case, user is not a list or a result set like rows was. It's a single instance of the Users class (representing a single row from the users table) or None. So, you can't use len(user) because user isn't a collection of items. Instead, you can simply check if user is None to see if a user was found.
+
+         # Forget any user_id
+        session.clear()
 
         # Remember which user has logged in
         session["user_id"] = user.id 
@@ -98,7 +87,10 @@ def login():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html")
+        for field, errors in form.errors.items():
+            for error in errors:
+                return apology(f"Error in {field}: {error}", 400)
+        return render_template("login.html", form=form)
 
 @app.route("/logout")
 def logout():
@@ -114,20 +106,11 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     # Register user
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
-        # Validate that inputs are not empty when form is submitted
-        if not username:
-            return apology("Must provide username, 403")
-        elif not password:
-            return apology("Must provide password, 403")
-        elif not confirmation:
-            return apology("Must confirm password, 403")
-        elif password != confirmation:
-            return apology("Passwords do not match, 403")
-        
+    form = RegistrationForm(request.form)
+    if form.validate_on_submit(): # shortcut for if request.method == "POST" and form.validate():
+        username = bleach.clean(form.username.data)
+        password = bleach.clean(form.password.data)
+  
         # Check if username already exists in database
         user = Users.query.filter_by(username=username).first()
         if user:
@@ -151,8 +134,11 @@ def register():
             return apology("An unexpected error occurred", 500)
 
     else:
-        return render_template("register.html")
-    return render_template("/login.html")
+        for field, errors in form.errors.items():
+            for error in errors:
+                return apology(f"Error in {field}: {error}", 400)
+        return render_template("register.html", form=form)
+    return redirect("/login")
 
 
 
