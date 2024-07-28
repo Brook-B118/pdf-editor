@@ -1,17 +1,16 @@
 import os
 import magic
-import sqlite3
 import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
 
 
-from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
-from models import db, Users # Database models sheet
-from forms import RegistrationForm, LoginForm
+from models import db, Users, Document # Database models sheet
+from forms import RegistrationForm, LoginForm, UploadForm
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -96,6 +95,7 @@ def login():
         return render_template("login.html", form=form)
 
 @app.route("/logout")
+@login_required
 def logout():
     # Log user out
 
@@ -145,53 +145,75 @@ def register():
 
 
 
-@app.route("/documents", methods=["GET", "POST"])
-def documents():
-
-    
-    if request.method == "POST":
-        # File Upload: Flask has a request.files object that you can use to access uploaded files. You can use the werkzeug.utils.secure_filename() function to ensure the filename is safe.
-
-        # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
-        uploaded_file = request.files.get("document")
-        print(type(uploaded_file))
+@app.route("/uploadDocuments", methods=["GET", "POST"])
+@login_required
+def upload_documents():
+  
+    # File Upload: Flask has a request.files object that you can use to access uploaded files. You can use the werkzeug.utils.secure_filename() function to ensure the filename is safe.
+    form = UploadForm()
+    # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
+    if form.validate_on_submit():
+        user_id = session['user_id']
+        uploaded_file = form.file.data
 
         # Ensure the filename is safe:
-        filename = secure_filename(uploaded_file.filename)
+        uploaded_filename = secure_filename(uploaded_file.filename)
 
         # Save the file
-        upload_folder = 'uploaded_pdfs' # Creates the folder to send uploads to (this is local for now)
+        upload_folder = f'{user_id}_uploaded_files' # Creates the folder to send uploads to (this is local for now)
 
-        if not os.path.exists('uploaded_pdfs'):
-            os.makedirs('uploaded_pdfs')
+        if not os.path.exists(f'{user_id}_uploaded_files'):
+            os.makedirs(f'{user_id}_uploaded_files')
 
-        uploaded_file.save(os.path.join(upload_folder, filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
+        uploaded_file.save(os.path.join(upload_folder, uploaded_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
 
         # Check the MIME type of the file
-        mime = magic.from_file(os.path.join(upload_folder, filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
-        if mime == 'application/pdf':
-            # The file is a PDF
-            
+        mime = magic.from_file(os.path.join(upload_folder, uploaded_filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
+        if mime in ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
+            # The file is a PDF or Word doc, add to Sqlite3 using SQLAlchemy
+            new_document = Document(user_id=session['user_id'], filename=uploaded_filename, file_path=os.path.join(upload_folder, uploaded_filename)) 
+              
+            db.session.add(new_document)  
+
             try:
-                db.execute("INSERT INTO documents (user_id, filename, file_path) VALUES(?, ?, ?)", session['user_id'], filename, os.path.join(upload_folder, filename)) # os.path.join(upload_folder, filename) is the full path to the file and not just the directory.
-                flash("upload successfull!")
-            except sqlite3.Error as e:
+                db.session.commit()
+                flash("Upload successful!")
+            except SQLAlchemyError as e:
                 print(e)
                 return apology("An error occurred while uploading the document.", 400)
-    
-            return redirect("/documents/edit")
+
+            document = Document.query.filter_by(filename=uploaded_filename).first()
+            if document:
+                session['filename'] = document.id
+            else: 
+                return apology("No file in session", 400)
+            return redirect(f"/documents/edit/{session['filename']}")
         
         else:
-            # The file is not a PDF
-
-            return apology("file is not a pdf", 403)
-
+            # The file is not a PDF or Word doc
+            return apology("file is not a pdf or doc", 403)
     else:
-        return render_template("documents.html")
+        return render_template("documents.html", form=form)
+
+
+
+
+@app.route("/documents/edit/<int:doc_id>", methods=["GET", "POST"])
+@login_required
+def editDocument(doc_id):
+    document = Document.query.get(doc_id)
+    # Now you can use document.id, document.filename, etc.
+    if request.method == "POST":
+        return apology("TODO", 403)
     
-
-
-
+    else:
+        filename = document.filename
+        if filename:
+            # Continue
+            return render_template("/editDocument.html")
+        else:
+            return apology("filename is None", 403)
+    
 
 
 

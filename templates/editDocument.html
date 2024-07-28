@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Edit document here
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid mb-4">
+    <h5>Supported files include: PDF and Word</h5>
+</div>
+<div class="container-fluid mb-4">
+
+</div>
+<script>
+    var filename = "{{ filename }}";
+</script>
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<script src="{{ url_for('static', filename='js/displayingPDF.js') }}"></script>
+{% endblock %}

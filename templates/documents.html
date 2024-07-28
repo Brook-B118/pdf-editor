@@ -6,15 +6,14 @@ Documents
 
 {% block main %}
 <div class="container-fluid mb-4">
-    <h5>Supported files include: PDF</h5>
+    <h5>Supported files include: PDF and Word</h5>
 </div>
 <div class="container-fluid mb-4">
-    <form action="/documents" method="post" enctype="multipart/form-data">
-        <input type="file" id="document" name="document" accept=".pdf" style="display: none;">
-        <label for="document" class="btn btn-success btn-lg">Upload File</label>
-        <p>Need this button for now since the upload file button does not submit, it only chooses a file</p>
-        <input type="submit" value="Upload" class="btn btn-primary">
+    <form id="uploadDocumentsForm" action="/documents" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <label for="document" class="btn btn-success btn-lg">Upload</label>
+        {{ form.file(style="display: none;", accept=".pdf,.doc,.docx", id="document") }}
     </form>
 </div>
-
+<script src="{{ url_for('static', filename='js/uploadDocument.js') }}"></script>
 {% endblock %}
