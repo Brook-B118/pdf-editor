@@ -15,3 +15,13 @@ class Users(db.Model): # Creates a table of the lower case class name by default
     id = db.Column(db.Integer, primary_key=True) # Because this has an integer and primary key, it will automatically have auto increment.)
     username = db.Column(db.String(25), unique=True, nullable=False)
     hash = db.Column(db.String(150), nullable=False)
+
+
+class Documents(db.Model):
+    __tablename__ = 'documents' # Optional to add tablename, SQLAclhemy by default will take the lowercase class name and use that as the tablename.
+    id = db.Column(db.Integer, primary_key=True)
+    upload_time = db.Column(db.DateTime, default=db.func.current_timestamp()) # The default part is for when we do not provide an upload time when creating a new row. It will automatically use the current timestamp.
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    filename = db.Column(db.String(255), unique=True, nullable=False)
+    file_path = db.Column(db.String(255), nullable=False)
+    edited_filename = db.Column(db.String(255))

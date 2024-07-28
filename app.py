@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_PUBLIC_KEY')
 app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_PRIVATE_KEY')
+app.config['TESTING'] = True # Let's flask_wtf know that I am testing my app (not running in a development env) so I don't have to submit the recaptcha everytime
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False # This is setting the session to not be permanent, meaning it will end when the browser is closed.
@@ -147,7 +148,6 @@ def register():
 @app.route("/documents", methods=["GET", "POST"])
 def documents():
 
-    print(os.getcwd())
     
     if request.method == "POST":
         # File Upload: Flask has a request.files object that you can use to access uploaded files. You can use the werkzeug.utils.secure_filename() function to ensure the filename is safe.
