@@ -1,7 +1,7 @@
 import os
 import magic
 import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
-
+import secrets # Used to generate a text string in hexadecimal
 
 from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
@@ -160,22 +160,21 @@ def upload_documents():
 
         # Ensure the filename is safe:
         uploaded_filename = secure_filename(uploaded_file.filename)
+        hex_filename = secrets.token_hex(16)
 
         # Save the file
-        upload_folder = (f'{user_id}_uploaded_files') # Creates the folder to send uploads to (this is local for now)
-        print(f"{upload_folder}")
+        upload_folder = (f'uploaded_files/{user_id}') # Creates the folder to send uploads to (this is local for now)
 
-        if not os.path.exists(f'{user_id}_uploaded_files'):
-            os.makedirs(f'{user_id}_uploaded_files')
-            print(f"{upload_folder}")
+        if not os.path.exists(f'uploaded_files/{user_id}'):
+            os.makedirs(f'uploaded_files/{user_id}')
 
-        uploaded_file.save(os.path.join(upload_folder, uploaded_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
+        uploaded_file.save(os.path.join(upload_folder, hex_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
 
         # Check the MIME type of the file
-        mime = magic.from_file(os.path.join(upload_folder, uploaded_filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
+        mime = magic.from_file(os.path.join(upload_folder, hex_filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
         if mime in ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
             # The file is a PDF or Word doc, add to Sqlite3 using SQLAlchemy
-            new_document = Document(user_id=session['user_id'], filename=uploaded_filename, file_path=os.path.join(upload_folder, uploaded_filename)) 
+            new_document = Document(user_id=session['user_id'], filename=hex_filename, file_path=os.path.join(upload_folder, hex_filename), edited_filename=uploaded_filename) 
               
             db.session.add(new_document)  
 
@@ -186,12 +185,12 @@ def upload_documents():
                 print(e)
                 return apology("An error occurred while uploading the document.", 400)
 
-            document = Document.query.filter_by(filename=uploaded_filename).first()
+            document = Document.query.filter_by(filename=hex_filename).first()
             if document:
-                session['doc_id'] = document.id
+                session['doc_id'] = document.filename
             else: 
                 return apology("No file in session", 400)
-            return redirect(url_for('editDocument', doc_id=document.id))
+            return redirect(url_for('editDocument', hex_filename=document.filename))
         
         else:
             # The file is not a PDF or Word doc
@@ -202,23 +201,30 @@ def upload_documents():
         
 
 
-@app.route("/doc_name/<int:doc_id>")
+@app.route("/doc_name/<hex_filename>")
 @login_required
 def docName(doc_id):
     document = Document.query.get(doc_id)
     filename = document.filename
     return jsonify(filename=filename)
 
-@app.route("/documents/edit/<int:doc_id>", methods=["GET", "POST"])
+@app.route("/documents/edit/<hex_filename>", methods=["GET", "POST"])
 @login_required
-def editDocument(doc_id):
-    document = Document.query.get(doc_id)
+def editDocument(hex_filename):
+    document = Document.query.filter_by(filename=hex_filename).first()
+    if document:
+        user_id = document.user_id
+    else:
+        return apology("document is None", 403)
     # Now you can use document.id, document.filename, etc.
     if request.method == "POST":
         return apology("TODO", 403)
     
     else:
-        return render_template('editDocument.html', doc_id=doc_id)
+        if session['user_id'] == user_id: 
+            return render_template('editDocument.html', document=document)
+        else:
+            logout()
     
 
 

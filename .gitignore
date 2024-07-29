@@ -5,4 +5,3 @@ flask_session/
 instance/
 .env
 uploaded_files/
-6_uploaded_files/
