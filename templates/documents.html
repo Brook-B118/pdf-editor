@@ -9,7 +9,7 @@ Documents
     <h5>Supported files include: PDF and Word</h5>
 </div>
 <div class="container-fluid mb-4">
-    <form id="uploadDocumentsForm" action="/documents" method="post" enctype="multipart/form-data">
+    <form id="uploadDocumentsForm" action="/uploadDocuments" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <label for="document" class="btn btn-success btn-lg">Upload</label>
         {{ form.file(style="display: none;", accept=".pdf,.doc,.docx", id="document") }}

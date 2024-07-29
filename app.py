@@ -4,7 +4,7 @@ import bleach # Used to sanitize the user input before you use it in your applic
 
 
 from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -153,17 +153,21 @@ def upload_documents():
     form = UploadForm()
     # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
     if form.validate_on_submit():
+        print("valid form btw")
         user_id = session['user_id']
+        print(user_id)
         uploaded_file = form.file.data
 
         # Ensure the filename is safe:
         uploaded_filename = secure_filename(uploaded_file.filename)
 
         # Save the file
-        upload_folder = f'{user_id}_uploaded_files' # Creates the folder to send uploads to (this is local for now)
+        upload_folder = (f'{user_id}_uploaded_files') # Creates the folder to send uploads to (this is local for now)
+        print(f"{upload_folder}")
 
         if not os.path.exists(f'{user_id}_uploaded_files'):
             os.makedirs(f'{user_id}_uploaded_files')
+            print(f"{upload_folder}")
 
         uploaded_file.save(os.path.join(upload_folder, uploaded_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
 
@@ -184,19 +188,26 @@ def upload_documents():
 
             document = Document.query.filter_by(filename=uploaded_filename).first()
             if document:
-                session['filename'] = document.id
+                session['doc_id'] = document.id
             else: 
                 return apology("No file in session", 400)
-            return redirect(f"/documents/edit/{session['filename']}")
+            return redirect(url_for('editDocument', doc_id=document.id))
         
         else:
             # The file is not a PDF or Word doc
             return apology("file is not a pdf or doc", 403)
     else:
+        
         return render_template("documents.html", form=form)
+        
 
 
-
+@app.route("/doc_name/<int:doc_id>")
+@login_required
+def docName(doc_id):
+    document = Document.query.get(doc_id)
+    filename = document.filename
+    return jsonify(filename=filename)
 
 @app.route("/documents/edit/<int:doc_id>", methods=["GET", "POST"])
 @login_required
@@ -207,12 +218,7 @@ def editDocument(doc_id):
         return apology("TODO", 403)
     
     else:
-        filename = document.filename
-        if filename:
-            # Continue
-            return render_template("/editDocument.html")
-        else:
-            return apology("filename is None", 403)
+        return render_template('editDocument.html', doc_id=doc_id)
     
 
 
