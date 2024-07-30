@@ -26,6 +26,9 @@ app.config["SESSION_PERMANENT"] = False # This is setting the session to not be 
 
 app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to "filesystem". This means that session data will be stored on the server's file system. This is a simple and effective way to handle session data, but it wouldn't be suitable for a large-scale application. When you're running your application on a development server, the session data is stored on the file system of the machine where the server is running. This could be your local machine if you're running the server locally, or a remote server if you're running it there.
 
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 # Trying to get pdf.js to work
+# app.config['MIMETYPE_MAP'] = {'.mjs': 'application/javascript'} # trying to get pdf.js to work
+
 Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
 
 
@@ -153,20 +156,18 @@ def upload_documents():
     form = UploadForm()
     # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
     if form.validate_on_submit():
-        print("valid form btw")
         user_id = session['user_id']
-        print(user_id)
         uploaded_file = form.file.data
 
         # Ensure the filename is safe:
         uploaded_filename = secure_filename(uploaded_file.filename)
-        hex_filename = secrets.token_hex(16)
+        hex_filename = secrets.token_hex(16) + '.pdf'
 
         # Save the file
-        upload_folder = (f'uploaded_files/{user_id}') # Creates the folder to send uploads to (this is local for now)
+        upload_folder = (f'static/uploaded_files/{user_id}') # Creates the folder to send uploads to (this is local for now)
 
-        if not os.path.exists(f'uploaded_files/{user_id}'):
-            os.makedirs(f'uploaded_files/{user_id}')
+        if not os.path.exists(f'static/uploaded_files/{user_id}'):
+            os.makedirs(f'static/uploaded_files/{user_id}')
 
         uploaded_file.save(os.path.join(upload_folder, hex_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
 
@@ -212,6 +213,7 @@ def docName(doc_id):
 @login_required
 def editDocument(hex_filename):
     document = Document.query.filter_by(filename=hex_filename).first()
+    print(document)
     if document:
         user_id = document.user_id
     else:
@@ -222,7 +224,7 @@ def editDocument(hex_filename):
     
     else:
         if session['user_id'] == user_id: 
-            return render_template('editDocument.html', document=document)
+            return render_template('editDocument.html', document=document, folder=user_id)
         else:
             logout()
     
