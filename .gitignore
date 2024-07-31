@@ -4,3 +4,7 @@ uploaded_pdfs/
 flask_session/
 instance/
 .env
+uploaded_files/
+build/
+web/
+LICENSE

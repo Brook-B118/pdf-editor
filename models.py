@@ -17,7 +17,7 @@ class Users(db.Model): # Creates a table of the lower case class name by default
     hash = db.Column(db.String(150), nullable=False)
 
 
-class Documents(db.Model):
+class Document(db.Model):
     __tablename__ = 'documents' # Optional to add tablename, SQLAclhemy by default will take the lowercase class name and use that as the tablename.
     id = db.Column(db.Integer, primary_key=True)
     upload_time = db.Column(db.DateTime, default=db.func.current_timestamp()) # The default part is for when we do not provide an upload time when creating a new row. It will automatically use the current timestamp.
