@@ -1,6 +1,8 @@
-import * as pdfjsLib from '/static/js/build/pdf.mjs';
+// import * as pdfjsLib from '/static/js/build/pdf.mjs';
+import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.mjs'
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/static/js/build/pdf.worker.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.worker.mjs';
+
 console.log(url)
 document.addEventListener('DOMContentLoaded', function () {
     console.log(url)
@@ -11,12 +13,17 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('PDF loaded');
         // You can now use *pdf* here
         let pages = pdf.numPages;
-        for (let i = 1; i == pages; i++) {
+        for (let i = 1; i <= pages; i++) {
             pdf.getPage(i).then(function (page) {
                 let viewport = page.getViewport({ scale: 1 });
-                var outputScale = window.devicePixelRatio || 1;
+                var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
                 let canvas = document.createElement('canvas')
+
+                // Add these lines to fully create the canvas
+                canvas.width = Math.floor(viewport.width * outputScale);
+                canvas.height = Math.floor(viewport.height * outputScale);
                 let context = canvas.getContext('2d');
+                context.scale(outputScale, outputScale);
 
                 page.render({ canvasContext: context, viewport: viewport });
                 displayDiv.appendChild(canvas);
