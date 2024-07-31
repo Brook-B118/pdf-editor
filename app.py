@@ -202,12 +202,13 @@ def upload_documents():
         
 
 
-@app.route("/doc_name/<hex_filename>")
-@login_required
-def docName(doc_id):
-    document = Document.query.get(doc_id)
-    filename = document.filename
-    return jsonify(filename=filename)
+# @app.route("/doc_name/<hex_filename>")
+# @login_required
+# def docName(doc_id):
+#     document = Document.query.get(doc_id)
+#     filename = document.filename
+#     return jsonify(filename=filename)
+
 
 @app.route("/documents/edit/<hex_filename>", methods=["GET", "POST"])
 @login_required
