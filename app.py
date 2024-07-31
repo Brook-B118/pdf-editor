@@ -3,7 +3,7 @@ import magic
 import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
 import secrets # Used to generate a text string in hexadecimal
 
-from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, DataError
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -12,6 +12,7 @@ from helpers import login_required, apology
 from models import db, Users, Document # Database models sheet
 from forms import RegistrationForm, LoginForm, UploadForm
 from dotenv import load_dotenv
+from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
 
 load_dotenv()
 
@@ -26,8 +27,6 @@ app.config["SESSION_PERMANENT"] = False # This is setting the session to not be 
 
 app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to "filesystem". This means that session data will be stored on the server's file system. This is a simple and effective way to handle session data, but it wouldn't be suitable for a large-scale application. When you're running your application on a development server, the session data is stored on the file system of the machine where the server is running. This could be your local machine if you're running the server locally, or a remote server if you're running it there.
 
-# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 # Trying to get pdf.js to work
-# app.config['MIMETYPE_MAP'] = {'.mjs': 'application/javascript'} # trying to get pdf.js to work
 
 Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
 
@@ -151,7 +150,7 @@ def register():
 @app.route("/uploadDocuments", methods=["GET", "POST"])
 @login_required
 def upload_documents():
-  
+
     # File Upload: Flask has a request.files object that you can use to access uploaded files. You can use the werkzeug.utils.secure_filename() function to ensure the filename is safe.
     form = UploadForm()
     # Get the uploaded file (request.files.get returns a FileStorage object, not a file name.)
@@ -161,30 +160,25 @@ def upload_documents():
 
         # Ensure the filename is safe:
         uploaded_filename = secure_filename(uploaded_file.filename)
-        hex_filename = secrets.token_hex(16) + '.pdf'
+        hex_filename = secrets.token_hex(16)
 
-        # Save the file
-        upload_folder = (f'static/uploaded_files/{user_id}') # Creates the folder to send uploads to (this is local for now)
+        file_info = {
+            "user_id": user_id,
+            "uploaded_file": uploaded_file,
+            "hex_filename": hex_filename,
+            "uploaded_filename": uploaded_filename
+        }
 
-        if not os.path.exists(f'static/uploaded_files/{user_id}'):
-            os.makedirs(f'static/uploaded_files/{user_id}')
+        # Temporarily save the file
+        save_temp_file(file_info)
 
-        uploaded_file.save(os.path.join(upload_folder, hex_filename)) # uploaded_file is the actual file and we are saving it in the folder AS the secure filename stored in filename.
+        # Make sure file is a PDF or a word doc
+        mime_check = check_temp_file_mime(file_info)
 
-        # Check the MIME type of the file
-        mime = magic.from_file(os.path.join(upload_folder, hex_filename), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
-        if mime in ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
-            # The file is a PDF or Word doc, add to Sqlite3 using SQLAlchemy
-            new_document = Document(user_id=session['user_id'], filename=hex_filename, file_path=os.path.join(upload_folder, hex_filename), edited_filename=uploaded_filename) 
-              
-            db.session.add(new_document)  
+        if mime_check:
 
-            try:
-                db.session.commit()
-                flash("Upload successful!")
-            except SQLAlchemyError as e:
-                print(e)
-                return apology("An error occurred while uploading the document.", 400)
+            # Add file to database
+            add_file_to_db(file_info)
 
             document = Document.query.filter_by(filename=hex_filename).first()
             if document:
@@ -192,9 +186,8 @@ def upload_documents():
             else: 
                 return apology("No file in session", 400)
             return redirect(url_for('editDocument', hex_filename=document.filename))
-        
+            
         else:
-            # The file is not a PDF or Word doc
             return apology("file is not a pdf or doc", 403)
     else:
         
