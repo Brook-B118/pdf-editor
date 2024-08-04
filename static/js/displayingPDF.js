@@ -3,35 +3,85 @@ import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.mjs'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.worker.mjs';
 
-console.log(url)
-document.addEventListener('DOMContentLoaded', function () {
-    console.log(url)
-    var loadingTask = pdfjsLib.getDocument(url);
-    console.log(url)
-    var displayDiv = document.getElementById('pdf-display');
-    loadingTask.promise.then(function (pdf) {
-        console.log('PDF loaded');
-        // You can now use *pdf* here
-        let pages = pdf.numPages;
-        for (let i = 1; i <= pages; i++) {
-            pdf.getPage(i).then(function (page) {
-                let viewport = page.getViewport({ scale: 1 });
-                var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
-                let canvas = document.createElement('canvas')
 
-                // Add these lines to fully create the canvas
-                canvas.width = Math.floor(viewport.width * outputScale);
-                canvas.height = Math.floor(viewport.height * outputScale);
-                let context = canvas.getContext('2d');
-                context.scale(outputScale, outputScale);
+export const displayPDF = function (url) {
+    return new Promise((resolve, reject) => {
+        var loadingTask = pdfjsLib.getDocument(url);
+        loadingTask.promise.then(function (pdf) {
+            window.pdfDoc = pdf; // This is for pdf.js
+            var displayDiv = document.getElementById('pdf-display');
+            displayDiv.innerHTML = ''; // Clear previous content
+            let pages = pdf.numPages;
+            for (let i = 1; i <= pages; i++) {
+                pdf.getPage(i).then(function (page) {
+                    let viewport = page.getViewport({ scale: 1 });
+                    var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
+                    let canvas = document.createElement('canvas');
+                    canvas.width = Math.floor(viewport.width * outputScale);
+                    canvas.height = Math.floor(viewport.height * outputScale);
+                    let context = canvas.getContext('2d');
+                    context.scale(outputScale, outputScale);
 
-                page.render({ canvasContext: context, viewport: viewport });
-                displayDiv.appendChild(canvas);
-            })
-        };
+                    page.render({ canvasContext: context, viewport: viewport });
+                    displayDiv.appendChild(canvas);
+                    if (i === pages) resolve(); // Resolve when the last page is rendered
+                });
+            }
+        }).catch(reject);
     });
-});
+};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const displayPDF = function (url) {
+//     return new Promise((resolve, reject) => {
+//         var loadingTask = pdfjsLib.getDocument(url);
+//         var displayDiv = document.getElementById('pdf-display');
+//         displayDiv.innerHTML = ''; // Clear previous content
+//         loadingTask.promise.then(function (pdf) {
+//             console.log('PDF loaded');
+//             // You can now use *pdf* here
+//             let pages = pdf.numPages;
+//             for (let i = 1; i <= pages; i++) {
+//                 pdf.getPage(i).then(function (page) {
+//                     let viewport = page.getViewport({ scale: 1 });
+//                     var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
+//                     let canvas = document.createElement('canvas')
+
+//                     // Add these lines to fully create the canvas
+//                     canvas.width = Math.floor(viewport.width * outputScale);
+//                     canvas.height = Math.floor(viewport.height * outputScale);
+//                     let context = canvas.getContext('2d');
+//                     context.scale(outputScale, outputScale);
+
+//                     page.render({ canvasContext: context, viewport: viewport });
+//                     displayDiv.appendChild(canvas);
+//                     if (i === pages) resolve(); // Resolve when the last page is rendered
+//                 });
+//             }
+//         }).catch(reject);
+//     });
+// };
 
 
 
