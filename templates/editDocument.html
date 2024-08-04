@@ -5,17 +5,36 @@ Edit document here
 {% endblock %}
 
 {% block main %}
-<div class="container-fluid mb-4">
+
+<div class="edit-document container-fluid mb-4">
     <h5>Supported files include: PDF and Word</h5>
 </div>
-<div class="container-fluid mb-4">
-    <div id="pdf-display" class="container-fluid mb-4"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div id="pdf-display" class="pdf-section">
+                <!-- PDF pages will be rendered here -->
+                <div id="overlay" class="overlay">
+                    <!-- Draggable and editable elements will go here -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="elements-container" class="elements-section">
+                <div class="element-block" data-type="text-block">Text Block</div>
+                <!-- Add more blocks as needed -->
+            </div>
+        </div>
+    </div>
 </div>
+
+
 <!-- <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> -->
 <script>
     var url = 'http://127.0.0.1:5000/static/uploaded_files/' + "{{ folder }}" + '/' + '{{ document.filename }}' + '.pdf';
 </script>
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
 <script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/editingPDF_2.js') }}" type="module"></script>
 {% endblock %}

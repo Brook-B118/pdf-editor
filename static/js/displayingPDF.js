@@ -8,12 +8,16 @@ export const displayPDF = function (url) {
     return new Promise((resolve, reject) => {
         var loadingTask = pdfjsLib.getDocument(url);
         loadingTask.promise.then(function (pdf) {
+            console.log("pdf is loaded")
             window.pdfDoc = pdf; // This is for pdf.js
             var displayDiv = document.getElementById('pdf-display');
-            displayDiv.innerHTML = ''; // Clear previous content
+            console.log("found pdf-display")
+            // displayDiv.innerHTML = ''; // Clear previous content
             let pages = pdf.numPages;
+
             for (let i = 1; i <= pages; i++) {
                 pdf.getPage(i).then(function (page) {
+                    console.log("pdf page line passed")
                     let viewport = page.getViewport({ scale: 1 });
                     var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
                     let canvas = document.createElement('canvas');
@@ -31,7 +35,7 @@ export const displayPDF = function (url) {
     });
 };
 
-
+displayPDF(url)
 
 
 
