@@ -3,6 +3,7 @@ import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.mjs'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.5.136/build/pdf.worker.mjs';
 
+export let pages = 0;
 
 export const displayPDF = function (url) {
     return new Promise((resolve, reject) => {
@@ -13,7 +14,7 @@ export const displayPDF = function (url) {
             var displayDiv = document.getElementById('pdf-display');
             console.log("found pdf-display")
             // displayDiv.innerHTML = ''; // Clear previous content
-            let pages = pdf.numPages;
+            pages = pdf.numPages;
 
             for (let i = 1; i <= pages; i++) {
                 pdf.getPage(i).then(function (page) {
@@ -28,6 +29,17 @@ export const displayPDF = function (url) {
 
                     page.render({ canvasContext: context, viewport: viewport });
                     displayDiv.appendChild(canvas);
+
+                    let overlay = document.createElement('div');
+                    overlay.style.width = `${canvas.width}px`;
+                    overlay.style.height = `${canvas.height}px`;
+                    overlay.style.position = 'absolute';
+                    overlay.style.top = `${canvas.offsetTop}px`;
+                    overlay.style.left = `${canvas.offsetLeft}px`;
+                    overlay.classList.add('overlay');
+                    overlay.id = `overlay-${i}`;
+                    displayDiv.appendChild(overlay);
+
                     if (i === pages) resolve(); // Resolve when the last page is rendered
                 });
             }
@@ -35,10 +47,9 @@ export const displayPDF = function (url) {
     });
 };
 
-displayPDF(url)
 
 
-
+// The offsetTop and offsetLeft properties give the distance between the element and its offset parent, not the browser's edge. The offset parent is usually the nearest positioned ancestor. In this case, it should be the pdf-display div.
 
 
 
