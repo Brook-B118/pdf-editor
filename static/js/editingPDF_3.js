@@ -1,6 +1,6 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-
+import { createTextBox } from './elementBlocks.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
     block.classList.add("draggable");
@@ -23,24 +23,21 @@ function addEventListeners() {
             console.log("Drop event triggered");
             const id = e.dataTransfer.getData("text/plain");
             const draggableElement = document.getElementById(id);
-            const overlayRect = e.target.getBoundingClientRect();
+            console.log(draggableElement);
+            console.log(draggableElement.classList);
 
-            // Create a new editable textbox
-            const textbox = document.createElement('input');
-            textbox.type = 'text';
-            textbox.classList.add('textbox');
-            textbox.style.position = 'absolute';
-            textbox.style.left = `${e.clientX - overlayRect.left}px`;
-            textbox.style.top = `${e.clientY - overlayRect.top}px`;
-            textbox.value = draggableElement.textContent;
-            // Append the new textbox to the overlay
-            e.target.appendChild(textbox);
+            if (draggableElement.classList.contains('text-box-block')) {
+                console.log("Condition met, calling createTextBox");
+                createTextBox(e, draggableElement);
+            }
         });
     }
-}
+};
 
 
 // Ensure this function is called after displayPDF is done
 displayPDF(url).then(() => {
     addEventListeners();
 });
+
+
