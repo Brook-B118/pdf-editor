@@ -15,20 +15,22 @@ function addEventListeners() {
         let overlay = document.getElementById(`overlay-${i}`);
         overlay.addEventListener("dragover", e => {
             e.preventDefault();
-            console.log(`Dragover event triggered on overlay-${i}`);
         });
 
         document.getElementById(`overlay-${i}`).addEventListener("drop", e => {
             e.preventDefault();
-            console.log("Drop event triggered");
             const id = e.dataTransfer.getData("text/plain");
             const draggableElement = document.getElementById(id);
-            console.log(draggableElement);
-            console.log(draggableElement.classList);
 
-            if (draggableElement.classList.contains('text-box-block')) {
-                console.log("Condition met, calling createTextBox");
+            console.log("Dropped element ID:", id);
+            console.log("Draggable element:", draggableElement);
+
+            if (draggableElement && draggableElement.classList.contains('new-text-box-block')) {
                 createTextBox(e, draggableElement);
+            } else {
+                // Handle moving the existing element
+                draggableElement.style.left = `${e.clientX}px`;
+                draggableElement.style.top = `${e.clientY}px`;
             }
         });
     }
@@ -40,4 +42,34 @@ displayPDF(url).then(() => {
     addEventListeners();
 });
 
+
+
+
+
+// Add mousedown event listener to handle dragging
+// addedElement.addEventListener('mousedown', function (event) {
+//     let shiftX = event.clientX - addedElement.offsetLeft;
+//     let shiftY = event.clientY - addedElement.offsetTop;
+
+//     function moveAt(clientX, clientY) {
+//         addedElement.style.left = clientX - shiftX + 'px';
+//         addedElement.style.top = clientY - shiftY + 'px';
+//     }
+
+//     moveAt(event.clientX, event.clientY);
+
+//     function onMouseMove(event) {
+//         moveAt(event.clientX, event.clientY);
+//     }
+
+//     document.addEventListener('mousemove', onMouseMove);
+
+//     function onMouseUp() {
+//         console.log("Mouse up event fired");
+//         document.removeEventListener('mousemove', onMouseMove);
+//         document.removeEventListener('mouseup', onMouseUp);
+//     }
+
+//     document.addEventListener('mouseup', onMouseUp);
+// });
 

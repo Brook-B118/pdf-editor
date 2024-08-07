@@ -37,3 +37,7 @@ canvas {
     z-index: 1;
     /* Ensure it's below the overlay */
 }
+
+.non-interactive {
+    pointer-events: none;
+}
