@@ -45,33 +45,5 @@ displayPDF(url).then(() => {
 });
 
 
-
-
-
-// Add mousedown event listener to handle dragging
-// addedElement.addEventListener('mousedown', function (event) {
-//     let shiftX = event.clientX - addedElement.offsetLeft;
-//     let shiftY = event.clientY - addedElement.offsetTop;
-
-//     function moveAt(clientX, clientY) {
-//         addedElement.style.left = clientX - shiftX + 'px';
-//         addedElement.style.top = clientY - shiftY + 'px';
-//     }
-
-//     moveAt(event.clientX, event.clientY);
-
-//     function onMouseMove(event) {
-//         moveAt(event.clientX, event.clientY);
-//     }
-
-//     document.addEventListener('mousemove', onMouseMove);
-
-//     function onMouseUp() {
-//         console.log("Mouse up event fired");
-//         document.removeEventListener('mousemove', onMouseMove);
-//         document.removeEventListener('mouseup', onMouseUp);
-//     }
-
-//     document.addEventListener('mouseup', onMouseUp);
-// });
+// besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY
 
