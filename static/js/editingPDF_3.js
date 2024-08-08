@@ -25,7 +25,7 @@ function addEventListeners() {
             console.log("draggable element =", draggableElement)
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
-                createTextBox(e, draggableElement);
+                createTextBox(e, draggableElement, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -33,6 +33,9 @@ function addEventListeners() {
                 const offsetY = e.clientY - overlayRect.top - draggableElement.offsetHeight / 2;
                 draggableElement.style.left = `${offsetX}px`;
                 draggableElement.style.top = `${offsetY}px`;
+
+                // Update the data-overlay-id attribute
+                draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
             }
         });
     }

@@ -10,6 +10,10 @@ Edit document here
     <h5>Supported files include: PDF and Word</h5>
 </div>
 
+<div class="edit-document container-fluid mb-4">
+    <button id="save-button">Save and Download</button>
+</div>
+
 <div class="container-fluid edit-doc">
     <div class="row">
         <div class="col-md-7">
@@ -44,4 +48,5 @@ Edit document here
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
 <script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
 <script src="{{ url_for('static', filename='js/editingPDF_3.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
 {% endblock %}
