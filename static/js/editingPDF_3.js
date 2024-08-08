@@ -22,15 +22,17 @@ function addEventListeners() {
             const id = e.dataTransfer.getData("text/plain");
             const draggableElement = document.getElementById(id);
 
-            console.log("Dropped element ID:", id);
-            console.log("Draggable element:", draggableElement);
+            console.log("draggable element =", draggableElement)
 
-            if (draggableElement && draggableElement.classList.contains('new-text-box-block')) {
+            if (draggableElement && draggableElement.id === 'new-text-box-block') {
                 createTextBox(e, draggableElement);
             } else {
                 // Handle moving the existing element
-                draggableElement.style.left = `${e.clientX}px`;
-                draggableElement.style.top = `${e.clientY}px`;
+                const overlayRect = overlay.getBoundingClientRect();
+                const offsetX = e.clientX - overlayRect.left - draggableElement.offsetWidth / 2;
+                const offsetY = e.clientY - overlayRect.top - draggableElement.offsetHeight / 2;
+                draggableElement.style.left = `${offsetX}px`;
+                draggableElement.style.top = `${offsetY}px`;
             }
         });
     }

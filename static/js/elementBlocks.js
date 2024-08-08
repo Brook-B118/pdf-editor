@@ -1,31 +1,4 @@
 
-function setupDragAndDrop(element) {
-    // Remove existing event listeners
-    element.replaceWith(element.cloneNode(true));
-    element = document.getElementById(element.id); // Re-select the element
-
-    // Add new event listeners
-    element.addEventListener('mousedown', function (event) {
-        let shiftX = event.clientX - element.offsetLeft;
-        let shiftY = event.clientY - element.offsetTop;
-
-        function moveAt(clientX, clientY) {
-            element.style.left = clientX - shiftX + 'px';
-            element.style.top = clientY - shiftY + 'px';
-        }
-
-        function onMouseMove(event) {
-            moveAt(event.clientX, event.clientY);
-        }
-
-        document.addEventListener('mousemove', onMouseMove);
-
-        document.addEventListener('mouseup', function onMouseUp() {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        });
-    });
-}
 
 let text_box_counter = 0;
 
@@ -35,8 +8,8 @@ export function createTextBox(e, draggableElement) {
 
     // create container
     const textboxContainer = document.createElement('div');
-    textboxContainer.classList.add("textboxContainer", "draggable")
-    textboxContainer.setAttribute("draggable", "true")
+    textboxContainer.classList.add("newElement", "textboxContainer", "draggable");
+    textboxContainer.setAttribute("draggable", "true");
     textboxContainer.style.position = 'absolute';
     textboxContainer.style.border = '1px solid red';
     textboxContainer.style.width = '100px';
@@ -79,17 +52,12 @@ export function createTextBox(e, draggableElement) {
     console.log("Textbox container appended to overlay");
     text_box_counter++;
     textboxContainer.id = `text-box-${text_box_counter}`;
-    setupDragAndDrop(textboxContainer);
-
-    textboxContainer.addEventListener('dragstart', e => {
-        e.dataTransfer.setData("text/plain", e.target.id);
+    textboxContainer.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", textboxContainer.id);
     });
-
-    textboxContainer.addEventListener('dragend', e => {
-        // Handle the drop logic here
-        textboxContainer.style.left = `${e.clientX}px`;
-        textboxContainer.style.top = `${e.clientY}px`;
-    });
+    textboxContainer.addEventListener("dragover", e => {
+        e.preventDefault();
+    })
 };
 
 
