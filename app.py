@@ -6,6 +6,8 @@ import secrets # Used to generate a text string in hexadecimal
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
+from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
+
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
@@ -18,6 +20,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+csrf = CSRFProtect(app)
 app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_PUBLIC_KEY')
 app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_PRIVATE_KEY')
 app.config['TESTING'] = True # Let's flask_wtf know that I am testing my app (not running in a development env) so I don't have to submit the recaptcha everytime

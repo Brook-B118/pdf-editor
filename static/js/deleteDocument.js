@@ -7,7 +7,7 @@ document.querySelectorAll('.remove-btn').forEach(button => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token() }}' // Include CSRF token if needed
+                'X-CSRFToken': csrfToken // Include CSRF token if needed
             }
         })
             .then(response => response.json())

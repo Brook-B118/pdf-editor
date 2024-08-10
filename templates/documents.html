@@ -43,5 +43,8 @@ Documents
 
 </div>
 <script src="{{ url_for('static', filename='js/uploadDocument.js') }}"></script>
+<script>
+    var csrfToken = "{{ csrf_token() }}";
+</script>
 <script src="{{ url_for('static', filename='js/deleteDocument.js') }}"></script>
 {% endblock %}
