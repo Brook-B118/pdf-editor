@@ -15,5 +15,33 @@ Documents
         {{ form.file(style="display: none;", accept=".pdf,.doc,.docx", id="document") }}
     </form>
 </div>
+<div class="container-fluid mb-4">
+    {% if files %}
+    <table class="table table-hover">
+        <thead>
+            Your documents
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr id="file-{{ file.filename }}">
+                <td><a href="{{ url_for('editDocument', hex_filename=file.filename) }}">
+                        {{ file.edited_filename }}
+                    </a></td>
+                <td class="text-end">
+                    <a href="{{ url_for('editDocument', hex_filename=file.filename) }}"
+                        class="btn btn-success btn-sm me-2">Edit</a>
+                    <button class="btn btn-danger btn-sm remove-btn"
+                        data-file-filename="{{ file.filename }}">Remove</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>Your documents will appear here</h4>
+    {% endif %}
+
+</div>
 <script src="{{ url_for('static', filename='js/uploadDocument.js') }}"></script>
+<script src="{{ url_for('static', filename='js/deleteDocument.js') }}"></script>
 {% endblock %}

@@ -190,8 +190,8 @@ def upload_documents():
         else:
             return apology("file is not a pdf or doc", 403)
     else:
-        
-        return render_template("documents.html", form=form)
+        userDocuments = Document.query.filter_by(user_id=session['user_id'])
+        return render_template("documents.html", form=form, files=userDocuments)
         
 
 
@@ -222,6 +222,17 @@ def editDocument(hex_filename):
         else:
             logout()
     
+
+@app.route('/remove/<filename>', methods=['POST'])
+@login_required
+def remove_file(filename):
+    document = Document.query.filter_by(filename=filename).first()
+    if document and document.user_id == session['user_id']:
+        db.session.delete(document)
+        db.session.commit()
+        os.remove(f'static/uploaded_files/{document.user_id}/{filename}.pdf')
+        return jsonify(success=True)
+    return jsonify(success=False)
 
 
 

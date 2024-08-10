@@ -83,3 +83,4 @@ def add_file_to_db(file_info):
     except SQLAlchemyError as e:
         print(e)
         return apology("An error occurred while uploading the document.", 400)    
+
