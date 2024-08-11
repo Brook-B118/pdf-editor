@@ -20,3 +20,6 @@ document.querySelectorAll('.remove-btn').forEach(button => {
             });
     });
 });
+
+// Along with asking the duck questions, watched this video to help me understand:
+// https://youtu.be/ZTQcJWixB1k?si=yRQh72MG_XtSxOwC

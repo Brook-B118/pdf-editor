@@ -51,7 +51,8 @@ export const displayPDF = function (url) {
 
 // The offsetTop and offsetLeft properties give the distance between the element and its offset parent, not the browser's edge. The offset parent is usually the nearest positioned ancestor. In this case, it should be the pdf-display div.
 
-
+// Along with asking the duck questions and reading the documentation at: https://mozilla.github.io/pdf.js/examples/ 
+// I watched this video to get better with JavaScript: https://youtu.be/EerdGm-ehJQ?si=mySJXTTRq74mehVs
 
 
 
