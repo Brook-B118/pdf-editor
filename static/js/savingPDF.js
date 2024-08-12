@@ -2,11 +2,6 @@ let changes = [];
 let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
-// document.querySelectorAll('.newElement').forEach(element => {
-//     element.addEventListener('dragend', autoSave);
-//     element.addEventListener('drop', autoSave);
-// });
-
 
 export function autoSave() {
     let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || [];
@@ -18,8 +13,21 @@ export function autoSave() {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
         const inputElement = element.querySelector('input.textbox');
+        let elementType = 'textboxContainer';
+        let text = '';
+        if (inputElement) {
+            text = inputElement.value;
+        }
+
+        // Determine the type of element
+        if (element.classList.contains('textboxContainer')) {
+            elementType = 'textboxContainer'
+        }
+        // Add more conditions for other element types if needed
+
         currentChanges.changes.push({
-            text: inputElement.value,
+            type: elementType,
+            text: text,
             x: offsetX,
             y: offsetY,
             overlayId: element.getAttribute('data-overlay-id')
