@@ -1,7 +1,7 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-// import { createTextBox } from './elementBlocks.js';
-import { createTextBox } from './elementBlocksCopy.js';
+import { createTextBox } from './elementBlocks.js';
+// import { createTextBox } from './elementBlocksCopy.js';
 import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
@@ -40,7 +40,7 @@ function addEventListeners() {
                 draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
             }
             // Call autoSave after handling the drop
-            autoSave();
+            autoSave(documentId);
         });
     }
 };
@@ -48,8 +48,13 @@ function addEventListeners() {
 
 // Ensure this function is called after displayPDF is done
 displayPDF(url).then(() => {
-    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || [];
-    let latestVersion = versionHistory[versionHistory.length - 1];
+    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || {};
+    let latestVersion = null;
+
+    if (versionHistory[documentId]) {
+        latestVersion = versionHistory[documentId][versionHistory[documentId].length - 1];
+    }
+
     if (latestVersion) {
         latestVersion.changes.forEach(change => {
             if (change.type === 'textboxContainer') {

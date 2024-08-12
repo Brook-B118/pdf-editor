@@ -1,4 +1,5 @@
 
+import { autoSave } from "./savingPDF.js";
 
 let text_box_counter = 0;
 
@@ -52,6 +53,18 @@ export function createTextBox(e, x, y, draggableElement, text, overlayId) {
     textbox.style.width = '100%';
     textbox.style.height = '100%';
     textbox.style.boxSizing = 'border-box';
+
+    // Add event listeners for autosave
+    textbox.addEventListener("focus", function () {
+        textbox.dataset.initialValue = textbox.value;
+    });
+
+    textbox.addEventListener("blur", function () {
+        if (textbox.value !== textbox.dataset.initialValue) {
+            autoSave(documentId);
+        }
+    });
+
     if (e) {
         textbox.style.left = `${e.clientX - overlayRect.left}px`;
         textbox.style.top = `${e.clientY - overlayRect.top}px`;
