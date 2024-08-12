@@ -2,6 +2,41 @@ let changes = [];
 let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
+export function autoSave(documentId) {
+    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || {};
+    let currentChanges = {
+        timestamp: new Date().toISOString(),
+        changes: []
+    };
+
+    document.querySelectorAll('.newElement').forEach(element => {
+        const offsetX = parseFloat(element.style.left);
+        const offsetY = parseFloat(element.style.top);
+        const inputElement = element.querySelector('input.textbox');
+        let elementType = 'textboxContainer';
+        let text = '';
+        if (inputElement) {
+            text = inputElement.value;
+        }
+
+        currentChanges.changes.push({
+            type: elementType,
+            text: text,
+            x: offsetX,
+            y: offsetY,
+            overlayId: element.getAttribute('data-overlay-id')
+        });
+    });
+
+    if (!versionHistory[documentId]) {
+        versionHistory[documentId] = [];
+    }
+    versionHistory[documentId].push(currentChanges);
+    localStorage.setItem('versionHistory', JSON.stringify(versionHistory));
+}
+
+
+// Change this to download button
 document.getElementById('save-button').addEventListener('click', () => {
     changes = [];
     document.querySelectorAll('.newElement').forEach(element => {

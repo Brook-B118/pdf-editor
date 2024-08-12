@@ -1,9 +1,13 @@
 
+import { autoSave } from "./savingPDF.js";
 
 let text_box_counter = 0;
 
-export function createTextBox(e, draggableElement, overlayId) {
-    const overlayRect = e.target.getBoundingClientRect();
+export function createTextBox(e, x, y, draggableElement, text, overlayId) {
+    let overlayRect;
+    if (e) {
+        overlayRect = e.target.getBoundingClientRect();
+    }
 
     // create container
     const textboxContainer = document.createElement('div');
@@ -13,8 +17,14 @@ export function createTextBox(e, draggableElement, overlayId) {
     textboxContainer.style.border = '1px solid red';
     textboxContainer.style.width = '100px';
     textboxContainer.style.height = '25px';
-    textboxContainer.style.left = `${e.clientX - overlayRect.left}px`;
-    textboxContainer.style.top = `${e.clientY - overlayRect.top}px`;
+    if (e) {
+        textboxContainer.style.left = `${e.clientX - overlayRect.left}px`;
+        textboxContainer.style.top = `${e.clientY - overlayRect.top}px`;
+    } else {
+        textboxContainer.style.left = `${x}px`;
+        textboxContainer.style.top = `${y}px`;
+    }
+
     console.log("Textbox container created");
 
     // create it's data-overlay-id attribute, do this to all new elements to be able to save their location.
@@ -43,15 +53,38 @@ export function createTextBox(e, draggableElement, overlayId) {
     textbox.style.width = '100%';
     textbox.style.height = '100%';
     textbox.style.boxSizing = 'border-box';
-    textbox.style.left = `${e.clientX - overlayRect.left}px`;
-    textbox.style.top = `${e.clientY - overlayRect.top}px`;
-    textbox.value = draggableElement.textContent;
+
+    // Add event listeners for autosave
+    textbox.addEventListener("focus", function () {
+        textbox.dataset.initialValue = textbox.value;
+    });
+
+    textbox.addEventListener("blur", function () {
+        if (textbox.value !== textbox.dataset.initialValue) {
+            autoSave(documentId);
+        }
+    });
+
+    if (e) {
+        textbox.style.left = `${e.clientX - overlayRect.left}px`;
+        textbox.style.top = `${e.clientY - overlayRect.top}px`;
+        textbox.value = draggableElement.textContent;
+    } else {
+        textbox.style.left = `${x}px`;
+        textbox.style.top = `${y}px`;
+        textbox.value = text;
+    }
 
     textboxContainer.appendChild(textbox);
     console.log("textboxcontainer data: ", textboxContainer)
 
     // Append the new textbox container to the overlay
-    e.target.appendChild(textboxContainer);
+    if (e) {
+        e.target.appendChild(textboxContainer);
+    }
+    else {
+        document.getElementById(overlayId).appendChild(textboxContainer);
+    }
     console.log("Textbox container appended to overlay");
     text_box_counter++;
     textboxContainer.id = `text-box-${text_box_counter}`;

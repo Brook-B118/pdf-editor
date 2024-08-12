@@ -1,6 +1,7 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
 import { createTextBox } from './elementBlocks.js';
+import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
     block.classList.add("draggable");
@@ -25,7 +26,7 @@ function addEventListeners() {
             console.log("draggable element =", draggableElement)
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
-                createTextBox(e, draggableElement, `overlay-${i}`);
+                createTextBox(e, null, null, draggableElement, null, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -37,6 +38,8 @@ function addEventListeners() {
                 // Update the data-overlay-id attribute
                 draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
             }
+            // Call autoSave after handling the drop
+            autoSave(documentId);
         });
     }
 };
@@ -44,8 +47,37 @@ function addEventListeners() {
 
 // Ensure this function is called after displayPDF is done
 displayPDF(url).then(() => {
+    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || {};
+    let latestVersion = null;
+
+    if (versionHistory[documentId]) {
+        latestVersion = versionHistory[documentId][versionHistory[documentId].length - 1];
+    }
+
+    if (latestVersion) {
+        latestVersion.changes.forEach(change => {
+            if (change.type === 'textboxContainer') {
+                createTextBoxWithSavedData(change);
+            }
+            // Add more conditions for other element types if needed
+        });
+    }
     addEventListeners();
 });
+
+function createTextBoxWithSavedData(change) {
+    console.log("change:", change)
+    // Create the textbox element
+    createTextBox(null, change.x, change.y, null, change.text, change.overlayId);
+    // Reposition the element
+    let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
+    console.log("element in createTextBoxWithSavedData():", element)
+    // if (element) {
+    //     element.style.left = `${change.x}px`;
+    //     element.style.top = `${change.y}px`;
+    //     let inputElement = element.querySelector('input.textbox');
+    // }
+}
 
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY
