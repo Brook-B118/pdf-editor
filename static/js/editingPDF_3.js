@@ -67,14 +67,12 @@ function createTextBoxWithSavedData(change) {
     createTextBox(null, change.x, change.y, null, change.text, change.overlayId);
     // Reposition the element
     let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
-    if (element) {
-        element.style.left = `${change.x}px`;
-        element.style.top = `${change.y}px`;
-        let inputElement = element.querySelector('input.textbox');
-        if (inputElement) {
-            inputElement.value = change.text;
-        }
-    }
+    console.log("element in createTextBoxWithSavedData():", element)
+    // if (element) {
+    //     element.style.left = `${change.x}px`;
+    //     element.style.top = `${change.y}px`;
+    //     let inputElement = element.querySelector('input.textbox');
+    // }
 }
 
 
