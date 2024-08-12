@@ -1,7 +1,7 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-import { createTextBox } from './elementBlocks.js';
-// import { createTextBox } from './elementBlocksCopy.js';
+// import { createTextBox } from './elementBlocks.js';
+import { createTextBox } from './elementBlocksCopy.js';
 import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {

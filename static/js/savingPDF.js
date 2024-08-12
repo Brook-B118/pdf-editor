@@ -13,10 +13,12 @@ export function autoSave() {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
         const inputElement = element.querySelector('input.textbox');
+        console.log("input element in autosave:", inputElement);
         let elementType = 'textboxContainer';
         let text = '';
         if (inputElement) {
             text = inputElement.value;
+            console.log("inputElement.value in autosave:", text);
         }
 
         // Determine the type of element
