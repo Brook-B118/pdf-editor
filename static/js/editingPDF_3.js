@@ -1,6 +1,7 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
 import { createTextBox } from './elementBlocks.js';
+import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
     block.classList.add("draggable");
@@ -37,6 +38,8 @@ function addEventListeners() {
                 // Update the data-overlay-id attribute
                 draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
             }
+            // Call autoSave after handling the drop
+            autoSave();
         });
     }
 };

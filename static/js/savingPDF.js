@@ -2,13 +2,13 @@ let changes = [];
 let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
-document.querySelectorAll('.newElement').forEach(element => {
-    element.addEventListener('dragend', autoSave);
-    element.addEventListener('drop', autoSave);
-});
+// document.querySelectorAll('.newElement').forEach(element => {
+//     element.addEventListener('dragend', autoSave);
+//     element.addEventListener('drop', autoSave);
+// });
 
 
-function autoSave() {
+export function autoSave() {
     let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || [];
     let currentChanges = {
         timestamp: new Date().toISOString(),
@@ -18,7 +18,7 @@ function autoSave() {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
         const inputElement = element.querySelector('input.textbox');
-        currentChanges.push({
+        currentChanges.changes.push({
             text: inputElement.value,
             x: offsetX,
             y: offsetY,
@@ -27,6 +27,7 @@ function autoSave() {
     });
     versionHistory.push(currentChanges);
     localStorage.setItem('versionHistory', JSON.stringify(versionHistory));
+    console.log(versionHistory[0].changes[0]);
 }
 
 
