@@ -10,10 +10,6 @@ Edit document here
     <h5>Supported files include: PDF and Word</h5>
 </div>
 
-<div class="edit-document container-fluid mb-4">
-    <button id="save-button">Save and Download</button>
-</div>
-
 <div class="container-fluid edit-doc">
     <div class="row">
         <div class="col-md-7">
@@ -24,35 +20,57 @@ Edit document here
                 <!-- </div> -->
             </div>
         </div>
+
         <div class="col-md-5">
+            <div id="toolbox" class="toolbox">
+                <div id="elements-container" class="elements-section">
+                    <div class="row justify-content-center">
+                        <div class="edit-document container-fluid mb-4">
+                            <button id="save-button">Save and Download</button>
+                        </div>
+                        <div class="col-md-5 element-block new-text-box-block" id="new-text-box-block"
+                            data-type="text-block">Text Block</div>
+                        <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
+                        <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
+                        <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
+                        <!-- Add more blocks as needed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- <div class="col-md-5">
             <div id="elements-container" class="elements-section">
                 <div class="row justify-content-center">
                     <div class="col-md-5 element-block new-text-box-block" id="new-text-box-block"
                         data-type="text-block">Text Block</div>
                     <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
                     <div class="col-md-5 element-block" data-type="text-block">Text Block</div>
-                    <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
-                    <!-- Add more blocks as needed -->
-                </div>
+                    <div class="col-md-5 element-block" data-type="text-block">Example Block</div> -->
+        <!-- Add more blocks as needed -->
+        <!-- </div>
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 
-<!-- <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> -->
-<script>
-    var csrfToken = "{{ csrf_token() }}";
-</script>
-<script>
-    var documentId = '{{ document.id }}'
-</script>
-<script>
-    var url = 'http://127.0.0.1:5000/static/uploaded_files/' + "{{ folder }}" + '/' + '{{ document.filename }}' + '.pdf';
-</script>
-<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
-<script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
-{% endblock %}
+        <!-- <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> -->
+        <script>
+            var csrfToken = "{{ csrf_token() }}";
+        </script>
+        <script>
+            var documentId = '{{ document.id }}'
+        </script>
+        <script>
+            var url = 'http://127.0.0.1:5000/static/uploaded_files/' + "{{ folder }}" + '/' + '{{ document.filename }}' + '.pdf';
+        </script>
+        <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
+        <script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
+        <script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
+        <script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
+        <script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
+        <script src="toolbox.js"></script>
+        {% endblock %}
