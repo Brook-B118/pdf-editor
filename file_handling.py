@@ -79,8 +79,9 @@ def add_file_to_db(file_info):
 
     try:
         db.session.commit()
-        flash("Upload successful!")
+        print("upload successfull!")
     except SQLAlchemyError as e:
+        db.session.rollback()
         print(e)
         return apology("An error occurred while uploading the document.", 400)    
 

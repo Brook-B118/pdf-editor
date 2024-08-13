@@ -194,7 +194,7 @@ def upload_documents():
         else:
             return apology("file is not a pdf or doc", 403)
     else:
-        userDocuments = Document.query.filter_by(user_id=session['user_id'])
+        userDocuments = Document.query.filter_by(user_id=session['user_id']).all()
         return render_template("documents.html", form=form, files=userDocuments)
         
 
