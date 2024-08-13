@@ -68,9 +68,9 @@ Edit document here
             var url = 'http://127.0.0.1:5000/static/uploaded_files/' + "{{ folder }}" + '/' + '{{ document.filename }}' + '.pdf';
         </script>
         <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
         <script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
         <script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
         <script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
         <script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
-        <script src="toolbox.js"></script>
         {% endblock %}

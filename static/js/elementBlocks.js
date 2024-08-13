@@ -1,9 +1,39 @@
-
 import { autoSave } from "./savingPDF.js";
+
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     interact('.newElement, .textbox').resizable({
+//         edges: { left: true, right: true, bottom: true, top: true }
+//     });
+// });
+
+interact('.newElement')
+    .resizable({
+        edges: { top: true, left: true, bottom: true, right: true },
+        listeners: {
+            move: function (event) {
+                let { x, y } = event.target.dataset
+
+                x = (parseFloat(x) || 0) + event.deltaRect.left
+                y = (parseFloat(y) || 0) + event.deltaRect.top
+
+                Object.assign(event.target.style, {
+                    width: `${event.rect.width}px`,
+                    height: `${event.rect.height}px`,
+                    transform: `translate(${x}px, ${y}px)`
+                })
+
+                Object.assign(event.target.dataset, { x, y })
+            },
+            end: function () {
+                autoSave(documentId);
+            }
+        }
+    })
 
 let text_box_counter = 0;
 
-export function createTextBox(e, x, y, draggableElement, text, overlayId) {
+export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -15,12 +45,14 @@ export function createTextBox(e, x, y, draggableElement, text, overlayId) {
     textboxContainer.setAttribute("draggable", "true");
     textboxContainer.style.position = 'absolute';
     textboxContainer.style.border = '1px solid red';
-    textboxContainer.style.width = '100px';
-    textboxContainer.style.height = '25px';
     if (e) {
+        textboxContainer.style.width = '100px';
+        textboxContainer.style.height = '25px';
         textboxContainer.style.left = `${e.clientX - overlayRect.left}px`;
         textboxContainer.style.top = `${e.clientY - overlayRect.top}px`;
     } else {
+        textboxContainer.style.width = `${width}px`;
+        textboxContainer.style.height = `${height}px`;
         textboxContainer.style.left = `${x}px`;
         textboxContainer.style.top = `${y}px`;
     }
@@ -95,6 +127,3 @@ export function createTextBox(e, x, y, draggableElement, text, overlayId) {
         e.preventDefault();
     })
 };
-
-
-

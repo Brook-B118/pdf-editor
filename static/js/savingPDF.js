@@ -12,6 +12,8 @@ export function autoSave(documentId) {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
+        const width = element.getBoundingClientRect().width;
+        const height = element.getBoundingClientRect().height;
         const inputElement = element.querySelector('input.textbox');
         let elementType = 'textboxContainer';
         let elementId = element.id;
@@ -25,6 +27,8 @@ export function autoSave(documentId) {
             element_id: elementId,
             type: elementType,
             content: content,
+            element_width: width,
+            element_height: height,
             position_x: offsetX,
             position_y: offsetY,
             overlayId: element.getAttribute('data-overlay-id')

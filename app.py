@@ -272,6 +272,8 @@ def autosave_elements():
         element_id = element['element_id']
         type = element['type']
         content = element['content']
+        width = element['element_width']
+        height = element['element_height']
         position_x = element['position_x']
         position_y = element['position_y']
         overlayId = element['overlayId']
@@ -287,12 +289,14 @@ def autosave_elements():
         # Update existing element
         existing_element.type = type
         existing_element.content = content
+        existing_element.width = width
+        existing_element.height = height
         existing_element.position_x = position_x
         existing_element.position_y = position_y
         existing_element.overlayId = overlayId
     else:
         # Create new element
-        new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, position_x=position_x, position_y=position_y, overlayId=overlayId)
+        new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width,height=height, position_x=position_x, position_y=position_y, overlayId=overlayId)
         db.session.add(new_element)
 
     try:
@@ -316,6 +320,8 @@ def get_changes():
         'element_id': change.element_id,
         'type': change.type,
         'content': change.content,
+        'width': change.width,
+        'height': change.height,
         'position_x': change.position_x,
         'position_y': change.position_y,
         'overlayId': change.overlayId
