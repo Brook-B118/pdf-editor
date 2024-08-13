@@ -3,7 +3,8 @@ import magic
 import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
 import secrets # Used to generate a text string in hexadecimal
 
-from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
+# from sqlalchemy.orm import sessionmaker
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
@@ -11,7 +12,7 @@ from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
-from models import db, Users, Document # Database models sheet
+from models import db, Users, Document, Element # Database models sheet
 from forms import RegistrationForm, LoginForm, UploadForm
 from dotenv import load_dotenv
 from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
@@ -238,6 +239,41 @@ def remove_file(filename):
     return jsonify(success=False)
 
 
+@app.route('/autosave', methods=['POST'])
+@login_required
+def autosave_elements():
+    data = request.get_json()
+    
+    # Extract data from the request
+    user_id = data['user_id']
+    document_id = data['document_id']
+    element_id = data['element_id']
+    type = data['elementType']
+    content = data['content']
+    position_x = data['position_x']
+    position_y = data['position_y']
+    overlayId = data['overlayId']
+
+    # Check if the element already exists
+    element = Element.query.filter_by(element_id=element_id, user_id=user_id, document_id=document_id).first()
+
+    if element:
+        # Update existing element
+        element.type = type
+        element.content = content
+        element.position_x = position_x
+        element.position_y = position_y
+        element.overlayId = overlayId
+    else:
+        # Create new element
+        element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, position_x=position_x, position_y=position_y, overlayId=overlayId)
+        db.session.add(element)
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db.session.rollback()
 
 
 
