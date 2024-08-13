@@ -3,7 +3,8 @@ import magic
 import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
 import secrets # Used to generate a text string in hexadecimal
 
-from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
+# from sqlalchemy.orm import sessionmaker
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
 from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
@@ -11,7 +12,7 @@ from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
-from models import db, Users, Document # Database models sheet
+from models import db, Users, Document, Element # Database models sheet
 from forms import RegistrationForm, LoginForm, UploadForm
 from dotenv import load_dotenv
 from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
@@ -231,13 +232,96 @@ def editDocument(hex_filename):
 def remove_file(filename):
     document = Document.query.filter_by(filename=filename).first()
     if document and document.user_id == session['user_id']:
-        db.session.delete(document)
+        document_id = document.id
+        elements = Element.query.filter_by(document_id=document_id)
+
+        elements.delete()  # Delete all elements associated with the document
+        db.session.delete(document) # Delete the document itself
         db.session.commit()
+        
         os.remove(f'static/uploaded_files/{document.user_id}/{filename}.pdf')
         return jsonify(success=True)
     return jsonify(success=False)
 
 
+@app.route('/autosave', methods=['POST'])
+@login_required
+def autosave_elements():
+    print("Autosave endpoint hit")  # Debugging line
+
+    data = request.get_json()
+
+    if not data:
+        print("No data received")
+        return jsonify({"error": "Invalid JSON"}), 400
+    
+    print("Received data:", data)  # Debugging line
+
+    # Extract data from the request
+    user_id = session['user_id']  # Get user ID from session
+    document_id = data['document_id']
+    elements = data['changes']
+
+    if not document_id or not isinstance(elements, list):
+        print("Invalid document_id or changes")
+        return jsonify({"error": "Invalid data format"}), 400
+
+    for element in elements:
+        print("Processing element:", element)  # Debugging line
+
+        element_id = element['element_id']
+        type = element['type']
+        content = element['content']
+        position_x = element['position_x']
+        position_y = element['position_y']
+        overlayId = element['overlayId']
+    
+        if not all([element_id, type, content, position_x, position_y, overlayId]):
+                print("Incomplete element data")
+                continue
+
+    # Check if the element already exists
+    existing_element = Element.query.filter_by(element_id=element_id, user_id=user_id, document_id=document_id).first()
+
+    if existing_element:
+        # Update existing element
+        existing_element.type = type
+        existing_element.content = content
+        existing_element.position_x = position_x
+        existing_element.position_y = position_y
+        existing_element.overlayId = overlayId
+    else:
+        # Create new element
+        new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, position_x=position_x, position_y=position_y, overlayId=overlayId)
+        db.session.add(new_element)
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Database error"}), 500
+
+    return jsonify({"success": True}), 200
+
+
+@app.route('/get_changes', methods=['GET'])
+@login_required
+def get_changes():
+    document_id = request.args.get('document_id')
+    user_id = session['user_id']
+    
+    changes = Element.query.filter_by(document_id=document_id, user_id=user_id).all()
+    changes_data = [{
+        'element_id': change.element_id,
+        'type': change.type,
+        'content': change.content,
+        'position_x': change.position_x,
+        'position_y': change.position_y,
+        'overlayId': change.overlayId
+    } for change in changes]
+    
+    return jsonify({'changes': changes_data})
 
 
 

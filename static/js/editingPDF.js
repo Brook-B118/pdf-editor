@@ -40,6 +40,7 @@ function addEventListeners() {
             }
             // Call autoSave after handling the drop
             autoSave(documentId);
+            console.log("autosave function called")
         });
     }
 };
@@ -47,36 +48,30 @@ function addEventListeners() {
 
 // Ensure this function is called after displayPDF is done
 displayPDF(url).then(() => {
-    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || {};
-    let latestVersion = null;
-
-    if (versionHistory[documentId]) {
-        latestVersion = versionHistory[documentId][versionHistory[documentId].length - 1];
-    }
-
-    if (latestVersion) {
-        latestVersion.changes.forEach(change => {
-            if (change.type === 'textboxContainer') {
-                createTextBoxWithSavedData(change);
-            }
-            // Add more conditions for other element types if needed
+    fetch(`/get_changes?document_id=${documentId}`)
+        .then(response => response.json())
+        .then(data => {
+            let changes = data.changes;
+            changes.forEach(change => {
+                if (change.type === 'textboxContainer') {
+                    createTextBoxWithSavedData(change);
+                }
+                // Add more conditions for other element types if needed
+            });
+            addEventListeners();
+        })
+        .catch(error => {
+            console.error('Error fetching changes:', error);
         });
-    }
-    addEventListeners();
 });
 
 function createTextBoxWithSavedData(change) {
-    console.log("change:", change)
+    console.log("change:", change);
     // Create the textbox element
-    createTextBox(null, change.x, change.y, null, change.text, change.overlayId);
+    createTextBox(null, change.position_x, change.position_y, null, change.content, change.overlayId);
     // Reposition the element
     let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
-    console.log("element in createTextBoxWithSavedData():", element)
-    // if (element) {
-    //     element.style.left = `${change.x}px`;
-    //     element.style.top = `${change.y}px`;
-    //     let inputElement = element.querySelector('input.textbox');
-    // }
+    console.log("element in createTextBoxWithSavedData():", element);
 }
 
 

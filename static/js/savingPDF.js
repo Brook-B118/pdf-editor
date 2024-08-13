@@ -3,10 +3,10 @@ let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
 export function autoSave(documentId) {
-    let versionHistory = JSON.parse(localStorage.getItem('versionHistory')) || {};
+    console.log("started autosave")
     let currentChanges = {
         timestamp: new Date().toISOString(),
-        changes: []
+        data: []
     };
 
     document.querySelectorAll('.newElement').forEach(element => {
@@ -14,27 +14,43 @@ export function autoSave(documentId) {
         const offsetY = parseFloat(element.style.top);
         const inputElement = element.querySelector('input.textbox');
         let elementType = 'textboxContainer';
-        let text = '';
+        let elementId = element.id;
+        let content = '';
         if (inputElement) {
-            text = inputElement.value;
+            content = inputElement.value;
         }
 
-        currentChanges.changes.push({
+        currentChanges.data.push({
+            document_id: documentId,
+            element_id: elementId,
             type: elementType,
-            text: text,
-            x: offsetX,
-            y: offsetY,
+            content: content,
+            position_x: offsetX,
+            position_y: offsetY,
             overlayId: element.getAttribute('data-overlay-id')
         });
     });
 
-    if (!versionHistory[documentId]) {
-        versionHistory[documentId] = [];
-    }
-    versionHistory[documentId].push(currentChanges);
-    localStorage.setItem('versionHistory', JSON.stringify(versionHistory));
+    // Send data to the server
+    fetch('/autosave', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken // Include CSRF token if needed
+        },
+        body: JSON.stringify({
+            document_id: documentId,
+            changes: currentChanges.data
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
-
 
 // Change this to download button
 document.getElementById('save-button').addEventListener('click', () => {

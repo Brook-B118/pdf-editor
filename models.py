@@ -1,5 +1,7 @@
-
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
+# from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func
+# from sqlalchemy.ext.declarative import declarative_base
 
 db = SQLAlchemy() # Creates instance of the SQLAlchemy class. This instance, db, is what you use to interact with your database. It's like a bridge between your Python code and your database.
 
@@ -25,3 +27,41 @@ class Document(db.Model):
     filename = db.Column(db.String(255), unique=True, nullable=False)
     file_path = db.Column(db.String(255), nullable=False)
     edited_filename = db.Column(db.String(255))
+
+# The previous models were created using the flask specific SQLAlchemy approach, we will now be creating tables for autosaving but using general SQLAlchemy
+
+# Base = declarative_base()
+
+# class Element(Base):
+#     __tablename__ = 'elements'
+#     id = Column(Integer, primary_key=True)
+#     timestamp = Column(DateTime, default=func.now(), nullable=False)
+#     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+#     document_id = Column(Integer, ForeignKey('documents.id'), nullable=False)
+#     element_id = Column(String, nullable=False)
+#     type = Column(String, nullable=False)  # e.g., 'textbox', 'image', etc.
+#     content = Column(String)  # Store content based on type
+#     position_x = Column(Float, nullable=False)
+#     position_y = Column(Float, nullable=False)
+#     overlayId = Column(String, nullable=False)
+
+# Apparently it is actually a bad idea to mix up ORM systems, it can lead to complications later. I am going to stick to db.Model for now.
+
+class Element(db.Model):
+    __tablename__ = 'elements'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    document_id = db.Column(db.Integer, db.ForeignKey('documents.id'), nullable=False)
+    element_id = db.Column(db.String, nullable=False)
+    type = db.Column(db.String, nullable=False)  # e.g., 'textbox', 'image', etc.
+    content = db.Column(db.String)  # Store content based on type
+    position_x = db.Column(db.Float, nullable=False)
+    position_y = db.Column(db.Float, nullable=False)
+    overlayId = db.Column(db.String, nullable=False)
+
+
+def update_timestamp(mapper, connection, target):
+    target.timestamp = db.func.now()
+
+event.listen(Element, 'before_update', update_timestamp)
