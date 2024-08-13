@@ -232,8 +232,13 @@ def editDocument(hex_filename):
 def remove_file(filename):
     document = Document.query.filter_by(filename=filename).first()
     if document and document.user_id == session['user_id']:
-        db.session.delete(document)
+        document_id = document.id
+        elements = Element.query.filter_by(document_id=document_id)
+
+        elements.delete()  # Delete all elements associated with the document
+        db.session.delete(document) # Delete the document itself
         db.session.commit()
+        
         os.remove(f'static/uploaded_files/{document.user_id}/{filename}.pdf')
         return jsonify(success=True)
     return jsonify(success=False)
@@ -243,7 +248,7 @@ def remove_file(filename):
 @login_required
 def autosave_elements():
     print("Autosave endpoint hit")  # Debugging line
-    
+
     data = request.get_json()
 
     if not data:

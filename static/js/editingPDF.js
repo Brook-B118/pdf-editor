@@ -1,7 +1,7 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-import { createTextBox } from './elementBlocks_2.js';
-import { autoSave } from './savingPDF_2.js';
+import { createTextBox } from './elementBlocks.js';
+import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
     block.classList.add("draggable");
