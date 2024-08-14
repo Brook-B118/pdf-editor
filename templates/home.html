@@ -6,4 +6,48 @@ Home
 
 {% block main %}
 
+<div class="collapse" id="navbarToggleExternalContent" data-bs-theme="dark">
+    <div class="bg-dark p-4">
+        <h5 class="text-body-emphasis h4">Collapsed content</h5>
+        <span class="text-body-secondary">Toggleable via the navbar brand.</span>
+    </div>
+</div>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<!-- 
+<div class="container-fluid edit-doc" id="sidebar-container">
+    <div class="row">
+        <div class="col-auto" id="sidebar">
+            <nav class="navbar navbar-dark bg-dark">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="sidebar-content"> -->
+<!-- Add some content here to make the sidebar visible -->
+<!-- <p>Sidebar content</p>
+</div>
+</nav>
+</div>
+<div class="col" id="navbarToggleExternalContent" data-bs-theme="dark">
+    <div class="bg-dark p-4">
+        <h5 class="text-body-emphasis h4">Collapsed content</h5>
+        <span class="text-body-secondary">Toggleable via the navbar brand.</span>
+    </div>
+</div>
+</div>
+</div> -->
+
+
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 {% endblock %}

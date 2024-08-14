@@ -62,7 +62,7 @@ def after_request(response): # The @app.after_request part means this code runs 
 @app.route("/")
 @login_required
 def index():
-    return apology("TODO")
+    return render_template("home.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
