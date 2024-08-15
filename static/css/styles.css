@@ -1,3 +1,15 @@
+body {
+    padding-top: 60px;
+}
+
+.navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 100;
+}
+
 #recaptcha-container {
     display: flex;
     justify-content: center;
@@ -53,4 +65,59 @@ canvas {
     /* Optional: to match your page background */
     overflow-y: auto;
     /* Enable scrolling within the toolbox */
+}
+
+.vertical-column-home {
+    background-color: #2b3035;
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    bottom: 0;
+    position: fixed;
+    top: 139px;
+    right: 0%;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+}
+
+.horizontal-column-home {
+    background-color: #2b3035;
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    height: 75px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-color: white;
+    border-width: 1px;
+    z-index: 50;
+}
+
+.vertical-column-link {
+    background-color: #2b3035;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.vertical-column-link:hover {
+    background-color: #790000;
+}
+
+/* .vertical-column-link i {
+    font-size: 15;
+} */
+
+.vertical-column-link div {
+    font-size: 14;
 }
