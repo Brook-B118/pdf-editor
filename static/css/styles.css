@@ -1,5 +1,6 @@
 body {
     padding-top: 60px;
+    background-color: #212529;
 }
 
 .navbar {
@@ -13,14 +14,6 @@ body {
 #recaptcha-container {
     display: flex;
     justify-content: center;
-}
-
-
-#elements-container .element-block {
-    margin: 5px;
-    padding: 10px;
-    background-color: #790000;
-    cursor: pointer;
 }
 
 #overlay .draggable {
@@ -54,17 +47,23 @@ canvas {
     pointer-events: none;
 }
 
-.toolbox {
-    position: -webkit-sticky;
-    /* For Safari */
+.vertical-column-wrapper {
+    background-color: #60d3e7;
+    display: flex;
+    flex-direction: row;
+    width: 475px;
+    bottom: 0;
     position: fixed;
-    /* top: 10; */
-    z-index: 1000;
-    /* Ensure it stays on top */
-    background-color: rgb(22, 21, 21);
-    /* Optional: to match your page background */
-    overflow-y: auto;
-    /* Enable scrolling within the toolbox */
+    top: 139px;
+    right: 0px;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+    transition: all 0.75s;
+    flex-shrink: 0;
 }
 
 .vertical-column-home {
@@ -73,16 +72,37 @@ canvas {
     flex-direction: column;
     width: 100px;
     bottom: 0;
-    position: fixed;
-    top: 139px;
-    right: 0%;
+    position: relative;
+    top: 0px;
+    left: 0px;
     border-top-style: solid;
     border-top-color: #2b3035;
     border-left-style: solid;
     border-left-color: white;
     border-width: 1px;
     z-index: 55;
+    transition: all 0.75s;
+    /* margin-right: 10px; */
 }
+
+.collapsed {
+    background-color: #60d3e7;
+    display: flex;
+    flex-direction: row;
+    width: 475px;
+    bottom: 0;
+    position: fixed;
+    top: 139px;
+    right: -375px;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+    transition: all 0.75s;
+}
+
 
 .horizontal-column-home {
     background-color: #2b3035;
@@ -108,6 +128,7 @@ canvas {
     align-items: center;
     flex-direction: column;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .vertical-column-link:hover {
@@ -120,4 +141,43 @@ canvas {
 
 .vertical-column-link div {
     font-size: 14;
+}
+
+.sidepanel {
+    background-color: rgb(104, 255, 44);
+    display: flex;
+    flex: 1;
+    position: relative;
+    top: 0;
+    height: 100vh;
+}
+
+/* .toolbox {} */
+
+.edit-document {
+    position: absolute;
+    top: 5px;
+    right: 30%;
+}
+
+#elements-container {
+    background-color: blueviolet;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    top: 40px;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+#elements-container .element-block {
+    flex: 0 0 150px;
+    margin: 5px;
+    /* padding: 10px; */
+    background-color: #790000;
+    cursor: pointer;
+    height: 70px;
 }
