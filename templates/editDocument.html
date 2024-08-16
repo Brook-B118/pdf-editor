@@ -6,13 +6,19 @@ Edit document here
 
 {% block main %}
 
-<div class="edit-document container-fluid mb-4">
+<div class="horizontal-column-home">
+    <div>
+        test 1
+    </div>
+</div>
+
+<div class="container-fluid mb-4">
     <h5>Supported files include: PDF and Word</h5>
 </div>
 
-<div class="container-fluid edit-doc">
+<div class="pdf-container">
     <div class="row">
-        <div class="col-md-7">
+        <div class="pdf-viewer container-fluid">
             <div id="pdf-display" class="pdf-section">
                 <!-- PDF pages will be rendered here -->
                 <!-- <div id="overlay" class="overlay"> -->
@@ -20,9 +26,54 @@ Edit document here
                 <!-- </div> -->
             </div>
         </div>
+    </div>
+</div>
 
 
-        <div class="col-md-5">
+<div class="vertical-column-wrapper">
+
+    <div class="vertical-column-home">
+        <div class="vertical-column-link collapsed-sidebar">
+            <i class='bx bx-menu bx-md' style='color:#ffffff'></i>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-grid-alt bx-md' style='color:#ffffff'></i>
+            <div>Elements</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+    </div>
+    <div class="sidepanel">
+        <!-- <div id="toolbox" class="toolbox"> -->
+        <div class="edit-document ">
+            <button id="save-button">Save and Download</button>
+        </div>
+        <div id="elements-container" class="elements-section">
+            <!-- <div class=""> -->
+            <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text
+                Block
+            </div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <!-- Add more blocks as needed -->
+            <!-- </div> -->
+        </div>
+        <!-- </div> -->
+    </div>
+</div>
+
+<!-- <div class="col-md-5">
             <div id="toolbox" class="toolbox">
                 <div id="elements-container" class="elements-section">
                     <div class="row justify-content-center">
@@ -33,14 +84,14 @@ Edit document here
                             data-type="text-block">Text Block</div>
                         <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
                         <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
-                        <div class="col-md-5 element-block" data-type="text-block">Example Block</div>
-                        <!-- Add more blocks as needed -->
-                    </div>
+                        <div class="col-md-5 element-block" data-type="text-block">Example Block</div> -->
+<!-- Add more blocks as needed -->
+<!-- </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 
 
@@ -76,5 +127,5 @@ Edit document here
 <script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
 <script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
 <script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
-<!-- <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script> -->
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 {% endblock %}

@@ -26,8 +26,39 @@ body {
     height: 50px;
 }
 
+.pdf-container {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    /* Enable vertical scrolling */
+    max-height: 75vh;
+    right: 480px;
+    left: 0px;
+    /* Adjust height as needed */
+    transition: all 0.75s;
+}
+
+.extended {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    /* Enable vertical scrolling */
+    max-height: 75vh;
+    right: 110px;
+    left: 0px;
+    /* Adjust height as needed */
+    transition: all 0.75s;
+}
+
 #pdf-display {
     position: relative;
+    display: block;
 }
 
 .overlay {
@@ -40,8 +71,12 @@ body {
 canvas {
     position: relative;
     z-index: 1;
+    display: block;
     /* Ensure it's below the overlay */
+    margin-bottom: 20px;
+    /* Add space between pages */
 }
+
 
 .non-interactive {
     pointer-events: none;
