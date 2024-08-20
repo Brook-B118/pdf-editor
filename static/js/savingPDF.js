@@ -17,6 +17,7 @@ export function autoSave(documentId) {
         const inputElement = element.querySelector('input.textbox');
         let elementType = 'textboxContainer';
         let elementId = element.id;
+        console.log("element id:", elementId)
         let content = '';
         if (inputElement) {
             content = inputElement.value;

@@ -1,5 +1,8 @@
 import { autoSave } from "./savingPDF.js";
 
+let delay = 100; // 300 milliseconds
+
+let doubleClickFlag = false;
 
 // document.addEventListener('DOMContentLoaded', () => {
 //     interact('.newElement, .textbox').resizable({
@@ -7,7 +10,7 @@ import { autoSave } from "./savingPDF.js";
 //     });
 // });
 
-interact('.newElement')
+interact('.resizable')
     .resizable({
         edges: { top: true, left: true, bottom: true, right: true },
         listeners: {
@@ -20,7 +23,7 @@ interact('.newElement')
                 Object.assign(event.target.style, {
                     width: `${event.rect.width}px`,
                     height: `${event.rect.height}px`,
-                    transform: `translate(${x}px, ${y}px)`
+                    transform: `translate(${x}px, ${y}px)`,
                 })
 
                 Object.assign(event.target.dataset, { x, y })
@@ -41,10 +44,10 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
 
     // create container
     const textboxContainer = document.createElement('div');
-    textboxContainer.classList.add("newElement", "textboxContainer", "draggable"); // add .newEelement to all new elements to be able to save them.
+    textboxContainer.classList.add("newElement", "resizable", "textboxContainer", "draggable"); // add .newEelement to all new elements to be able to save them.
     textboxContainer.setAttribute("draggable", "true");
     textboxContainer.style.position = 'absolute';
-    textboxContainer.style.border = '1px solid red';
+    textboxContainer.style.border = '2px solid red';
     if (e) {
         textboxContainer.style.width = '100px';
         textboxContainer.style.height = '25px';
@@ -62,21 +65,21 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     // create it's data-overlay-id attribute, do this to all new elements to be able to save their location.
     textboxContainer.setAttribute('data-overlay-id', overlayId);
 
-    // Create a toolbar for textbox
-    const toolbar = document.createElement('div');
-    toolbar.classList.add('toolbar');
-    toolbar.style.position = 'absolute';
-    toolbar.style.left = '0';
-    toolbar.style.top = '-30px'; // Adjust as needed
-    console.log("Toolbar created");
+    // // Create a toolbar for textbox
+    // const toolbar = document.createElement('div');
+    // toolbar.classList.add('toolbar');
+    // toolbar.style.position = 'absolute';
+    // toolbar.style.left = '0';
+    // toolbar.style.top = '-30px'; // Adjust as needed
+    // console.log("Toolbar created");
 
-    // Add buttons for bold, italic, etc.
-    const boldButton = document.createElement('button');
-    boldButton.textContent = 'B';
-    toolbar.appendChild(boldButton);
+    // // Add buttons for bold, italic, etc.
+    // const boldButton = document.createElement('button');
+    // boldButton.textContent = 'B';
+    // toolbar.appendChild(boldButton);
 
-    // Append Toolbar to Textbox Container
-    textboxContainer.appendChild(toolbar);
+    // // Append Toolbar to Textbox Container
+    // textboxContainer.appendChild(toolbar);
 
     // Create a new editable textbox
     const textbox = document.createElement('input')
@@ -120,10 +123,36 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     console.log("Textbox container appended to overlay");
     text_box_counter++;
     textboxContainer.id = `text-box-${text_box_counter}`;
+
+    textboxContainer.addEventListener("mousedown", (e) => {
+        textbox.blur();
+        textboxContainer.focus();
+    })
+
+    textboxContainer.addEventListener("click", (e) => {
+        // if (!doubleClickFlag) {
+        // Focus on container
+        textbox.blur();
+        textboxContainer.focus();
+        // }
+    });
+
+    textboxContainer.addEventListener("dblclick", (e) => {
+        // doubleClickFlag = true;
+        // Focus on input field
+        textboxContainer.blur();
+        textbox.focus();
+        // doubleClickFlag = false; // Reset the flag
+
+    });
+
     textboxContainer.addEventListener("dragstart", e => {
         e.dataTransfer.setData("text/plain", textboxContainer.id);
+
     });
     textboxContainer.addEventListener("dragover", e => {
+        textbox.blur();
+        textboxContainer.focus();
         e.preventDefault();
     })
 };
