@@ -1,38 +1,32 @@
 import { autoSave } from "./savingPDF.js";
 
-let delay = 100; // 300 milliseconds
+interact('.resizable').resizable({
+    edges: { bottom: '.resize-handle', right: '.resize-handle' },
+    listeners: {
+        move: function (event) {
+            let { x, y } = event.target.dataset
 
-let doubleClickFlag = false;
+            x = (parseFloat(x) || 0) + event.deltaRect.left
+            y = (parseFloat(y) || 0) + event.deltaRect.top
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     interact('.newElement, .textbox').resizable({
-//         edges: { left: true, right: true, bottom: true, top: true }
-//     });
-// });
+            Object.assign(event.target.style, {
+                width: `${event.rect.width}px`,
+                height: `${event.rect.height}px`,
+                transform: `translate(${x}px, ${y}px)`
+            })
 
-interact('.resizable')
-    .resizable({
-        edges: { top: true, left: true, bottom: true, right: true },
-        listeners: {
-            move: function (event) {
-                let { x, y } = event.target.dataset
+            Object.assign(event.target.dataset, { x, y })
+        },
+        modifiers: [
+            interact.modifiers.restrictEdges({
+                outer: 'parent',
+            })
+        ], end: function () {
+            autoSave(documentId);
+        },
+    }
+});
 
-                x = (parseFloat(x) || 0) + event.deltaRect.left
-                y = (parseFloat(y) || 0) + event.deltaRect.top
-
-                Object.assign(event.target.style, {
-                    width: `${event.rect.width}px`,
-                    height: `${event.rect.height}px`,
-                    transform: `translate(${x}px, ${y}px)`,
-                })
-
-                Object.assign(event.target.dataset, { x, y })
-            },
-            end: function () {
-                autoSave(documentId);
-            }
-        }
-    })
 
 let text_box_counter = 0;
 
@@ -46,8 +40,9 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     const textboxContainer = document.createElement('div');
     textboxContainer.classList.add("newElement", "resizable", "textboxContainer", "draggable"); // add .newEelement to all new elements to be able to save them.
     textboxContainer.setAttribute("draggable", "true");
-    textboxContainer.style.position = 'absolute';
+    textboxContainer.style.position = 'relative';
     textboxContainer.style.border = '2px solid red';
+
     if (e) {
         textboxContainer.style.width = '100px';
         textboxContainer.style.height = '25px';
@@ -64,6 +59,12 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
 
     // create it's data-overlay-id attribute, do this to all new elements to be able to save their location.
     textboxContainer.setAttribute('data-overlay-id', overlayId);
+
+    // Create the resizeable circle for the container in bottom right
+
+    const resize_handle = document.createElement('div');
+    resize_handle.classList.add('resize-handle')
+    textboxContainer.appendChild(resize_handle);
 
     // // Create a toolbar for textbox
     // const toolbar = document.createElement('div');
@@ -84,10 +85,11 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     // Create a new editable textbox
     const textbox = document.createElement('input')
     textbox.type = 'text';
-    textbox.classList.add('textbox');
+    textbox.classList.add('resizable', 'textbox');
     textbox.style.width = '100%';
     textbox.style.height = '100%';
     textbox.style.boxSizing = 'border-box';
+    textbox.classList.add("readonly");
 
     // Add event listeners for autosave
     textbox.addEventListener("focus", function () {
@@ -124,29 +126,23 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     text_box_counter++;
     textboxContainer.id = `text-box-${text_box_counter}`;
 
-    textboxContainer.addEventListener("mousedown", (e) => {
-        textbox.blur();
-        textboxContainer.focus();
-    })
+    // Add event listeners to container so click doesn't access the input field, dblclick accesses input field, and container can reposition with drag/drop
 
     textboxContainer.addEventListener("click", (e) => {
-        // if (!doubleClickFlag) {
-        // Focus on container
+        textbox.classList.add("readonly");
         textbox.blur();
         textboxContainer.focus();
-        // }
     });
 
     textboxContainer.addEventListener("dblclick", (e) => {
-        // doubleClickFlag = true;
-        // Focus on input field
+        textbox.classList.remove("readonly");
         textboxContainer.blur();
         textbox.focus();
-        // doubleClickFlag = false; // Reset the flag
 
     });
 
     textboxContainer.addEventListener("dragstart", e => {
+        textbox.classList.add("readonly");
         e.dataTransfer.setData("text/plain", textboxContainer.id);
 
     });

@@ -216,3 +216,22 @@ canvas {
     cursor: pointer;
     height: 70px;
 }
+
+.readonly {
+    pointer-events: none;
+}
+
+
+
+
+.resize-handle {
+    width: 15px;
+    height: 15px;
+    background-color: blue;
+    /* or any color you prefer */
+    border-radius: 50%;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+}
