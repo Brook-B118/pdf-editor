@@ -270,6 +270,7 @@ def autosave_elements():
         print("Processing element:", element)  # Debugging line
 
         element_id = element['element_id']
+        print(f"element_id being saved: {element_id}")
         type = element['type']
         content = element['content']
         width = element['element_width']
@@ -282,22 +283,35 @@ def autosave_elements():
                 print("Incomplete element data")
                 continue
 
-    # Check if the element already exists
-    existing_element = Element.query.filter_by(element_id=element_id, user_id=user_id, document_id=document_id).first()
+   
+        # Check if the element already exists
+        existing_elements = Element.query.filter_by(user_id=user_id, document_id=document_id).all()
+        print(f"existing elements: {existing_elements}")
+        element_found = False  # Move this line here
 
-    if existing_element:
-        # Update existing element
-        existing_element.type = type
-        existing_element.content = content
-        existing_element.width = width
-        existing_element.height = height
-        existing_element.position_x = position_x
-        existing_element.position_y = position_y
-        existing_element.overlayId = overlayId
-    else:
-        # Create new element
-        new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width,height=height, position_x=position_x, position_y=position_y, overlayId=overlayId)
-        db.session.add(new_element)
+        for existing_element in existing_elements:
+            print(f"Checking element: {existing_element.element_id}")
+            if existing_element.element_id == element_id:
+                print(f"existing element found: {existing_element}")
+                # Update the element
+                existing_element.type = type
+                existing_element.content = content
+                existing_element.width = width
+                existing_element.height = height
+                existing_element.position_x = position_x
+                existing_element.position_y = position_y
+                existing_element.overlayId = overlayId
+                element_found = True
+                break
+        
+        if element_found:
+            if isinstance(existing_element, Element):
+                db.session.add(existing_element)
+        else:
+            print("No existing element found, creating a new one.")
+            new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width, height=height, position_x=position_x, position_y=position_y, overlayId=overlayId)
+            if isinstance(new_element, Element):
+                db.session.add(new_element)
 
     try:
         db.session.commit()

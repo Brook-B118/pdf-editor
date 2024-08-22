@@ -2,6 +2,14 @@ import { autoSave } from "./savingPDF.js";
 
 interact('.resizable').resizable({
     edges: { bottom: '.resize-handle', right: '.resize-handle' },
+    modifiers: [
+        interact.modifiers.restrictEdges({
+            outer: 'parent',
+        }),
+        interact.modifiers.restrictSize({
+            min: { width: 100, height: 50 }
+        })
+    ],
     listeners: {
         move: function (event) {
             let { x, y } = event.target.dataset
@@ -17,11 +25,7 @@ interact('.resizable').resizable({
 
             Object.assign(event.target.dataset, { x, y })
         },
-        modifiers: [
-            interact.modifiers.restrictEdges({
-                outer: 'parent',
-            })
-        ], end: function () {
+        end: function () {
             autoSave(documentId);
         },
     }
@@ -44,8 +48,8 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textboxContainer.style.border = '2px solid red';
 
     if (e) {
-        textboxContainer.style.width = '100px';
-        textboxContainer.style.height = '25px';
+        textboxContainer.style.width = '150px';
+        textboxContainer.style.height = '50px';
         textboxContainer.style.left = `${e.clientX - overlayRect.left}px`;
         textboxContainer.style.top = `${e.clientY - overlayRect.top}px`;
     } else {

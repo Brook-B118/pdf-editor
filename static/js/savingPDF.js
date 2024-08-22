@@ -12,12 +12,12 @@ export function autoSave(documentId) {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
+        console.log(`Element ID: ${element.id}, X: ${offsetX}, Y: ${offsetY}`);
         const width = element.getBoundingClientRect().width;
         const height = element.getBoundingClientRect().height;
         const inputElement = element.querySelector('input.textbox');
         let elementType = 'textboxContainer';
         let elementId = element.id;
-        console.log("element id:", elementId)
         let content = '';
         if (inputElement) {
             content = inputElement.value;
