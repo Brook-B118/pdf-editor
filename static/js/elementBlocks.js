@@ -44,7 +44,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     const textboxContainer = document.createElement('div');
     textboxContainer.classList.add("newElement", "resizable", "textboxContainer", "draggable"); // add .newEelement to all new elements to be able to save them.
     textboxContainer.setAttribute("draggable", "true");
-    textboxContainer.style.position = 'relative';
+    textboxContainer.style.position = 'absolute';
     textboxContainer.style.border = '2px solid red';
 
     if (e) {

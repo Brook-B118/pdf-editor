@@ -37,6 +37,7 @@ function addEventListeners() {
 
                 // Update the data-overlay-id attribute
                 draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
+
             }
             // Call autoSave after handling the drop
             autoSave(documentId);
