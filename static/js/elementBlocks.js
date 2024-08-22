@@ -24,6 +24,12 @@ interact('.resizable').resizable({
             })
 
             Object.assign(event.target.dataset, { x, y })
+
+            // Adjust the textarea height to match the container
+            const textarea = event.target.querySelector('textarea');
+            if (textarea) {
+                textarea.style.height = '100%';
+            }
         },
         end: function () {
             autoSave(documentId);
@@ -87,13 +93,26 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     // textboxContainer.appendChild(toolbar);
 
     // Create a new editable textbox
-    const textbox = document.createElement('input')
-    textbox.type = 'text';
+    const textbox = document.createElement('textarea')
+    // textbox.type = 'text'; Do not need anymore because we are not making an input field.
     textbox.classList.add('resizable', 'textbox');
     textbox.style.width = '100%';
     textbox.style.height = '100%';
     textbox.style.boxSizing = 'border-box';
     textbox.classList.add("readonly");
+    textbox.style.overflow = 'hidden';
+    textbox.oninput = function () {
+        this.style.height = 'auto'; // Reset the height to auto to recalculate
+        if (this.value === '') {
+            this.style.height = '50px'; // Set a minimum height when empty
+            textboxContainer.style.height = '54px'; // Set container height accordingly
+        } else {
+            this.style.height = this.scrollHeight + 'px';
+            textboxContainer.style.height = (this.scrollHeight + 4) + 'px';
+        }
+        console.log("textbox height: ", textbox.style.height);
+        console.log("TextboxContainer height: ", textboxContainer.style.height);
+    };
 
     // Add event listeners for autosave
     textbox.addEventListener("focus", function () {

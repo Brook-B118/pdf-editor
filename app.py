@@ -279,7 +279,7 @@ def autosave_elements():
         position_y = element['position_y']
         overlayId = element['overlayId']
     
-        if not all([element_id, type, content, position_x, position_y, overlayId]):
+        if not all([element_id, type, position_x, position_y, overlayId]):
                 print("Incomplete element data")
                 continue
 

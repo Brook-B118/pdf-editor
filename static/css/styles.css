@@ -236,3 +236,10 @@ canvas {
     bottom: -5px;
     cursor: se-resize;
 }
+
+textarea {
+    width: 100%;
+    /* or a fixed width like 300px */
+    box-sizing: border-box;
+    resize: none;
+}

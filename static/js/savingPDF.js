@@ -15,12 +15,16 @@ export function autoSave(documentId) {
         console.log(`Element ID: ${element.id}, X: ${offsetX}, Y: ${offsetY}`);
         const width = element.getBoundingClientRect().width;
         const height = element.getBoundingClientRect().height;
-        const inputElement = element.querySelector('input.textbox');
+        const inputElement = element.querySelector('input.textbox, textarea.textbox');
         let elementType = 'textboxContainer';
         let elementId = element.id;
         let content = '';
         if (inputElement) {
-            content = inputElement.value;
+            if (inputElement.tagName.toLowerCase() === 'textarea') {
+                content = inputElement.value;
+            } else {
+                content = inputElement.value;
+            }
         }
 
         currentChanges.data.push({
