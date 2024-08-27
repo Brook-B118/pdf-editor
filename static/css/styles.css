@@ -31,7 +31,8 @@ body {
     justify-content: center;
     position: fixed;
     flex: 1;
-    padding-top: 125px;
+    margin-top: 60px;
+    /* padding-top: 125px; */
     overflow-y: auto;
     overflow-x: auto;
     /* Enable vertical scrolling */
@@ -90,7 +91,7 @@ canvas {
     width: 475px;
     bottom: 0;
     position: fixed;
-    top: 139px;
+    top: 119px;
     right: 0px;
     border-top-style: solid;
     border-top-color: #2b3035;
@@ -128,7 +129,7 @@ canvas {
     width: 475px;
     bottom: 0;
     position: fixed;
-    top: 139px;
+    /* top: 139px; */
     right: -375px;
     border-top-style: solid;
     border-top-color: #2b3035;
@@ -148,7 +149,7 @@ canvas {
     top: 65px;
     left: 0;
     right: 0;
-    height: 75px;
+    height: 55px;
     border-top-style: solid;
     border-bottom-style: solid;
     border-color: white;
