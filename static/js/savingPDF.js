@@ -67,7 +67,7 @@ document.getElementById('save-button').addEventListener('click', () => {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
-        const inputElement = element.querySelector('input.textbox');
+        const inputElement = element.querySelector('input.textbox, textarea.textbox');
         changes.push({
             text: inputElement.value,
             x: offsetX,

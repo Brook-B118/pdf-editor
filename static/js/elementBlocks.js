@@ -52,6 +52,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textboxContainer.setAttribute("draggable", "true");
     textboxContainer.style.position = 'absolute';
     textboxContainer.style.border = '2px solid red';
+    textboxContainer.setAttribute("tabindex", "0"); // Divs are not normally focusable but input and textarea fields are. This line makes the div textboxContainer focusable as well as tabable with the tab button.
 
     if (e) {
         textboxContainer.style.width = '150px';
@@ -101,16 +102,26 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textbox.style.boxSizing = 'border-box';
     textbox.classList.add("readonly");
     textbox.style.overflow = 'hidden';
+
+    // If I want the container to not increase when the user enters more lines, this means user has to manually increase size of container with the resize handle.
+    // textbox.addEventListener("input", () => {
+    //     textboxContainer.style.height = `${textarea.scrollHeight}px`;
+    // });
+
     textbox.oninput = function () {
         this.style.height = 'auto'; // Reset the height to auto to recalculate
+        const paddingAndBorder = 4; // 2px padding + 2px border (the textbox was popping out because of 2px border and 2px padding which is default for textarea)
+        console.log("scrollHeight: ", this.scrollHeight);
+
         if (this.value === '') {
             this.style.height = '50px'; // Set a minimum height when empty
             textboxContainer.style.height = '54px'; // Set container height accordingly
         } else {
-            this.style.height = this.scrollHeight + 'px';
-            textboxContainer.style.height = (this.scrollHeight + 4) + 'px';
+            this.style.height = (this.scrollHeight + paddingAndBorder) + 'px';
+            textboxContainer.style.height = (this.scrollHeight + paddingAndBorder + 4) + 'px';
         }
-        console.log("textbox height: ", textbox.style.height);
+
+        console.log("textbox height: ", this.style.height);
         console.log("TextboxContainer height: ", textboxContainer.style.height);
     };
 
@@ -164,14 +175,21 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
 
     });
 
-    textboxContainer.addEventListener("dragstart", e => {
+    textboxContainer.addEventListener("dragstart", (e) => {
         textbox.classList.add("readonly");
         e.dataTransfer.setData("text/plain", textboxContainer.id);
-
     });
-    textboxContainer.addEventListener("dragover", e => {
+
+    textboxContainer.addEventListener("dragover", (e) => {
         textbox.blur();
-        textboxContainer.focus();
         e.preventDefault();
-    })
+    });
+
+    textboxContainer.addEventListener("focus", (e) => {
+        textboxContainer.style.border = '2px solid green';
+    });
+
+    textboxContainer.addEventListener("blur", (e) => {
+        textboxContainer.style.border = '2px solid red';
+    });
 };

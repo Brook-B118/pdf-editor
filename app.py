@@ -272,7 +272,7 @@ def autosave_elements():
         element_id = element['element_id']
         print(f"element_id being saved: {element_id}")
         type = element['type']
-        content = element['content']
+        content = bleach.clean(element['content'])
         width = element['element_width']
         height = element['element_height']
         position_x = element['position_x']

@@ -50,7 +50,7 @@ body {
     overflow-y: auto;
     overflow-x: auto;
     /* Enable vertical scrolling */
-    max-height: 75vh;
+    max-height: 80vh;
     right: 110px;
     left: 0px;
     /* Adjust height as needed */
