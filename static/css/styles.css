@@ -244,3 +244,21 @@ textarea {
     box-sizing: border-box;
     resize: none;
 }
+
+#text-box-customize-container {
+    background-color: rgb(43, 46, 226);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    top: 40px;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.text-box-customize-option {
+    flex: 0 0 150px;
+    margin: 5px;
+}

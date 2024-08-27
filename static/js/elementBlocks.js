@@ -1,4 +1,5 @@
 import { autoSave } from "./savingPDF.js";
+import { addTextboxEventListeners } from "./textboxCustomization.js";
 
 interact('.resizable').resizable({
     edges: { bottom: '.resize-handle', right: '.resize-handle' },
@@ -77,21 +78,6 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     resize_handle.classList.add('resize-handle')
     textboxContainer.appendChild(resize_handle);
 
-    // // Create a toolbar for textbox
-    // const toolbar = document.createElement('div');
-    // toolbar.classList.add('toolbar');
-    // toolbar.style.position = 'absolute';
-    // toolbar.style.left = '0';
-    // toolbar.style.top = '-30px'; // Adjust as needed
-    // console.log("Toolbar created");
-
-    // // Add buttons for bold, italic, etc.
-    // const boldButton = document.createElement('button');
-    // boldButton.textContent = 'B';
-    // toolbar.appendChild(boldButton);
-
-    // // Append Toolbar to Textbox Container
-    // textboxContainer.appendChild(toolbar);
 
     // Create a new editable textbox
     const textbox = document.createElement('textarea')
@@ -121,8 +107,6 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
             textboxContainer.style.height = (this.scrollHeight + paddingAndBorder + 4) + 'px';
         }
 
-        console.log("textbox height: ", this.style.height);
-        console.log("TextboxContainer height: ", textboxContainer.style.height);
     };
 
     // Add event listeners for autosave
@@ -134,6 +118,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         if (textbox.value !== textbox.dataset.initialValue) {
             autoSave(documentId);
         }
+        textbox.classList.add("readonly");
     });
 
     if (e) {
@@ -187,9 +172,31 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
 
     textboxContainer.addEventListener("focus", (e) => {
         textboxContainer.style.border = '2px solid green';
+        // Change sidepanel for textbox customization:
+        document.querySelector(".sidepanel").innerHTML = `
+          <div class="edit-document">
+              <button id="save-button">Save and Download</button>
+          </div>
+          <div id="text-box-customize-container" class="textbox-customize-section">
+              <p>Textbox Customization here</p>
+              <button id="align-left" class="text-box-customize-option">Left</button>
+              <button id="align-center" class="text-box-customize-option">Center</button>
+              <button id="align-right" class="text-box-customize-option">Right</button>
+              <input type="color" id="bg-color-picker" class="text-box-customize-option">
+              <select id="font-selector" class="text-box-customize-option">
+                  <option value="Arial">Arial</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <!-- Add more font options here -->
+              </select>
+          </div>
+          `;
+        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
+        addTextboxEventListeners(textboxContainer.id);
     });
 
     textboxContainer.addEventListener("blur", (e) => {
         textboxContainer.style.border = '2px solid red';
     });
 };
+
+
