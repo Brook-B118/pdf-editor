@@ -1,6 +1,6 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-import { createTextBox } from './elementBlocks.js';
+import { createTextBox, createShape } from './elementBlocks.js';
 import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
@@ -27,6 +27,8 @@ function addEventListeners() {
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
                 createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
+            } else if (draggableElement && draggableElement.id === 'new-shape-block') {
+                createShape(e, null, null, null, null, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -56,6 +58,8 @@ displayPDF(url).then(() => {
             changes.forEach(change => {
                 if (change.type === 'textboxContainer') {
                     createTextBoxWithSavedData(change);
+                } else if (change.type === 'shape') {
+                    createShapeWithSavedData(change);
                 }
                 // Add more conditions for other element types if needed
             });
@@ -75,6 +79,9 @@ function createTextBoxWithSavedData(change) {
     console.log("element in createTextBoxWithSavedData():", element);
 }
 
+function createShapeWithSavedData(change) {
+    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId)
+}
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY
 
