@@ -1,5 +1,6 @@
 import { autoSave } from "./savingPDF.js";
 import { addTextboxEventListeners } from "./textboxCustomization.js";
+import { addShapeEventListeners } from "./shapeCustomization.js";
 
 interact('.resizable').resizable({
     edges: { bottom: '.resize-handle', right: '.resize-handle' },
@@ -290,6 +291,33 @@ export function createShape(e, x, y, width, height, overlayId) {
     shape.addEventListener("dragover", (e) => {
         shape.blur();
         e.preventDefault();
+    });
+
+    shape.addEventListener("focus", (e) => {
+        // shape.style.border = '2px solid green';
+        // Change sidepanel for textbox customization:
+        document.querySelector(".sidepanel").innerHTML = `
+          <div class="edit-document">
+              <button id="save-button">Save and Download</button>
+          </div>
+          <div id="text-box-customize-container" class="textbox-customize-section">
+              <p class="text-box-customize-header">Textbox Customization here</p>
+              <button id="align-left" class="text-box-customize-option align-option">Left</button>
+              <button id="align-center" class="text-box-customize-option align-option">Center</button>
+              <button id="align-right" class="text-box-customize-option align-option">Right</button>
+              <select id="font-selector" class="text-box-customize-option">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <!-- Add more font options here -->
+              </select>
+              <select id="font-size-selector" class="text-box-customize-option">
+                <!-- Add font size options here -->
+              </select>
+              <button id="delete-element" class="text-box-customize-option">Delete</button>
+          </div>
+          `;
+        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
+        addShapeEventListeners(shape.id);
     });
 
 };
