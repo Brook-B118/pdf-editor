@@ -1,6 +1,6 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-import { createTextBox } from './elementBlocks.js';
+import { createTextBox, createShape } from './elementBlocks.js';
 import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
@@ -27,6 +27,8 @@ function addEventListeners() {
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
                 createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
+            } else if (draggableElement && draggableElement.id === 'new-shape-block') {
+                createShape(e, null, null, null, null, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();

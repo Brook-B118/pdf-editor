@@ -203,3 +203,93 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
 };
 
 
+// Shape Block Section
+
+interact('.resizable-shape').resizable({
+    edges: { top: true, left: true, bottom: true, right: true },
+    modifiers: [
+        interact.modifiers.restrictEdges({
+            outer: 'parent',
+        }),
+        interact.modifiers.restrictSize({
+            min: { width: 100, height: 50 }
+        })
+    ],
+    listeners: {
+        move: function (event) {
+            let { x, y } = event.target.dataset
+
+            x = (parseFloat(x) || 0) + event.deltaRect.left
+            y = (parseFloat(y) || 0) + event.deltaRect.top
+
+            Object.assign(event.target.style, {
+                width: `${event.rect.width}px`,
+                height: `${event.rect.height}px`,
+                transform: `translate(${x}px, ${y}px)`
+            })
+
+            Object.assign(event.target.dataset, { x, y })
+        },
+        end: function () {
+            autoSave(documentId);
+        },
+    }
+});
+
+let shape_counter = 0;
+
+export function createShape(e, x, y, width, height, overlayId) {
+    let overlayRect;
+    if (e) {
+        overlayRect = e.target.getBoundingClientRect();
+    }
+
+    // create shape (no need for container)
+    const shape = document.createElement('div');
+    shape.classList.add("newElement", "resizable-shape", "shape", "draggable"); // add .newEelement to all new elements to be able to save them.
+    shape.setAttribute("draggable", "true");
+    shape.style.position = 'absolute';
+    shape.style.border = '2px solid red';
+    shape.style.backgroundColor = 'blue';
+    shape.setAttribute("tabindex", "0");
+
+    if (e) {
+        shape.style.width = '150px';
+        shape.style.height = '50px';
+        shape.style.left = `${e.clientX - overlayRect.left}px`;
+        shape.style.top = `${e.clientY - overlayRect.top}px`;
+    } else {
+        shape.style.width = `${width}px`;
+        shape.style.height = `${height}px`;
+        shape.style.left = `${x}px`;
+        shape.style.top = `${y}px`;
+    }
+
+    console.log("Shape created");
+
+    // create it's data-overlay-id attribute, do this to all new elements to be able to save their location.
+    shape.setAttribute('data-overlay-id', overlayId);
+
+    // Append the new shape to the overlay
+    if (e) {
+        e.target.appendChild(shape);
+    }
+    else {
+        document.getElementById(overlayId).appendChild(shape);
+    }
+    console.log("Shape appended to overlay");
+    shape_counter++;
+    shape.id = `shape-${shape_counter}`;
+
+    // Add event listeners to enable repositioning drag and drop
+
+    shape.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", shape.id);
+    });
+
+    shape.addEventListener("dragover", (e) => {
+        shape.blur();
+        e.preventDefault();
+    });
+
+};
