@@ -178,15 +178,17 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
               <button id="save-button">Save and Download</button>
           </div>
           <div id="text-box-customize-container" class="textbox-customize-section">
-              <p>Textbox Customization here</p>
-              <button id="align-left" class="text-box-customize-option">Left</button>
-              <button id="align-center" class="text-box-customize-option">Center</button>
-              <button id="align-right" class="text-box-customize-option">Right</button>
-              <input type="color" id="bg-color-picker" class="text-box-customize-option">
+              <p class="text-box-customize-header">Textbox Customization here</p>
+              <button id="align-left" class="text-box-customize-option align-option">Left</button>
+              <button id="align-center" class="text-box-customize-option align-option">Center</button>
+              <button id="align-right" class="text-box-customize-option align-option">Right</button>
               <select id="font-selector" class="text-box-customize-option">
-                  <option value="Arial">Arial</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <!-- Add more font options here -->
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <!-- Add more font options here -->
+              </select>
+              <select id="font-size-selector" class="text-box-customize-option">
+                <!-- Add font size options here -->
               </select>
               <button id="delete-element" class="text-box-customize-option">Delete</button>
           </div>

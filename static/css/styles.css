@@ -258,7 +258,20 @@ textarea {
     padding-top: 25px;
 }
 
+.text-box-customize-header {
+    position: absolute;
+    top: 5px;
+    align-self: center;
+    margin: 0px;
+}
+
 .text-box-customize-option {
     flex: 0 0 150px;
+    margin-top: 10px;
     margin: 5px;
+}
+
+.align-option {
+    flex: 0 0 75px;
+    margin: 10px;
 }

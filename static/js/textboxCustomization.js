@@ -17,12 +17,24 @@ export function addTextboxEventListeners(textboxContainerId) {
         textbox.style.textAlign = 'right';
     });
 
-    document.getElementById('bg-color-picker').addEventListener('input', function (event) {
-        textbox.style.backgroundColor = event.target.value;
-    });
-
     document.getElementById('font-selector').addEventListener('change', function (event) {
         textbox.style.fontFamily = event.target.value;
+    });
+
+    const fontSizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+    const fontSizeSelector = document.getElementById('font-size-selector');
+
+    fontSizes.forEach(size => {
+        const option = document.createElement('option');
+        option.value = size;
+        option.textContent = `${size}`;
+        fontSizeSelector.appendChild(option);
+    });
+
+    fontSizeSelector.value = parseInt(window.getComputedStyle(textbox).fontSize);
+
+    fontSizeSelector.addEventListener('change', function (event) {
+        textbox.style.fontSize = `${event.target.value}px`; // the fontSize expects a value with units like 'px'.
     });
 
     document.getElementById('delete-element').addEventListener('click', function () {
