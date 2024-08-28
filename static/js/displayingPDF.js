@@ -19,7 +19,7 @@ export const displayPDF = function (url) {
             for (let i = 1; i <= pages; i++) {
                 pdf.getPage(i).then(function (page) {
                     console.log("pdf page line passed")
-                    let viewport = page.getViewport({ scale: 1 });
+                    let viewport = page.getViewport({ scale: 1.5 }); // Changes the zoom (size) of the pdf.
                     var outputScale = window.devicePixelRatio || 1; // This line was not being used and the pdf was only being a quarter of the way loaded
                     let canvas = document.createElement('canvas');
                     canvas.width = Math.floor(viewport.width * outputScale);

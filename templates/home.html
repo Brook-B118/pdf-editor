@@ -6,4 +6,59 @@ Home
 
 {% block main %}
 
+<div class="horizontal-column-home">
+    <div>
+        test 1
+    </div>
+</div>
+
+<div class="vertical-column-wrapper">
+
+    <div class="vertical-column-home">
+        <div class="vertical-column-link collapsed-sidebar">
+            <i class='bx bx-menu bx-md' style='color:#ffffff'></i>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-grid-alt bx-md' style='color:#ffffff'></i>
+            <div>Elements</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+    </div>
+    <div class="sidepanel">
+        <!-- <div id="toolbox" class="toolbox"> -->
+        <div class="edit-document ">
+            <button id="save-button">Save and Download</button>
+        </div>
+        <div id="elements-container" class="elements-section">
+            <!-- <div class=""> -->
+            <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text Block
+            </div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <!-- Add more blocks as needed -->
+            <!-- </div> -->
+        </div>
+        <!-- </div> -->
+    </div>
+</div>
+<div style="height:3000px">
+
+</div>
+
+
+
+
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 {% endblock %}

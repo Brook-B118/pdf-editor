@@ -26,7 +26,7 @@ function addEventListeners() {
             console.log("draggable element =", draggableElement)
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
-                createTextBox(e, null, null, draggableElement, null, `overlay-${i}`);
+                createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -37,6 +37,7 @@ function addEventListeners() {
 
                 // Update the data-overlay-id attribute
                 draggableElement.setAttribute('data-overlay-id', `overlay-${i}`);
+
             }
             // Call autoSave after handling the drop
             autoSave(documentId);
@@ -68,7 +69,7 @@ displayPDF(url).then(() => {
 function createTextBoxWithSavedData(change) {
     console.log("change:", change);
     // Create the textbox element
-    createTextBox(null, change.position_x, change.position_y, null, change.content, change.overlayId);
+    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId);
     // Reposition the element
     let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
     console.log("element in createTextBoxWithSavedData():", element);

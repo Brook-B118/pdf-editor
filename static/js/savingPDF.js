@@ -12,12 +12,19 @@ export function autoSave(documentId) {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
-        const inputElement = element.querySelector('input.textbox');
+        console.log(`Element ID: ${element.id}, X: ${offsetX}, Y: ${offsetY}`);
+        const width = element.getBoundingClientRect().width;
+        const height = element.getBoundingClientRect().height;
+        const inputElement = element.querySelector('input.textbox, textarea.textbox');
         let elementType = 'textboxContainer';
         let elementId = element.id;
         let content = '';
         if (inputElement) {
-            content = inputElement.value;
+            if (inputElement.tagName.toLowerCase() === 'textarea') {
+                content = inputElement.value;
+            } else {
+                content = inputElement.value;
+            }
         }
 
         currentChanges.data.push({
@@ -25,6 +32,8 @@ export function autoSave(documentId) {
             element_id: elementId,
             type: elementType,
             content: content,
+            element_width: width,
+            element_height: height,
             position_x: offsetX,
             position_y: offsetY,
             overlayId: element.getAttribute('data-overlay-id')
@@ -36,7 +45,7 @@ export function autoSave(documentId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Include CSRF token if needed
+            'X-CSRFToken': csrfToken // Includes CSRF token 
         },
         body: JSON.stringify({
             document_id: documentId,
@@ -58,7 +67,7 @@ document.getElementById('save-button').addEventListener('click', () => {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
-        const inputElement = element.querySelector('input.textbox');
+        const inputElement = element.querySelector('input.textbox, textarea.textbox');
         changes.push({
             text: inputElement.value,
             x: offsetX,

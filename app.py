@@ -62,7 +62,7 @@ def after_request(response): # The @app.after_request part means this code runs 
 @app.route("/")
 @login_required
 def index():
-    return apology("TODO")
+    return render_template("home.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -217,8 +217,8 @@ def editDocument(hex_filename):
     else:
         return apology("document is None", 403)
     # Now you can use document.id, document.filename, etc.
-    if request.method == "POST":
-        return apology("TODO", 403)
+    if request.method == "POST": # do not need this im pretty sure
+        return apology("TODO", 403) # do not need
     
     else:
         if session['user_id'] == user_id: 
@@ -243,6 +243,38 @@ def remove_file(filename):
         return jsonify(success=True)
     return jsonify(success=False)
 
+
+@app.route('/remove_element', methods=['POST'])
+@login_required
+def remove_element():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+    
+    # Extract the data from request and session
+    user_id = session['user_id']
+    document_id = data['document_id']
+    element_id = data['element_id']
+
+    if not document_id or not element_id:
+        print("Invalid document_id or element_id")
+
+    # Check if element exists in db
+    target_element = Element.query.filter_by(user_id=user_id, document_id=document_id, element_id=element_id).first()
+
+    if target_element:
+        db.session.delete(target_element)
+        try:
+            db.session.commit()
+            return jsonify({"success": True}), 200 
+        except SQLAlchemyError as e:
+            print(e)
+            db.session.rollback()
+            return jsonify({"error": "Database error"}), 500
+    else:
+        return jsonify({"error": "Database error"}), 500
+      
 
 @app.route('/autosave', methods=['POST'])
 @login_required
@@ -270,30 +302,49 @@ def autosave_elements():
         print("Processing element:", element)  # Debugging line
 
         element_id = element['element_id']
+        print(f"element_id being saved: {element_id}")
         type = element['type']
-        content = element['content']
+        content = bleach.clean(element['content'])
+        width = element['element_width']
+        height = element['element_height']
         position_x = element['position_x']
         position_y = element['position_y']
         overlayId = element['overlayId']
     
-        if not all([element_id, type, content, position_x, position_y, overlayId]):
+        if not all([element_id, type, position_x, position_y, overlayId]):
                 print("Incomplete element data")
                 continue
 
-    # Check if the element already exists
-    existing_element = Element.query.filter_by(element_id=element_id, user_id=user_id, document_id=document_id).first()
+   
+        # Check if the element already exists
+        existing_elements = Element.query.filter_by(user_id=user_id, document_id=document_id).all()
+        print(f"existing elements: {existing_elements}")
+        element_found = False 
 
-    if existing_element:
-        # Update existing element
-        existing_element.type = type
-        existing_element.content = content
-        existing_element.position_x = position_x
-        existing_element.position_y = position_y
-        existing_element.overlayId = overlayId
-    else:
-        # Create new element
-        new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, position_x=position_x, position_y=position_y, overlayId=overlayId)
-        db.session.add(new_element)
+        for existing_element in existing_elements:
+            print(f"Checking element: {existing_element.element_id}")
+            if existing_element.element_id == element_id:
+                print(f"existing element found: {existing_element}")
+                # Update the element
+                existing_element.type = type
+                existing_element.content = content
+                existing_element.width = width
+                existing_element.height = height
+                existing_element.position_x = position_x
+                existing_element.position_y = position_y
+                existing_element.overlayId = overlayId
+                element_found = True
+                break
+        
+        if element_found:
+            if isinstance(existing_element, Element):
+                db.session.add(existing_element) # db.session.add can be thought about as staging a change to the db without fully finallizing it (committing). The changes are only finalized once db.session.commit is called. 
+                # This is good for making multiple changes and then committing them all at once.
+        else:
+            print("No existing element found, creating a new one.")
+            new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width, height=height, position_x=position_x, position_y=position_y, overlayId=overlayId)
+            if isinstance(new_element, Element):
+                db.session.add(new_element)
 
     try:
         db.session.commit()
@@ -316,6 +367,8 @@ def get_changes():
         'element_id': change.element_id,
         'type': change.type,
         'content': change.content,
+        'width': change.width,
+        'height': change.height,
         'position_x': change.position_x,
         'position_y': change.position_y,
         'overlayId': change.overlayId

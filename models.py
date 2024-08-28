@@ -56,9 +56,12 @@ class Element(db.Model):
     element_id = db.Column(db.String, nullable=False)
     type = db.Column(db.String, nullable=False)  # e.g., 'textbox', 'image', etc.
     content = db.Column(db.String)  # Store content based on type
+    width = db.Column(db.Float, nullable=False)  # Add width
+    height = db.Column(db.Float, nullable=False)  # Add height
     position_x = db.Column(db.Float, nullable=False)
     position_y = db.Column(db.Float, nullable=False)
     overlayId = db.Column(db.String, nullable=False)
+
 
 
 def update_timestamp(mapper, connection, target):
