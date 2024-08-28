@@ -188,6 +188,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
                   <option value="Times New Roman">Times New Roman</option>
                   <!-- Add more font options here -->
               </select>
+              <button id="delete-element" class="text-box-customize-option">Delete</button>
           </div>
           `;
         // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"

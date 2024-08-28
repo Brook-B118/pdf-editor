@@ -45,7 +45,7 @@ export function autoSave(documentId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Include CSRF token if needed
+            'X-CSRFToken': csrfToken // Includes CSRF token 
         },
         body: JSON.stringify({
             document_id: documentId,

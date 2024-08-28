@@ -21,5 +21,13 @@ document.querySelector(".show-element-blocks-bar").addEventListener("click", fun
             <div class="element-block" data-type="text-block">Example Block</div>
         </div>
     `;
+    // Add the draggable functionality back to the element blocks whenever the sidepanel loads them
+    document.querySelectorAll('.element-block').forEach((block) => {
+        block.classList.add("draggable");
+        block.setAttribute("draggable", "true");
+        block.addEventListener("dragstart", e => {
+            e.dataTransfer.setData("text/plain", block.id);
+        });
+    });
 });
 
