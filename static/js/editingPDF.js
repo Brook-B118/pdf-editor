@@ -58,6 +58,8 @@ displayPDF(url).then(() => {
             changes.forEach(change => {
                 if (change.type === 'textboxContainer') {
                     createTextBoxWithSavedData(change);
+                } else if (change.type === 'shape') {
+                    createShapeWithSavedData(change);
                 }
                 // Add more conditions for other element types if needed
             });
@@ -77,6 +79,9 @@ function createTextBoxWithSavedData(change) {
     console.log("element in createTextBoxWithSavedData():", element);
 }
 
+function createShapeWithSavedData(change) {
+    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId)
+}
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY
 

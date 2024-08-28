@@ -16,8 +16,15 @@ export function autoSave(documentId) {
         const width = element.getBoundingClientRect().width;
         const height = element.getBoundingClientRect().height;
         const inputElement = element.querySelector('input.textbox, textarea.textbox');
-        let elementType = 'textboxContainer';
         let elementId = element.id;
+
+        let elementType;
+        if (element.classList.contains('textboxContainer')) {
+            elementType = 'textboxContainer';
+        } else if (element.classList.contains('shape')) {
+            elementType = 'shape'
+        }
+
         let content = '';
         if (inputElement) {
             if (inputElement.tagName.toLowerCase() === 'textarea') {
