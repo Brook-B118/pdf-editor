@@ -2,6 +2,8 @@ let changes = [];
 let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
+const scale = 1.5;
+
 export function autoSave(documentId) {
     console.log("started autosave")
     let currentChanges = {
@@ -68,19 +70,70 @@ export function autoSave(documentId) {
         });
 }
 
+// Need this to put the css color into values that pdf-lib expects
+const namedColors = {
+    red: "rgb(255, 0, 0)",
+    blue: "rgb(0, 0, 255)",
+    // Add more named colors as needed
+};
+
+function cssColorToRgb(color) {
+    if (namedColors[color]) {
+        color = namedColors[color];
+    }
+    const rgb = color.match(/\d+/g).map(Number);
+    return { r: rgb[0] / 255, g: rgb[1] / 255, b: rgb[2] / 255 };
+}
+
+
 // Change this to download button
+console.log("save button clicked!")
 document.getElementById('save-button').addEventListener('click', () => {
     changes = [];
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
+        const width = element.getBoundingClientRect().width;
+        console.log("width", width)
+        const height = element.getBoundingClientRect().height;
         const inputElement = element.querySelector('input.textbox, textarea.textbox');
+
+        let elementType = '';
+        let borderColor = '';
+        let fillColor = '';
+        let borderWidth = '';
+        if (element.classList.contains('textboxContainer')) {
+            elementType = 'textboxContainer';
+        } else if (element.classList.contains('shape')) {
+            elementType = 'shape'
+            borderColor = cssColorToRgb(element.style.borderColor);
+            fillColor = cssColorToRgb(element.style.backgroundColor);
+            borderWidth = parseInt(element.style.borderWidth.match(/\d+/)[0]);
+            console.log("border width:", borderWidth)
+        }
+
+        let content = '';
+        if (inputElement) {
+            if (inputElement.tagName.toLowerCase() === 'textarea') {
+                content = inputElement.value;
+            } else {
+                content = inputElement.value;
+            }
+        }
+
         changes.push({
-            text: inputElement.value,
+            type: elementType,
+            element_width: width,
+            element_height: height,
+            borderColor: borderColor,
+            fillColor: fillColor,
+            borderWidth: borderWidth,
+            text: content,
             x: offsetX,
             y: offsetY,
             overlayId: element.getAttribute('data-overlay-id')
         });
+        console.log("changes:", changes);
     });
     applyChangesToPdf(pdfDoc, changes);
     savePdf(pdfDoc);
@@ -104,14 +157,34 @@ async function applyChangesToPdf(pdfDoc, changes) {
 
         // To adjust for this, you might need to transform the y-coordinate. 
         // Subtract the y-coordinate from the page height:
-        const pageHeight = page.getHeight();
+        const pageWidth = (page.getWidth()) * scale;
+        console.log("page width:", pageWidth);
+        const pageHeight = (page.getHeight()) * scale;
+        console.log("page height:", pageHeight);
         const adjustedY = pageHeight - change.y;
-        page.drawText(change.text, {
-            x: change.x,
-            y: adjustedY,
-            size: 12,
-            color: PDFLib.rgb(0, 0, 0),
-        });
+        console.log("adjustedY:", adjustedY);
+        console.log("change.x:", change.x);
+        console.log("change.y:", change.y);
+        if (change.type === 'textboxContainer') {
+            page.drawText(change.text, {
+                x: change.x / scale,
+                y: (adjustedY / scale) - (change.element_height / scale),
+                size: 12,
+                color: PDFLib.rgb(0, 0, 0),
+            });
+        } else if (change.type === 'shape') {
+            // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.
+            console.log("scale:", scale)
+            page.drawRectangle({
+                x: change.x / scale,
+                y: (adjustedY / scale) - (change.element_height / scale),
+                width: change.element_width / scale,
+                height: change.element_height / scale,
+                color: PDFLib.rgb(change.fillColor.r, change.fillColor.g, change.fillColor.b),
+                borderColor: PDFLib.rgb(change.borderColor.r, change.borderColor.g, change.borderColor.b),
+                borderWidth: change.borderWidth / scale,
+            });
+        }
     });
 }
 
