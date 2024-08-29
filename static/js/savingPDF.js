@@ -2,6 +2,8 @@ let changes = [];
 let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
+const scale = 1.5;
+
 export function autoSave(documentId) {
     console.log("started autosave")
     let currentChanges = {
@@ -155,13 +157,18 @@ async function applyChangesToPdf(pdfDoc, changes) {
 
         // To adjust for this, you might need to transform the y-coordinate. 
         // Subtract the y-coordinate from the page height:
-        const pageHeight = page.getHeight();
+        const pageWidth = (page.getWidth()) * scale;
+        console.log("page width:", pageWidth);
+        const pageHeight = (page.getHeight()) * scale;
+        console.log("page height:", pageHeight);
         const adjustedY = pageHeight - change.y;
-        const scale = 0.98;
+        console.log("adjustedY:", adjustedY);
+        console.log("change.x:", change.x);
+        console.log("change.y:", change.y);
         if (change.type === 'textboxContainer') {
             page.drawText(change.text, {
-                x: change.x,
-                y: adjustedY,
+                x: change.x / scale,
+                y: (adjustedY / scale) - (change.element_height / scale),
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
             });
@@ -170,12 +177,12 @@ async function applyChangesToPdf(pdfDoc, changes) {
             console.log("scale:", scale)
             page.drawRectangle({
                 x: change.x / scale,
-                y: adjustedY / scale,
-                width: change.element_width,
-                height: change.element_height,
+                y: (adjustedY / scale) - (change.element_height / scale),
+                width: change.element_width / scale,
+                height: change.element_height / scale,
                 color: PDFLib.rgb(change.fillColor.r, change.fillColor.g, change.fillColor.b),
                 borderColor: PDFLib.rgb(change.borderColor.r, change.borderColor.g, change.borderColor.b),
-                borderWidth: change.borderWidth,
+                borderWidth: change.borderWidth / scale,
             });
         }
     });
