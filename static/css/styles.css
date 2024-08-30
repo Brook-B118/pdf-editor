@@ -275,3 +275,30 @@ textarea {
     flex: 0 0 75px;
     margin: 10px;
 }
+
+#shape-customize-container {
+    background-color: rgb(226, 43, 144);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    top: 40px;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.shape-customize-header {
+    position: absolute;
+    top: 5px;
+    align-self: center;
+    margin: 0px;
+    margin-bottom: 11px;
+}
+
+.shape-customize-option {
+    flex: 0 0 150px;
+    margin-top: 10px;
+    margin: 5px;
+}
