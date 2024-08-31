@@ -302,11 +302,15 @@ export function createShape(e, x, y, width, height, overlayId) {
           </div>
           <div id="shape-customize-container" class="shape-customize-section">
             <p class="shape-customize-header">Shape Customization here</p>
+            <div class="shape-customize-row">
             <label for="fill-color-selector">Fill Color:</label>
             <input type="color" id="fill-color-selector" class="shape-customize-option">
             <label for="border-color-selector">Border Color:</label>
             <input type="color" id="border-color-selector" class="shape-customize-option">
+            </div>
+            <div class="shape-customize-row">
             <button id="delete-element" class="shape-customize-option">Delete</button>
+            </div>
           </div>
           `;
         // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"

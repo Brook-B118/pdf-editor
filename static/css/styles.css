@@ -297,8 +297,25 @@ textarea {
     margin-bottom: 11px;
 }
 
+.shape-customize-row {
+    display: flex;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+    width: 100%;
+}
+
 .shape-customize-option {
-    flex: 0 0 150px;
-    margin-top: 10px;
-    margin: 5px;
+    flex: 0 0 75px;
+    margin: 10px;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+}
+
+.shape-customize-row label {
+    padding-bottom: 4px;
+    /* used this to align the label text with the input box, the elements were alligned but the positioning of the text itself was a bit too low.*/
 }
