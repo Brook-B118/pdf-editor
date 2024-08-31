@@ -1,7 +1,8 @@
 
 export function addShapeEventListeners(shapeId) {
     const shape = document.getElementById(shapeId);
-    const computedStyle = window.getComputedStyle(shape).backgroundColor;
+    let computedStyle;
+    // const computedStyle = window.getComputedStyle(shape).backgroundColor;
 
     // Customize shape inside the container that was passed through
 
@@ -12,7 +13,7 @@ export function addShapeEventListeners(shapeId) {
     };
 
 
-    function cssColorToHEX(color) {
+    function cssColorToHEX(color, computedStyle) {
         if (namedColorsToHex[color]) {
             color = namedColorsToHex[color];
             return color;
@@ -29,10 +30,18 @@ export function addShapeEventListeners(shapeId) {
 
     const fillColorSelector = document.getElementById('fill-color-selector');
 
-    fillColorSelector.value = cssColorToHEX(shape.style.backgroundColor);
+    fillColorSelector.value = cssColorToHEX(shape.style.backgroundColor, computedStyle = window.getComputedStyle(shape).backgroundColor);
 
     fillColorSelector.addEventListener('change', function (event) {
         shape.style.backgroundColor = event.target.value;
+    })
+
+    const borderColorSelector = document.getElementById('border-color-selector');
+
+    borderColorSelector.value = cssColorToHEX(shape.style.borderColor, computedStyle = window.getComputedStyle(shape).borderColor);
+
+    borderColorSelector.addEventListener('change', function (event) {
+        shape.style.borderColor = event.target.value;
     })
 
     document.getElementById('delete-element').addEventListener('click', function () {
