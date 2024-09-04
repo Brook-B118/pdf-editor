@@ -80,7 +80,7 @@ function createTextBoxWithSavedData(change) {
 }
 
 function createShapeWithSavedData(change) {
-    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId)
+    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId, change.background_color, change.border_color)
 }
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY

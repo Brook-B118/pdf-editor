@@ -239,7 +239,7 @@ interact('.resizable-shape').resizable({
 
 let shape_counter = 0;
 
-export function createShape(e, x, y, width, height, overlayId) {
+export function createShape(e, x, y, width, height, overlayId, background_color, border_color) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -250,20 +250,24 @@ export function createShape(e, x, y, width, height, overlayId) {
     shape.classList.add("newElement", "resizable-shape", "shape", "draggable"); // add .newEelement to all new elements to be able to save them.
     shape.setAttribute("draggable", "true");
     shape.style.position = 'absolute';
-    shape.style.border = '2px solid red';
-    shape.style.backgroundColor = 'blue';
     shape.setAttribute("tabindex", "0");
+    shape.style.border = 'solid';
+    shape.style.borderWidth = '2px';
 
     if (e) {
         shape.style.width = '150px';
         shape.style.height = '50px';
         shape.style.left = `${e.clientX - overlayRect.left}px`;
         shape.style.top = `${e.clientY - overlayRect.top}px`;
+        shape.style.backgroundColor = 'blue';
+        shape.style.border = 'solid red';
     } else {
         shape.style.width = `${width}px`;
         shape.style.height = `${height}px`;
         shape.style.left = `${x}px`;
         shape.style.top = `${y}px`;
+        shape.style.backgroundColor = background_color;
+        shape.style.borderColor = border_color;
     }
 
     console.log("Shape created");

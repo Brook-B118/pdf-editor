@@ -1,3 +1,4 @@
+import { autoSave } from "./savingPDF.js";
 
 export function addShapeEventListeners(shapeId) {
     const shape = document.getElementById(shapeId);
@@ -34,6 +35,7 @@ export function addShapeEventListeners(shapeId) {
 
     fillColorSelector.addEventListener('change', function (event) {
         shape.style.backgroundColor = event.target.value;
+        autoSave(documentId);
     })
 
     const borderColorSelector = document.getElementById('border-color-selector');
@@ -42,6 +44,7 @@ export function addShapeEventListeners(shapeId) {
 
     borderColorSelector.addEventListener('change', function (event) {
         shape.style.borderColor = event.target.value;
+        autoSave(documentId);
     })
 
     document.getElementById('delete-element').addEventListener('click', function () {

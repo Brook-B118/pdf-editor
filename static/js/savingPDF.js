@@ -19,12 +19,15 @@ export function autoSave(documentId) {
         const height = element.getBoundingClientRect().height;
         const inputElement = element.querySelector('input.textbox, textarea.textbox');
         let elementId = element.id;
-
+        let background_color = '';
+        let border_color = '';
         let elementType;
         if (element.classList.contains('textboxContainer')) {
             elementType = 'textboxContainer';
         } else if (element.classList.contains('shape')) {
             elementType = 'shape'
+            background_color = element.style.backgroundColor;
+            border_color = element.style.borderColor;
         }
 
         let content = '';
@@ -45,7 +48,9 @@ export function autoSave(documentId) {
             element_height: height,
             position_x: offsetX,
             position_y: offsetY,
-            overlayId: element.getAttribute('data-overlay-id')
+            overlayId: element.getAttribute('data-overlay-id'),
+            background_color: background_color,
+            border_color: border_color
         });
     });
 
