@@ -1,6 +1,7 @@
 import { autoSave } from "./savingPDF.js";
 import { addTextboxEventListeners } from "./textboxCustomization.js";
 import { addShapeEventListeners } from "./shapeCustomization.js";
+import { addsignatureFieldEventListeners } from "./signatureCustomization.js"
 
 interact('.resizable').resizable({
     edges: { bottom: '.resize-handle', right: '.resize-handle' },
@@ -175,9 +176,6 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         textboxContainer.style.border = '2px solid green';
         // Change sidepanel for textbox customization:
         document.querySelector(".sidepanel").innerHTML = `
-          <div class="edit-document">
-              <button id="save-button">Save and Download</button>
-          </div>
           <div id="text-box-customize-container" class="textbox-customize-section">
               <p class="text-box-customize-header">Textbox Customization here</p>
               <button id="align-left" class="text-box-customize-option align-option">Left</button>
@@ -301,9 +299,6 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
         // shape.style.border = '2px solid green';
         // Change sidepanel for textbox customization:
         document.querySelector(".sidepanel").innerHTML = `
-          <div class="edit-document">
-              <button id="save-button">Save and Download</button>
-          </div>
           <div id="shape-customize-container" class="shape-customize-section">
             <p class="shape-customize-header">Shape Customization here</p>
             <div class="shape-customize-row">
@@ -319,6 +314,156 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
           `;
         // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
         addShapeEventListeners(shape.id);
+    });
+
+};
+
+
+// Signature block section
+
+interact('.resizable-signatureField').resizable({
+    edges: { top: true, left: true, bottom: true, right: true },
+    modifiers: [
+        interact.modifiers.restrictEdges({
+            outer: 'parent',
+        }),
+        interact.modifiers.restrictSize({
+            min: { width: 100, height: 50 }
+        })
+    ],
+    listeners: {
+        move: function (event) {
+            let { x, y } = event.target.dataset
+
+            x = (parseFloat(x) || 0) + event.deltaRect.left
+            y = (parseFloat(y) || 0) + event.deltaRect.top
+
+            Object.assign(event.target.style, {
+                width: `${event.rect.width}px`,
+                height: `${event.rect.height}px`,
+                transform: `translate(${x}px, ${y}px)`
+            })
+
+            Object.assign(event.target.dataset, { x, y })
+        },
+        end: function () {
+            autoSave(documentId);
+        },
+    }
+});
+
+let signatureField_counter = 0;
+
+export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId) {
+    let overlayRect;
+    if (e) {
+        overlayRect = e.target.getBoundingClientRect();
+    }
+
+    // create signatureField (no need for container)
+    const signatureField = document.createElement('input');
+    signatureField.classList.add("newElement", "resizable-signatureField", "signatureField", "draggable"); // add .newEelement to all new elements to be able to save them.
+    signatureField.setAttribute("draggable", "true");
+    signatureField.style.position = 'absolute';
+    signatureField.setAttribute("tabindex", "0");
+    signatureField.style.fontFamily = 'Cursive';
+    signatureField.style.fontSize = '24px'
+    signatureField.setAttribute("readonly", true);
+    signatureField.type = 'text';
+    // signatureField.style.border = 'solid';
+    // signatureField.style.borderWidth = '2px';
+
+    if (e) {
+        signatureField.style.width = '200px';
+        signatureField.style.height = '100px';
+        signatureField.style.left = `${e.clientX - overlayRect.left}px`;
+        signatureField.style.top = `${e.clientY - overlayRect.top}px`;
+        signatureField.value = draggableElement.textContent;
+        // signatureField.style.backgroundColor = 'blue';
+        // signatureField.style.border = 'solid red';
+    } else {
+        signatureField.style.width = `${width}px`;
+        signatureField.style.height = `${height}px`;
+        signatureField.style.left = `${x}px`;
+        signatureField.style.top = `${y}px`;
+        signatureField.value = text;
+        // signatureField.style.backgroundColor = background_color;
+        // signatureField.style.borderColor = border_color;
+    }
+
+    console.log("signatureField created");
+
+    // create it's data-overlay-id attribute, do this to all new elements to be able to save their location.
+    signatureField.setAttribute('data-overlay-id', overlayId);
+
+    // Append the new signatureField to the overlay
+    if (e) {
+        e.target.appendChild(signatureField);
+    }
+    else {
+        document.getElementById(overlayId).appendChild(signatureField);
+    }
+    console.log("signatureField appended to overlay");
+    signatureField_counter++;
+    signatureField.id = `signatureField-${signatureField_counter}`;
+
+    // Add event listeners to enable repositioning drag and drop
+
+    signatureField.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", signatureField.id);
+    });
+
+    signatureField.addEventListener("dragover", (e) => {
+        signatureField.blur();
+        e.preventDefault();
+    });
+
+
+    signatureField.addEventListener("click", () => {
+        // signatureField.style.border = '2px solid green';
+        // Change sidepanel for textbox customization:
+        document.querySelector(".sidepanel").innerHTML = `
+          <div id="signatureField-customize-container" class="signatureField-customize-section">
+            <div class="signatureField-customize-row">
+                <div id="signature-preview">
+                    <div id="signature-content">Your text here</div>
+                </div>
+            </div>
+            <div class="signatureField-customize-row">
+                <p class="signatureField-customize-header">signatureField Customization here</p>
+            </div>
+            <div class="signatureField-customize-row">
+                <input id="type-signature" class="signatureField-customize-option" maxlength="100">
+                <button id="submit-signature" class="signatureField-customize-option">Sign</button>
+            </div>
+            <div class="signatureField-customize-row">
+                <button id="align-left" class="signatureField-customize-option align-option">Left</button>
+                <button id="align-center" class="signatureField-customize-option align-option">Center</button>
+                <button id="align-right" class="signatureField-customize-option align-option">Right</button>
+            </div>
+            <div class="signatureField-customize-row">
+                <select id="font-selector" class="signatureField-customize-option">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <!-- Add more font options here -->
+                </select>
+                <select id="font-size-selector" class="signatureField-customize-option">
+                    <!-- Add font size options here -->
+                </select>
+            </div>
+            <div class="signatureField-customize-row">
+                <label for="fill-color-selector">Fill Color:</label>
+                <input type="color" id="fill-color-selector" class="signatureField-customize-option">
+                <label for="border-color-selector">Border Color:</label>
+                <input type="color" id="border-color-selector" class="signatureField-customize-option">
+            </div>
+            <div class="signatureField-customize-row">
+                <button id="delete-element" class="signatureField-customize-option">Delete</button>
+            </div>
+          </div>
+          `;
+        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
+        addsignatureFieldEventListeners(signatureField.id);
     });
 
 };

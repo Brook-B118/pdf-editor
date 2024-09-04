@@ -1,6 +1,6 @@
 import { displayPDF } from './displayingPDF.js';
 import { pages } from './displayingPDF.js';
-import { createTextBox, createShape } from './elementBlocks.js';
+import { createTextBox, createShape, createSignatureField } from './elementBlocks.js';
 import { autoSave } from './savingPDF.js';
 
 document.querySelectorAll('.element-block').forEach((block) => {
@@ -29,6 +29,8 @@ function addEventListeners() {
                 createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
             } else if (draggableElement && draggableElement.id === 'new-shape-block') {
                 createShape(e, null, null, null, null, `overlay-${i}`);
+            } else if (draggableElement && draggableElement.id === 'new-signatureField-block') {
+                createSignatureField(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -60,6 +62,8 @@ displayPDF(url).then(() => {
                     createTextBoxWithSavedData(change);
                 } else if (change.type === 'shape') {
                     createShapeWithSavedData(change);
+                } else if (change.type === 'signatureField') {
+                    createSignatureFieldWithSavedData(change);
                 }
                 // Add more conditions for other element types if needed
             });
@@ -81,6 +85,10 @@ function createTextBoxWithSavedData(change) {
 
 function createShapeWithSavedData(change) {
     createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId, change.background_color, change.border_color)
+}
+
+function createSignatureFieldWithSavedData(change) {
+    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId)
 }
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY

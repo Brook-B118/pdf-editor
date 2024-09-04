@@ -17,25 +17,29 @@ export function autoSave(documentId) {
         console.log(`Element ID: ${element.id}, X: ${offsetX}, Y: ${offsetY}`);
         const width = element.getBoundingClientRect().width;
         const height = element.getBoundingClientRect().height;
-        const inputElement = element.querySelector('input.textbox, textarea.textbox');
+        const nestedInputElement = element.querySelector('input.textbox, textarea.textbox');
         let elementId = element.id;
         let background_color = '';
         let border_color = '';
         let elementType;
+        let content = '';
+
         if (element.classList.contains('textboxContainer')) {
             elementType = 'textboxContainer';
         } else if (element.classList.contains('shape')) {
-            elementType = 'shape'
+            elementType = 'shape';
             background_color = element.style.backgroundColor;
             border_color = element.style.borderColor;
+        } else if (element.classList.contains('signatureField')) {
+            elementType = 'signatureField';
+            content = element.value; // Ensure you get the value directly from the element
         }
 
-        let content = '';
-        if (inputElement) {
-            if (inputElement.tagName.toLowerCase() === 'textarea') {
-                content = inputElement.value;
+        if (nestedInputElement) {
+            if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
+                content = nestedInputElement.value;
             } else {
-                content = inputElement.value;
+                content = nestedInputElement.value;
             }
         }
 
@@ -103,28 +107,32 @@ document.getElementById('save-button').addEventListener('click', async () => {
         const width = element.getBoundingClientRect().width;
         console.log("width", width)
         const height = element.getBoundingClientRect().height;
-        const inputElement = element.querySelector('input.textbox, textarea.textbox');
+        const nestedInputElement = element.querySelector('input.textbox, textarea.textbox'); //querySelector checks if the element has any input elements within it (like the textbox inside the container)
 
         let elementType = '';
         let borderColor = '';
         let fillColor = '';
         let borderWidth = '';
+        let content = '';
+
         if (element.classList.contains('textboxContainer')) {
             elementType = 'textboxContainer';
         } else if (element.classList.contains('shape')) {
-            elementType = 'shape'
+            elementType = 'shape';
             borderColor = cssColorToRgb(element.style.borderColor);
             fillColor = cssColorToRgb(element.style.backgroundColor);
             borderWidth = parseInt(element.style.borderWidth.match(/\d+/)[0]);
             console.log("border width:", borderWidth)
+        } else if (element.classList.contains('signatureField')) {
+            elementType = 'signatureField';
+            content = element.value; // Ensure you get the value directly from the element
         }
 
-        let content = '';
-        if (inputElement) {
-            if (inputElement.tagName.toLowerCase() === 'textarea') {
-                content = inputElement.value;
+        if (nestedInputElement) {
+            if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
+                content = nestedInputElement.value;
             } else {
-                content = inputElement.value;
+                content = nestedInputElement.value;
             }
         }
 
@@ -173,7 +181,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
         console.log("adjustedY:", adjustedY);
         console.log("change.x:", change.x);
         console.log("change.y:", change.y);
-        if (change.type === 'textboxContainer') {
+        if (change.type === 'textboxContainer' || change.type === 'signatureField') {
             page.drawText(change.text, {
                 x: change.x / scale,
                 y: (adjustedY / scale) - (change.element_height / scale),

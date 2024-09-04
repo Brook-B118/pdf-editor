@@ -252,7 +252,6 @@ textarea {
     flex-direction: row;
     flex: 1;
     flex-wrap: wrap;
-    top: 40px;
     justify-content: center;
     align-content: flex-start;
     padding-top: 25px;
@@ -283,7 +282,6 @@ textarea {
     flex-direction: row;
     flex: 1;
     flex-wrap: wrap;
-    top: 40px;
     justify-content: center;
     align-content: flex-start;
     padding-top: 25px;
@@ -318,4 +316,65 @@ textarea {
 .shape-customize-row label {
     padding-bottom: 4px;
     /* used this to align the label text with the input box, the elements were alligned but the positioning of the text itself was a bit too low.*/
+}
+
+#signatureField-customize-container {
+    background-color: rgb(233, 92, 26);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.signatureField-customize-header {
+    position: absolute;
+    top: 5px;
+    align-self: center;
+    margin: 0px;
+    margin-bottom: 11px;
+}
+
+.signatureField-customize-row {
+    display: flex;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+    width: 100%;
+}
+
+.signatureField-customize-option {
+    flex: 0 0 75px;
+    margin: 10px;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+}
+
+.signatureField-customize-row label {
+    padding-bottom: 4px;
+    /* used this to align the label text with the input box, the elements were alligned but the positioning of the text itself was a bit too low.*/
+}
+
+#signature-preview {
+    width: 100%;
+    height: auto;
+    /* Allow height to adjust based on content */
+    box-sizing: border-box;
+    display: grid;
+    align-items: center;
+    /* Center vertically */
+    padding: 10px;
+    /* Add some padding for better appearance */
+}
+
+#signature-content {
+    width: 100%;
+    text-align: center;
+    /* Default to center horizontally */
 }
