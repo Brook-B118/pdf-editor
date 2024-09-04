@@ -93,8 +93,10 @@ function cssColorToRgb(color) {
 
 // Change this to download button
 console.log("save button clicked!")
-document.getElementById('save-button').addEventListener('click', () => {
+document.getElementById('save-button').addEventListener('click', async () => {
     changes = [];
+    existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+    pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
@@ -150,6 +152,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
     const pages = pdfDoc.getPages();
     // loop through each change
     changes.forEach(change => {
+        console.log("Applying change:", change);
         // for the current change, it's page is the pages index of overlayID which was saved as `overlay[i]`
         // Have to use match method here to get the number itself, the match method with the regular expression \d+ will return
         // the entire sequence of digits as a single string, not individual digits. So for "overlay111", it will return ["111"], not ["1", "1", "1"].
