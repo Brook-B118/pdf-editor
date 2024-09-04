@@ -17,7 +17,7 @@ document.querySelector(".show-element-blocks-bar").addEventListener("click", fun
         <div id="elements-container" class="elements-section">
             <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text Block</div>
             <div class="element-block new-shape-block" id="new-shape-block" data-type="shape-block">Shape Block</div>
-            <div class="element-block" data-type="text-block">Example Block</div>
+            <div class="element-block new-signatureField-block" id="new-signatureField-block" data-type="signatureField-block">Signature Block</div>
             <div class="element-block" data-type="text-block">Example Block</div>
         </div>
     `;
