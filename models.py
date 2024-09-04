@@ -61,6 +61,8 @@ class Element(db.Model):
     position_x = db.Column(db.Float, nullable=False)
     position_y = db.Column(db.Float, nullable=False)
     overlayId = db.Column(db.String, nullable=False)
+    background_color = db.Column(db.String, nullable=True)
+    border_color = db.Column(db.String, nullable=True)
 
 
 
