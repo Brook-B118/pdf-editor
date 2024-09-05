@@ -125,14 +125,14 @@ document.getElementById('save-button').addEventListener('click', async () => {
             console.log("border width:", borderWidth)
         } else if (element.classList.contains('signatureField')) {
             elementType = 'signatureField';
-            content = element.value; // Ensure you get the value directly from the element
+            content = DOMPurify.sanitize(element.value); // Ensure you get the value directly from the element
         }
 
         if (nestedInputElement) {
             if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
-                content = nestedInputElement.value;
+                content = DOMPurify.sanitize(nestedInputElement.value);
             } else {
-                content = nestedInputElement.value;
+                content = DOMPurify.sanitize(nestedInputElement.value);
             }
         }
 

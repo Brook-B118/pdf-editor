@@ -108,7 +108,6 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
             this.style.height = (this.scrollHeight + paddingAndBorder) + 'px';
             textboxContainer.style.height = (this.scrollHeight + paddingAndBorder + 4) + 'px';
         }
-
     };
 
     // Add event listeners for autosave
