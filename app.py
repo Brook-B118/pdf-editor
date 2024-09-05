@@ -73,7 +73,7 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit(): # shortcut for if request.method == "POST" and form.validate():
         username = bleach.clean(form.username.data)
-        password = bleach.clean(form.password.data)
+        password = form.password.data
 
         # Query database for username
         user = Users.query.filter_by(username=username).first() # SQL Alchemy: This will return the first Users object (i.e., row from the users table) where the username matches the username from the form.
@@ -118,7 +118,7 @@ def register():
     form = RegistrationForm(request.form)
     if form.validate_on_submit(): # shortcut for if request.method == "POST" and form.validate():
         username = bleach.clean(form.username.data)
-        password = bleach.clean(form.password.data)
+        password = form.password.data
   
         # Check if username already exists in database
         user = Users.query.filter_by(username=username).first()
