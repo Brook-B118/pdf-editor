@@ -63,7 +63,7 @@ class Element(db.Model):
     overlayId = db.Column(db.String, nullable=False)
     background_color = db.Column(db.String, nullable=True)
     border_color = db.Column(db.String, nullable=True)
-
+    font_family = db.Column(db.String, nullable=True)
 
 
 def update_timestamp(mapper, connection, target):

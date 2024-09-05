@@ -1,6 +1,6 @@
-let changes = [];
-let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
-let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
+// let changes = [];
+// let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+// let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
 const scale = 1.5;
 
@@ -23,6 +23,7 @@ export function autoSave(documentId) {
         let border_color = '';
         let elementType;
         let content = '';
+        let font_family = '';
 
         if (element.classList.contains('textboxContainer')) {
             elementType = 'textboxContainer';
@@ -33,11 +34,13 @@ export function autoSave(documentId) {
         } else if (element.classList.contains('signatureField')) {
             elementType = 'signatureField';
             content = element.value; // Ensure you get the value directly from the element
+            font_family = element.style.fontFamily;
         }
 
         if (nestedInputElement) {
             if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
                 content = nestedInputElement.value;
+                font_family = nestedInputElement.style.fontFamily;
             } else {
                 content = nestedInputElement.value;
             }
@@ -54,7 +57,8 @@ export function autoSave(documentId) {
             position_y: offsetY,
             overlayId: element.getAttribute('data-overlay-id'),
             background_color: background_color,
-            border_color: border_color
+            border_color: border_color,
+            font_family: font_family
         });
     });
 
@@ -98,9 +102,13 @@ function cssColorToRgb(color) {
 // Change this to download button
 console.log("save button clicked!")
 document.getElementById('save-button').addEventListener('click', async () => {
-    changes = [];
-    existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-    pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+    let changes = [];
+    let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+    let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+
+    const timesNewRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+    const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
@@ -114,6 +122,8 @@ document.getElementById('save-button').addEventListener('click', async () => {
         let fillColor = '';
         let borderWidth = '';
         let content = '';
+        let font_family = '';
+
 
         if (element.classList.contains('textboxContainer')) {
             elementType = 'textboxContainer';
@@ -126,14 +136,25 @@ document.getElementById('save-button').addEventListener('click', async () => {
         } else if (element.classList.contains('signatureField')) {
             elementType = 'signatureField';
             content = DOMPurify.sanitize(element.value); // Ensure you get the value directly from the element
+            font_family = element.style.fontFamily;
         }
 
         if (nestedInputElement) {
             if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
                 content = DOMPurify.sanitize(nestedInputElement.value);
+                font_family = nestedInputElement.style.fontFamily;
+                console.log("nestedtInputFontFamily:", font_family);
             } else {
                 content = DOMPurify.sanitize(nestedInputElement.value);
             }
+        }
+
+        let fontFamilyBytes;
+
+        if (font_family === 'Times New Roman') {
+            fontFamilyBytes = timesNewRomanFont;
+        } else if (font_family === 'Arial') {
+            fontFamilyBytes = helveticaFont;
         }
 
         changes.push({
@@ -146,7 +167,8 @@ document.getElementById('save-button').addEventListener('click', async () => {
             text: content,
             x: offsetX,
             y: offsetY,
-            overlayId: element.getAttribute('data-overlay-id')
+            overlayId: element.getAttribute('data-overlay-id'),
+            font_family: fontFamilyBytes
         });
         console.log("changes:", changes);
     });
@@ -181,12 +203,15 @@ async function applyChangesToPdf(pdfDoc, changes) {
         console.log("adjustedY:", adjustedY);
         console.log("change.x:", change.x);
         console.log("change.y:", change.y);
+        console.log("font:", change.font_family);
+
         if (change.type === 'textboxContainer' || change.type === 'signatureField') {
             page.drawText(change.text, {
                 x: change.x / scale,
                 y: (adjustedY / scale) - (change.element_height / scale),
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
+                font: change.font_family,
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.

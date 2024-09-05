@@ -331,11 +331,8 @@ textarea {
 }
 
 .signatureField-customize-header {
-    position: absolute;
-    top: 5px;
     align-self: center;
-    margin: 0px;
-    margin-bottom: 11px;
+    margin: 0;
 }
 
 .signatureField-customize-row {
@@ -362,8 +359,9 @@ textarea {
 }
 
 #signature-preview {
-    width: 100%;
+    width: 90%;
     height: auto;
+    min-height: 70px;
     /* Allow height to adjust based on content */
     box-sizing: border-box;
     display: grid;
@@ -371,6 +369,13 @@ textarea {
     /* Center vertically */
     padding: 10px;
     /* Add some padding for better appearance */
+    background-color: white;
+    margin-bottom: 10px;
+    color: black;
+    /* changes text color inside a div apparently */
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
 }
 
 #signature-content {
