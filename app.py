@@ -312,6 +312,7 @@ def autosave_elements():
         overlayId = element['overlayId']
         background_color = element['background_color']
         border_color = element['border_color']
+        font_family = element['font_family']
     
         if not all([element_id, type, position_x, position_y, overlayId]):
                 print("Incomplete element data")
@@ -337,6 +338,7 @@ def autosave_elements():
                 existing_element.overlayId = overlayId
                 existing_element.background_color = background_color
                 existing_element.border_color = border_color
+                existing_element.font_family = font_family
                 element_found = True
                 break
         
@@ -346,7 +348,7 @@ def autosave_elements():
                 # This is good for making multiple changes and then committing them all at once.
         else:
             print("No existing element found, creating a new one.")
-            new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width, height=height, position_x=position_x, position_y=position_y, overlayId=overlayId, background_color=background_color, border_color=border_color)
+            new_element = Element(user_id=user_id, document_id=document_id, element_id=element_id, type=type, content=content, width=width, height=height, position_x=position_x, position_y=position_y, overlayId=overlayId, background_color=background_color, border_color=border_color, font_family=font_family)
             if isinstance(new_element, Element):
                 db.session.add(new_element)
 
@@ -377,7 +379,8 @@ def get_changes():
         'position_y': change.position_y,
         'overlayId': change.overlayId,
         'background_color': change.background_color,
-        'border_color': change.border_color
+        'border_color': change.border_color,
+        'font_family': change.font_family
     } for change in changes]
     
     return jsonify({'changes': changes_data})

@@ -5,7 +5,6 @@
 const scale = 1.5;
 
 export function autoSave(documentId) {
-    console.log("started autosave")
     let currentChanges = {
         timestamp: new Date().toISOString(),
         data: []
@@ -14,7 +13,6 @@ export function autoSave(documentId) {
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
-        console.log(`Element ID: ${element.id}, X: ${offsetX}, Y: ${offsetY}`);
         const width = element.getBoundingClientRect().width;
         const height = element.getBoundingClientRect().height;
         const nestedInputElement = element.querySelector('input.textbox, textarea.textbox');
@@ -35,6 +33,7 @@ export function autoSave(documentId) {
             elementType = 'signatureField';
             content = element.value; // Ensure you get the value directly from the element
             font_family = element.style.fontFamily;
+            console.log("signatureField font family:", font_family);
         }
 
         if (nestedInputElement) {
@@ -100,20 +99,23 @@ function cssColorToRgb(color) {
 
 
 // Change this to download button
-console.log("save button clicked!")
 document.getElementById('save-button').addEventListener('click', async () => {
     let changes = [];
     let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+    const fontkit = window.fontkit;
+    const parisienneFontBytes = await fetch('/static/fonts/Parisienne-Regular.ttf').then(res => res.arrayBuffer());
     let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+    pdfDoc.registerFontkit(fontkit);
 
     const timesNewRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
     const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    const parisienneFont = await pdfDoc.embedFont(parisienneFontBytes);
+    console.log("new custom font:", parisienneFont);
 
     document.querySelectorAll('.newElement').forEach(element => {
         const offsetX = parseFloat(element.style.left);
         const offsetY = parseFloat(element.style.top);
         const width = element.getBoundingClientRect().width;
-        console.log("width", width)
         const height = element.getBoundingClientRect().height;
         const nestedInputElement = element.querySelector('input.textbox, textarea.textbox'); //querySelector checks if the element has any input elements within it (like the textbox inside the container)
 
@@ -132,18 +134,18 @@ document.getElementById('save-button').addEventListener('click', async () => {
             borderColor = cssColorToRgb(element.style.borderColor);
             fillColor = cssColorToRgb(element.style.backgroundColor);
             borderWidth = parseInt(element.style.borderWidth.match(/\d+/)[0]);
-            console.log("border width:", borderWidth)
         } else if (element.classList.contains('signatureField')) {
             elementType = 'signatureField';
             content = DOMPurify.sanitize(element.value); // Ensure you get the value directly from the element
+            console.log("Element:", element); // Debug statement
             font_family = element.style.fontFamily;
+            console.log("signatureField font family:", font_family);
         }
 
         if (nestedInputElement) {
             if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
                 content = DOMPurify.sanitize(nestedInputElement.value);
                 font_family = nestedInputElement.style.fontFamily;
-                console.log("nestedtInputFontFamily:", font_family);
             } else {
                 content = DOMPurify.sanitize(nestedInputElement.value);
             }
@@ -155,6 +157,8 @@ document.getElementById('save-button').addEventListener('click', async () => {
             fontFamilyBytes = timesNewRomanFont;
         } else if (font_family === 'Arial') {
             fontFamilyBytes = helveticaFont;
+        } else if (font_family === 'cursive') {
+            fontFamilyBytes = parisienneFont;
         }
 
         changes.push({
@@ -168,9 +172,8 @@ document.getElementById('save-button').addEventListener('click', async () => {
             x: offsetX,
             y: offsetY,
             overlayId: element.getAttribute('data-overlay-id'),
-            font_family: fontFamilyBytes
+            font_family: fontFamilyBytes,
         });
-        console.log("changes:", changes);
     });
     applyChangesToPdf(pdfDoc, changes);
     savePdf(pdfDoc);
@@ -196,14 +199,8 @@ async function applyChangesToPdf(pdfDoc, changes) {
         // To adjust for this, you might need to transform the y-coordinate. 
         // Subtract the y-coordinate from the page height:
         const pageWidth = (page.getWidth()) * scale;
-        console.log("page width:", pageWidth);
         const pageHeight = (page.getHeight()) * scale;
-        console.log("page height:", pageHeight);
         const adjustedY = pageHeight - change.y;
-        console.log("adjustedY:", adjustedY);
-        console.log("change.x:", change.x);
-        console.log("change.y:", change.y);
-        console.log("font:", change.font_family);
 
         if (change.type === 'textboxContainer' || change.type === 'signatureField') {
             page.drawText(change.text, {
@@ -215,7 +212,6 @@ async function applyChangesToPdf(pdfDoc, changes) {
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.
-            console.log("scale:", scale)
             page.drawRectangle({
                 x: change.x / scale,
                 y: (adjustedY / scale) - (change.element_height / scale),

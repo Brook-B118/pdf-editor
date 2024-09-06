@@ -383,3 +383,9 @@ textarea {
     text-align: center;
     /* Default to center horizontally */
 }
+
+
+@font-face {
+    font-family: 'Parisienne';
+    src: url('/static/fonts/Parisienne-Regular.ttf') format('truetype');
+}

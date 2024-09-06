@@ -1,3 +1,4 @@
+import { autoSave } from "./savingPDF.js";
 
 export function addTextboxEventListeners(textboxContainerId) {
     const container = document.getElementById(textboxContainerId);
@@ -17,8 +18,15 @@ export function addTextboxEventListeners(textboxContainerId) {
         textbox.style.textAlign = 'right';
     });
 
+    const fontSelector = document.getElementById('font-selector');
+    fontSelector.value = window.getComputedStyle(textbox).fontFamily;
+
     document.getElementById('font-selector').addEventListener('change', function (event) {
+        textbox.dataset.initialFontFamily = textbox.style.fontFamily;
         textbox.style.fontFamily = event.target.value;
+        if (textbox.style.fontFamily !== textbox.dataset.initialFontFamily) {
+            autoSave(documentId);
+        }
     });
 
     const fontSizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
