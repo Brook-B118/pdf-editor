@@ -77,10 +77,10 @@ displayPDF(url).then(() => {
 function createTextBoxWithSavedData(change) {
     console.log("change:", change);
     // Create the textbox element
-    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId);
+    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family);
     // Reposition the element
-    let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
-    console.log("element in createTextBoxWithSavedData():", element);
+    // let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
+    // console.log("element in createTextBoxWithSavedData():", element);
 }
 
 function createShapeWithSavedData(change) {
@@ -88,7 +88,7 @@ function createShapeWithSavedData(change) {
 }
 
 function createSignatureFieldWithSavedData(change) {
-    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId)
+    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family)
 }
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY

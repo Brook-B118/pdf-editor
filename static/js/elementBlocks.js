@@ -43,7 +43,7 @@ interact('.resizable').resizable({
 
 let text_box_counter = 0;
 
-export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId) {
+export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -111,6 +111,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     };
 
     // Add event listeners for autosave
+
     textbox.addEventListener("focus", function () {
         textbox.dataset.initialValue = textbox.value;
     });
@@ -130,6 +131,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         textbox.style.left = `${x}px`;
         textbox.style.top = `${y}px`;
         textbox.value = text;
+        textbox.style.fontFamily = font_family;
     }
 
     textboxContainer.appendChild(textbox);
@@ -353,7 +355,7 @@ interact('.resizable-signatureField').resizable({
 
 let signatureField_counter = 0;
 
-export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId) {
+export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId, font_family) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -365,7 +367,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     signatureField.setAttribute("draggable", "true");
     signatureField.style.position = 'absolute';
     signatureField.setAttribute("tabindex", "0");
-    signatureField.style.fontFamily = 'Cursive';
+    signatureField.style.fontFamily = 'Parisienne';
     signatureField.style.fontSize = '24px'
     signatureField.setAttribute("readonly", true);
     signatureField.type = 'text';
@@ -386,6 +388,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
         signatureField.style.left = `${x}px`;
         signatureField.style.top = `${y}px`;
         signatureField.value = text;
+        signatureField.style.fontFamily = font_family;
         // signatureField.style.backgroundColor = background_color;
         // signatureField.style.borderColor = border_color;
     }
@@ -444,6 +447,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
                 <select id="font-selector" class="signatureField-customize-option">
                     <option value="Arial">Arial</option>
                     <option value="Times New Roman">Times New Roman</option>
+                    <option value="Parisienne">Parisienne</option>
                     <!-- Add more font options here -->
                 </select>
                 <select id="font-size-selector" class="signatureField-customize-option">

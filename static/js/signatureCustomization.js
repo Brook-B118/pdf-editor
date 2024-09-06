@@ -27,6 +27,7 @@ export function addsignatureFieldEventListeners(signatureFieldId) {
         signatureField.value = signatureInput.value;
         signatureField.style.textAlign = signaturePreview.style.textAlign;
         signatureField.style.fontFamily = signaturePreview.style.fontFamily;
+        autoSave(documentId);
     })
 
     document.getElementById('align-left').addEventListener('click', function () {
@@ -41,9 +42,14 @@ export function addsignatureFieldEventListeners(signatureFieldId) {
         signaturePreview.style.textAlign = 'right';
     });
 
+    const fontSelector = document.getElementById('font-selector');
+    fontSelector.value = window.getComputedStyle(signaturePreview).fontFamily;
+
     document.getElementById('font-selector').addEventListener('change', function (event) {
+        signaturePreview.dataset.initialFontFamily = signaturePreview.style.fontFamily;
         signaturePreview.style.fontFamily = event.target.value;
     });
+
 
     const fontSizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
     const fontSizeSelector = document.getElementById('font-size-selector');
