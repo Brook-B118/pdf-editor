@@ -4,82 +4,88 @@
 
 const scale = 1.5;
 
+let saveQueue = Promise.resolve();
+
 export function autoSave(documentId) {
-    let currentChanges = {
-        timestamp: new Date().toISOString(),
-        data: []
-    };
+    // Add the autosave function to the queue by attaching .then
+    saveQueue = saveQueue.then(async () => {
+        let currentChanges = {
+            timestamp: new Date().toISOString(),
+            data: []
+        };
 
-    document.querySelectorAll('.newElement').forEach(element => {
-        const offsetX = parseFloat(element.style.left);
-        const offsetY = parseFloat(element.style.top);
-        const width = element.getBoundingClientRect().width;
-        const height = element.getBoundingClientRect().height;
-        const nestedInputElement = element.querySelector('input.textbox, textarea.textbox');
-        let elementId = element.id;
-        let background_color = '';
-        let border_color = '';
-        let elementType;
-        let content = '';
-        let font_family = '';
+        document.querySelectorAll('.newElement').forEach(element => {
+            const offsetX = parseFloat(element.style.left);
+            const offsetY = parseFloat(element.style.top);
+            const width = element.getBoundingClientRect().width;
+            const height = element.getBoundingClientRect().height;
+            const nestedInputElement = element.querySelector('input.textbox, textarea.textbox');
+            let elementId = element.id;
+            let background_color = '';
+            let border_color = '';
+            let elementType;
+            let content = '';
+            let font_family = '';
 
-        if (element.classList.contains('textboxContainer')) {
-            elementType = 'textboxContainer';
-        } else if (element.classList.contains('shape')) {
-            elementType = 'shape';
-            background_color = element.style.backgroundColor;
-            border_color = element.style.borderColor;
-        } else if (element.classList.contains('signatureField')) {
-            elementType = 'signatureField';
-            content = element.value; // Ensure you get the value directly from the element
-            font_family = element.style.fontFamily;
-            console.log("signatureField font family:", font_family);
-        }
-
-        if (nestedInputElement) {
-            if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
-                content = nestedInputElement.value;
-                font_family = nestedInputElement.style.fontFamily;
-            } else {
-                content = nestedInputElement.value;
+            if (element.classList.contains('textboxContainer')) {
+                elementType = 'textboxContainer';
+            } else if (element.classList.contains('shape')) {
+                elementType = 'shape';
+                background_color = element.style.backgroundColor;
+                border_color = element.style.borderColor;
+            } else if (element.classList.contains('signatureField')) {
+                elementType = 'signatureField';
+                content = element.value;
+                font_family = element.style.fontFamily;
             }
+
+            if (nestedInputElement) {
+                if (nestedInputElement.tagName.toLocaleLowerCase() === 'textarea') {
+                    content = nestedInputElement.value;
+                    font_family = nestedInputElement.style.fontFamily;
+                } else {
+                    content = nestedInputElement.value;
+                }
+            }
+
+            currentChanges.data.push({
+                document_id: documentId,
+                element_id: elementId,
+                type: elementType,
+                content: content,
+                element_width: width,
+                element_height: height,
+                position_x: offsetX,
+                position_y: offsetY,
+                overlayId: element.getAttribute('data-overlay-id'),
+                background_color: background_color,
+                border_color: border_color,
+                font_family: font_family
+            });
+
+        });
+
+
+        try {
+            // Use async/await to handle the fetch request
+            let response = await fetch('/autosave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    document_id: documentId,
+                    changes: currentChanges.data
+                })
+            });
+            let data = await response.json();
+            console.log('Success:', data);
+        } catch (error) {
+            console.error('Error:', error);
         }
 
-        currentChanges.data.push({
-            document_id: documentId,
-            element_id: elementId,
-            type: elementType,
-            content: content,
-            element_width: width,
-            element_height: height,
-            position_x: offsetX,
-            position_y: offsetY,
-            overlayId: element.getAttribute('data-overlay-id'),
-            background_color: background_color,
-            border_color: border_color,
-            font_family: font_family
-        });
     });
-
-    // Send data to the server
-    fetch('/autosave', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Includes CSRF token 
-        },
-        body: JSON.stringify({
-            document_id: documentId,
-            changes: currentChanges.data
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
 }
 
 // Need this to put the css color into values that pdf-lib expects
