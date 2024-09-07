@@ -108,10 +108,10 @@ function cssColorToRgb(color) {
 document.getElementById('save-button').addEventListener('click', async () => {
     let changes = [];
     let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-    const fontkit = window.fontkit;
-    const parisienneFontBytes = await fetch('/static/fonts/Parisienne-Regular.ttf').then(res => res.arrayBuffer());
     let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+    const fontkit = window.fontkit;
     pdfDoc.registerFontkit(fontkit);
+    const parisienneFontBytes = await fetch('/static/fonts/Parisienne-Regular.ttf').then(res => res.arrayBuffer());
 
     const timesNewRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
     const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
