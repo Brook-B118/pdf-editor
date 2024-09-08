@@ -3,6 +3,9 @@
 // let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
 
 const scale = 1.5;
+const dpi = 96;
+const padding = 2; // padding in pixels
+const border = 4; // border in pixels
 
 let saveQueue = Promise.resolve();
 
@@ -119,10 +122,10 @@ document.getElementById('save-button').addEventListener('click', async () => {
     console.log("new custom font:", parisienneFont);
 
     document.querySelectorAll('.newElement').forEach(element => {
-        const offsetX = parseFloat(element.style.left);
-        const offsetY = parseFloat(element.style.top);
-        const width = element.getBoundingClientRect().width;
-        const height = element.getBoundingClientRect().height;
+        const offsetX = (parseFloat(element.style.left) + 2 * (padding - border)) * (72 / dpi);
+        const offsetY = (parseFloat(element.style.top) + 2 * (padding + border + 1)) * (72 / dpi); // the + 1 is too account for the text being a bit too high, consider figuring out lineHeight and implementing it so this can be dynamic.
+        const width = (element.getBoundingClientRect().width + 2 * (padding - border)) * (72 / dpi);
+        const height = (element.getBoundingClientRect().height + 2 * (padding + border + 1)) * (72 / dpi); // the 2 * padding and border is to account for the padding and border top and bottom being the same.
         const nestedInputElement = element.querySelector('input.textbox, textarea.textbox'); //querySelector checks if the element has any input elements within it (like the textbox inside the container)
 
         let elementType = '';
@@ -201,17 +204,23 @@ async function applyChangesToPdf(pdfDoc, changes) {
 
         // PDF coordinates typically start from the bottom-left corner, 
         // whereas many web-based coordinate systems start from the top-left.
+        const firstPage = pages[0];
+        console.log("first page height:", firstPage.getHeight());
 
         // To adjust for this, you might need to transform the y-coordinate. 
         // Subtract the y-coordinate from the page height:
-        const pageWidth = (page.getWidth()) * scale;
-        const pageHeight = (page.getHeight()) * scale;
-        const adjustedY = pageHeight - change.y;
+        const pageWidth = (page.getWidth()) * scale; // for bug fixing
+        const pageHeightBeforeScale = (page.getHeight()); // for bug fixing
+        console.log('pageHeight before scale:', pageHeightBeforeScale) // for bug fixing
+        const pageHeight = (page.getHeight());
+        console.log('pageHeight:', pageHeight); // for bug fixing
+        console.log('change.y:', change.y); // for bug fixing
+        const adjustedY = pageHeight - (change.y);
 
         if (change.type === 'textboxContainer' || change.type === 'signatureField') {
             page.drawText(change.text, {
-                x: change.x / scale,
-                y: (adjustedY / scale) - (change.element_height / scale),
+                x: change.x,
+                y: adjustedY,
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
