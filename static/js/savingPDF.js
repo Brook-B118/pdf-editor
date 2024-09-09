@@ -4,8 +4,9 @@
 
 const scale = 1.5;
 const dpi = 96;
-const padding = 2; // padding in pixels
-const border = 4; // border in pixels
+const padding = 2; // padding in pixels for the textarea element
+const border = 2; // border in pixels for the textbox container element (the border for the textarea is irrelevant since it is hidden behind the border of the container)
+const lineHeight = 1; // lineHeight in pixels for the textarea element (this ends up being that space between the top of the container and the top of the text inside);
 
 let saveQueue = Promise.resolve();
 
@@ -122,9 +123,9 @@ document.getElementById('save-button').addEventListener('click', async () => {
     console.log("new custom font:", parisienneFont);
 
     document.querySelectorAll('.newElement').forEach(element => {
-        const offsetX = (parseFloat(element.style.left) + 2 * (padding - border)) * (72 / dpi);
-        const offsetY = (parseFloat(element.style.top) + 2 * (padding + border + 1)) * (72 / dpi); // the + 1 is too account for the text being a bit too high, consider figuring out lineHeight and implementing it so this can be dynamic.
-        const width = (element.getBoundingClientRect().width + 2 * (padding - border)) * (72 / dpi);
+        const offsetX = (parseFloat(element.style.left) + 2 * (padding - border - lineHeight)) * (72 / dpi);
+        const offsetY = (parseFloat(element.style.top) + 2 * (padding + border + lineHeight)) * (72 / dpi); // the + 1 is too account for the text being a bit too high, consider figuring out lineHeight and implementing it so this can be dynamic.
+        const width = (element.getBoundingClientRect().width + 2 * (padding - border - 1)) * (72 / dpi);
         const height = (element.getBoundingClientRect().height + 2 * (padding + border + 1)) * (72 / dpi); // the 2 * padding and border is to account for the padding and border top and bottom being the same.
         const nestedInputElement = element.querySelector('input.textbox, textarea.textbox'); //querySelector checks if the element has any input elements within it (like the textbox inside the container)
 
@@ -217,13 +218,23 @@ async function applyChangesToPdf(pdfDoc, changes) {
         console.log('change.y:', change.y); // for bug fixing
         const adjustedY = pageHeight - (change.y);
 
-        if (change.type === 'textboxContainer' || change.type === 'signatureField') {
+        if (change.type === 'textboxContainer') {
             page.drawText(change.text, {
                 x: change.x,
                 y: adjustedY,
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight
+            });
+        } else if (change.type === 'signatureField') {
+            page.drawText(change.text, {
+                x: change.x,
+                y: adjustedY,
+                size: 24,
+                color: PDFLib.rgb(0, 0, 0),
+                font: change.font_family,
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.
