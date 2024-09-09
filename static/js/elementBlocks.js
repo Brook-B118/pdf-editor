@@ -87,6 +87,9 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textbox.classList.add('resizable', 'textbox');
     textbox.style.width = '100%';
     textbox.style.height = '100%';
+    textbox.style.lineHeight = '1'; // The line-height property controls the amount of space between lines of text. When you set it to a fixed pixel value like 2px, it makes the space between lines very small, causing overlap. Using a relative value like 1.5 means the line height will be 1.5 times the font size, which maintains readability and proper spacing.
+    textbox.style.textAlign = "left";
+    textbox.style.verticalAlign = "top";
     textbox.style.boxSizing = 'border-box';
     textbox.classList.add("readonly");
     textbox.style.overflow = 'hidden';
@@ -369,6 +372,8 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     signatureField.setAttribute("tabindex", "0");
     signatureField.style.fontFamily = 'Parisienne';
     signatureField.style.fontSize = '24px'
+    signatureField.style.textAlign = "left";
+    signatureField.style.verticalAlign = "top";
     signatureField.setAttribute("readonly", true);
     signatureField.type = 'text';
     // signatureField.style.border = 'solid';
