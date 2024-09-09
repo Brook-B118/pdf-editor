@@ -140,7 +140,7 @@ document.getElementById('save-button').addEventListener('click', async () => {
             // The textbox (textarea) has box-sizing: border-box; which means its border and padding are included in its total size. It also takes up 100% of the containers width, which means that the text inside it must be the distance of padding + border from the left of the container. 
             offsetX = (parseFloat(element.style.left) - (padding + border)) * (72 / dpi);
             // In order to get the position of the top of the text, we needed to set a lineHeight which not only changes the space from the top of the textbox to the first line of text, but also the space between the following lines of text. If we add padding + border + lineHeight, we get the accurate position of the text compared to its container.
-            offsetY = (parseFloat(element.style.top) + (padding + border + lineHeight)) * (72 / dpi);
+            offsetY = (parseFloat(element.style.top) + 2 * (padding + border) + lineHeight) * (72 / dpi);
             width = (element.getBoundingClientRect().width + 2 * (padding - border - 1)) * (72 / dpi);
             height = (element.getBoundingClientRect().height + 2 * (padding + border + 1)) * (72 / dpi); // the 2 * padding and border is to account for the padding and border top and bottom being the same.
             elementType = 'textboxContainer';
@@ -241,24 +241,37 @@ async function applyChangesToPdf(pdfDoc, changes) {
 
         // PDF coordinates typically start from the bottom-left corner, 
         // whereas many web-based coordinate systems start from the top-left.
-        const firstPage = pages[0];
-        console.log("first page height:", firstPage.getHeight());
-
         // To adjust for this, you might need to transform the y-coordinate. 
         // Subtract the y-coordinate from the page height:
-        const pageWidth = (page.getWidth()) * scale; // for bug fixing
-        const pageHeightBeforeScale = (page.getHeight()); // for bug fixing
-        console.log('pageHeight before scale:', pageHeightBeforeScale) // for bug fixing
+        const pageWidth = (page.getWidth());
+        console.log("pageWidth:", pageWidth)
         const pageHeight = (page.getHeight());
-        console.log('pageHeight:', pageHeight); // for bug fixing
-        console.log('change.y:', change.y); // for bug fixing
+        console.log("pageHeight:", pageHeight);
+        console.log("change.x:", change.x);
+        console.log("change.y:", change.y);
+        console.log("change.element_width:", change.element_width);
+        console.log("change.element_height:", change.element_height);
+        if (change.x + change.element_width > pageWidth) {
+            change.x = pageWidth - change.element_width;
+            console.log("new change.x:", change.x);
+        } else if (change.x < 10) {
+            change.x = 0;
+        }
+
+        if (change.y + change.element_height > pageHeight) {
+            change.y = pageHeight - change.element_height;
+            console.log("new change.y:", change.y);
+        } else if (change.y < 10) {
+            change.y = 12; // font size plus a bit maybe
+        }
+
         const adjustedY = pageHeight - (change.y);
 
         if (change.type === 'textboxContainer') {
             page.drawText(change.text, {
                 x: change.x,
                 y: adjustedY,
-                size: 9,
+                size: 10,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
                 lineHeight: 12, // set this to the size of the font for 1x lineHeight
