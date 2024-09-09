@@ -371,9 +371,9 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     signatureField.style.position = 'absolute';
     signatureField.setAttribute("tabindex", "0");
     signatureField.style.fontFamily = 'Parisienne';
-    signatureField.style.fontSize = '24px'
-    signatureField.style.textAlign = "left";
-    signatureField.style.verticalAlign = "top";
+    signatureField.style.fontSize = '24px';
+    signatureField.style.textAlign = 'center';
+    signatureField.style.padding = '2px';
     signatureField.setAttribute("readonly", true);
     signatureField.type = 'text';
     // signatureField.style.border = 'solid';
