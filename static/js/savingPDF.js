@@ -138,9 +138,9 @@ document.getElementById('save-button').addEventListener('click', async () => {
 
         if (element.classList.contains('textboxContainer')) {
             // The textbox (textarea) has box-sizing: border-box; which means its border and padding are included in its total size. It also takes up 100% of the containers width, which means that the text inside it must be the distance of padding + border from the left of the container. 
-            offsetX = (parseFloat(element.style.left) - (padding + border)) * (72 / dpi);
+            offsetX = (parseFloat(element.style.left) - (2 * (padding + border))) * (72 / dpi);
             // In order to get the position of the top of the text, we needed to set a lineHeight which not only changes the space from the top of the textbox to the first line of text, but also the space between the following lines of text. If we add padding + border + lineHeight, we get the accurate position of the text compared to its container.
-            offsetY = (parseFloat(element.style.top) + 2 * (padding + border) + lineHeight) * (72 / dpi);
+            offsetY = (parseFloat(element.style.top) + (2 * (padding + border)) + lineHeight) * (72 / dpi);
             width = (element.getBoundingClientRect().width + 2 * (padding - border - 1)) * (72 / dpi);
             height = (element.getBoundingClientRect().height + 2 * (padding + border + 1)) * (72 / dpi); // the 2 * padding and border is to account for the padding and border top and bottom being the same.
             elementType = 'textboxContainer';
@@ -274,7 +274,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
                 size: 10,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'signatureField') {
             page.drawText(change.text, {
@@ -283,7 +283,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.
