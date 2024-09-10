@@ -253,7 +253,7 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
     shape.setAttribute("draggable", "true");
     shape.style.position = 'absolute';
     shape.setAttribute("tabindex", "0");
-    shape.style.border = 'solid';
+    shape.style.border = 'solid red';
     shape.style.borderWidth = '2px';
 
     if (e) {
@@ -262,7 +262,6 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
         shape.style.left = `${e.clientX - overlayRect.left}px`;
         shape.style.top = `${e.clientY - overlayRect.top}px`;
         shape.style.backgroundColor = 'blue';
-        shape.style.border = 'solid red';
     } else {
         shape.style.width = `${width}px`;
         shape.style.height = `${height}px`;
