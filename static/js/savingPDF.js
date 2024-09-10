@@ -6,6 +6,7 @@ const scale = 1.5;
 const dpi = 96;
 const padding = 2; // padding in pixels for the textarea element
 const border = 2; // border in pixels for the textbox container element (the border for the textarea is irrelevant since it is hidden behind the border of the container)
+const fontSize = 16;
 const lineHeight = 1; // lineHeight in pixels for the textarea element (this ends up being that space between the top of the container and the top of the text inside);
 
 let saveQueue = Promise.resolve();
@@ -137,22 +138,25 @@ document.getElementById('save-button').addEventListener('click', async () => {
 
 
         if (element.classList.contains('textboxContainer')) {
-            // The textbox (textarea) has box-sizing: border-box; which means its border and padding are included in its total size. It also takes up 100% of the containers width, which means that the text inside it must be the distance of padding + border from the left of the container. 
-            offsetX = (parseFloat(element.style.left) - (padding + border)) * (72 / dpi);
+            // The textbox (textarea) has 2px border and 2px padding and is inside a container with a 2px border. PDF-Lib origin is bottom-left corner while our editor is top-left corner. When we give a y value to PDF-lib drawText function, we are giving the "baseline" of the text. For offsetY we need to add these values as well as the lineheight and the font size that is used to move the baseline up since the value for the top of our element is the value for the bottom on pdf-lib's end.
+            // For the offsetX value, we need to add the padding and the two borders one time each because we are only worried about the space between the left of the container and the left of the text.
+            offsetX = (parseFloat(element.style.left) + padding + border + border) / scale; // I think this makes more sense, the value becomes 6 which adds up to the 2px border on the container, 2px border on the textarea, and 2px padding in the textarea.
             // In order to get the position of the top of the text, we needed to set a lineHeight which not only changes the space from the top of the textbox to the first line of text, but also the space between the following lines of text. If we add padding + border + lineHeight, we get the accurate position of the text compared to its container.
-            offsetY = (parseFloat(element.style.top) + 2 * (padding + border) + lineHeight) * (72 / dpi);
-            width = (element.getBoundingClientRect().width + 2 * (padding - border - 1)) * (72 / dpi);
-            height = (element.getBoundingClientRect().height + 2 * (padding + border + 1)) * (72 / dpi); // the 2 * padding and border is to account for the padding and border top and bottom being the same.
+            offsetY = (parseFloat(element.style.top) + fontSize + lineHeight + padding + border + border) / scale; // This also makes more sense, two 2px borders and 2px padding and 1px lineheight.
+            width = ((element.getBoundingClientRect().width)) / scale;
+            height = ((element.getBoundingClientRect().height)) / scale; // the 2 * padding and border is to account for the padding and border top and bottom being the same. The double lineHeight is to consider the top and bottom space from lineHeight.
             elementType = 'textboxContainer';
         } else if (element.classList.contains('shape')) {
-            offsetX = (parseFloat(element.style.left) * (72 / dpi));
-            offsetY = (parseFloat(element.style.top) * (72 / dpi));
-            width = (element.getBoundingClientRect().width) * (72 / dpi);
-            height = (element.getBoundingClientRect().height) * (72 / dpi);
+            offsetX = (parseFloat(element.style.left) / scale);
+            offsetY = (parseFloat(element.style.top) / scale);
+            width = ((element.getBoundingClientRect().width) / scale);
+            console.log("boundingClientRect().width:", element.getBoundingClientRect().width);
+            height = ((element.getBoundingClientRect().height) / scale);
+            console.log("boundingClientRect().height:", element.getBoundingClientRect().height);
             elementType = 'shape';
             borderColor = cssColorToRgb(element.style.borderColor);
             fillColor = cssColorToRgb(element.style.backgroundColor);
-            borderWidth = parseInt(element.style.borderWidth.match(/\d+/)[0]);
+            borderWidth = parseInt(element.style.borderWidth.match(/\d+/)[0]) / scale;
         } else if (element.classList.contains('signatureField')) {
             content = DOMPurify.sanitize(element.value); // Ensure you get the value directly from the element
             // in order to center text in a input field for pdf-lib to understand
@@ -172,16 +176,16 @@ document.getElementById('save-button').addEventListener('click', async () => {
             let halvedTextWidth = textWidth / 2;
             console.log("halvedTextWidth:", halvedTextWidth);
 
-            width = (element.getBoundingClientRect().width + 2 * (padding - border)) * (72 / dpi);
-            height = (element.getBoundingClientRect().height + 2 * (padding + border)) * (72 / dpi);
+            width = (element.getBoundingClientRect().width + 2 * (padding - border)) / scale;
+            height = (element.getBoundingClientRect().height + 2 * (padding + border)) / scale;
             // step 5: add the amount of pixels it would take to get to middle of field width and then subtract the half of textWidth
-            offsetX = ((parseFloat(element.style.left)) + (halvedFieldWidth - halvedTextWidth) - (2 * (padding + border))) * (72 / dpi); // take offsetX and add textwidth(pixel measurement of the text) then divide by 4 since the gap to the left and right would be about 1/4th of the pixel length of the text. Include subtracting the border and padding (multiplied by 2 for left and right sides) as well as the x gutter which was given by bootstrap by default. It has a value of 1.5 rem.
+            offsetX = ((parseFloat(element.style.left)) + (halvedFieldWidth - halvedTextWidth) - (2 * (padding + border))) / scale;
             console.log("signature offsetX:", offsetX);
             // In order to fix the height, I need to find the textHeight and add it back to the offset or else the top of the text will be written below the baseline (height/2)
             let metrics = context.measureText(content);
             let textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
             console.log("textHeight:", textHeight);
-            offsetY = (parseFloat(element.style.top) + (((element.getBoundingClientRect().height - textHeight) / 2)) + (2 * (padding + border))) * (72 / dpi);
+            offsetY = (parseFloat(element.style.top) + (((element.getBoundingClientRect().height - textHeight) / 2)) + (2 * (padding + border))) / scale;
             elementType = 'signatureField';
             console.log("Element:", element); // Debug statement
             font_family = element.style.fontFamily;
@@ -251,21 +255,26 @@ async function applyChangesToPdf(pdfDoc, changes) {
         console.log("change.y:", change.y);
         console.log("change.element_width:", change.element_width);
         console.log("change.element_height:", change.element_height);
-        if (change.x + change.element_width > pageWidth) {
-            change.x = pageWidth - change.element_width;
-            console.log("new change.x:", change.x);
-        } else if (change.x < 10) {
-            change.x = 0;
-        }
 
-        if (change.y + change.element_height > pageHeight) {
-            change.y = pageHeight - change.element_height;
-            console.log("new change.y:", change.y);
-        } else if (change.y < 10) {
-            change.y = 12; // font size plus a bit maybe
-        }
+        // boundaries
+        // if (change.x + change.element_width > pageWidth) {
+        //     change.x = pageWidth - change.element_width;
+        //     console.log("new change.x:", change.x);
+        // } else if (change.x < 0) {
+        //     change.x = 3;
+        // }
+
+        // if (change.y > pageHeight) {
+        //     change.y = pageHeight - change.element_height;
+        //     console.log("new change.y:", change.y);
+        // } else if (change.type === 'textboxContainer' && change.y < 12) {
+        //     change.y = 12; // font size plus a bit maybe
+        // } else if (change.type === 'signatureField' || change.type === 'shape' && change.y < 0) {
+        //     change.y = 1;
+        // }
 
         const adjustedY = pageHeight - (change.y);
+        console.log("adjustedY:", adjustedY);
 
         if (change.type === 'textboxContainer') {
             page.drawText(change.text, {
@@ -274,7 +283,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
                 size: 10,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'signatureField') {
             page.drawText(change.text, {
@@ -283,18 +292,18 @@ async function applyChangesToPdf(pdfDoc, changes) {
                 size: 12,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight
+                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.
             page.drawRectangle({
-                x: change.x / scale,
-                y: (adjustedY / scale) - (change.element_height / scale),
-                width: change.element_width / scale,
-                height: change.element_height / scale,
+                x: change.x,
+                y: (adjustedY - change.element_height),
+                width: change.element_width,
+                height: change.element_height,
                 color: PDFLib.rgb(change.fillColor.r, change.fillColor.g, change.fillColor.b),
                 borderColor: PDFLib.rgb(change.borderColor.r, change.borderColor.g, change.borderColor.b),
-                borderWidth: change.borderWidth / scale,
+                borderWidth: change.borderWidth,
             });
         }
     });
