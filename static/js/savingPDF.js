@@ -207,7 +207,7 @@ document.getElementById('save-button').addEventListener('click', async () => {
             fontFamilyBytes = timesNewRomanFont;
         } else if (font_family === 'Arial') {
             fontFamilyBytes = helveticaFont;
-        } else if (font_family === 'cursive') {
+        } else if (font_family === 'Parisienne') {
             fontFamilyBytes = parisienneFont;
         }
 
@@ -283,7 +283,7 @@ async function applyChangesToPdf(pdfDoc, changes) {
                 size: 10,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
+                lineHeight: 10, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'signatureField') {
             page.drawText(change.text, {
