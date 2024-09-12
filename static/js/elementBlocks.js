@@ -182,9 +182,9 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         document.querySelector(".sidepanel").innerHTML = `
           <div id="text-box-customize-container" class="textbox-customize-section">
               <p class="text-box-customize-header">Textbox Customization here</p>
-              <button id="align-left" class="text-box-customize-option align-option">Left</button>
-              <button id="align-center" class="text-box-customize-option align-option">Center</button>
-              <button id="align-right" class="text-box-customize-option align-option">Right</button>
+              <button id="align-left" class="text-box-customize-option align-option" disabled>Left</button>
+              <button id="align-center" class="text-box-customize-option align-option" disabled>Center</button>
+              <button id="align-right" class="text-box-customize-option align-option" disabled>Right</button>
               <select id="font-selector" class="text-box-customize-option">
                 <option value="Arial">Arial</option>
                 <option value="Times New Roman">Times New Roman</option>
@@ -443,9 +443,9 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
                 <button id="submit-signature" class="signatureField-customize-option">Sign</button>
             </div>
             <div class="signatureField-customize-row">
-                <button id="align-left" class="signatureField-customize-option align-option">Left</button>
-                <button id="align-center" class="signatureField-customize-option align-option">Center</button>
-                <button id="align-right" class="signatureField-customize-option align-option">Right</button>
+                <button id="align-left" class="signatureField-customize-option align-option" disabled>Left</button>
+                <button id="align-center" class="signatureField-customize-option align-option" disabled>Center</button>
+                <button id="align-right" class="signatureField-customize-option align-option" disabled>Right</button>
             </div>
             <div class="signatureField-customize-row">
                 <select id="font-selector" class="signatureField-customize-option">
