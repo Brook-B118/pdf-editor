@@ -43,7 +43,7 @@ interact('.resizable').resizable({
 
 let text_box_counter = 0;
 
-export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family) {
+export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -130,11 +130,15 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         textbox.style.left = `${e.clientX - overlayRect.left}px`;
         textbox.style.top = `${e.clientY - overlayRect.top}px`;
         textbox.value = draggableElement.textContent;
+        textbox.style.fontFamily = 'Arial';
+        textbox.style.fontSize = `${16}px`;
     } else {
         textbox.style.left = `${x}px`;
         textbox.style.top = `${y}px`;
         textbox.value = text;
         textbox.style.fontFamily = font_family;
+        textbox.style.fontSize = `${font_size}px`;
+
     }
 
     textboxContainer.appendChild(textbox);
@@ -357,7 +361,7 @@ interact('.resizable-signatureField').resizable({
 
 let signatureField_counter = 0;
 
-export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId, font_family) {
+export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -369,8 +373,6 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     signatureField.setAttribute("draggable", "true");
     signatureField.style.position = 'absolute';
     signatureField.setAttribute("tabindex", "0");
-    signatureField.style.fontFamily = 'Parisienne';
-    signatureField.style.fontSize = '24px';
     signatureField.style.textAlign = 'center';
     signatureField.style.padding = '2px';
     signatureField.setAttribute("readonly", true);
@@ -384,6 +386,8 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
         signatureField.style.left = `${e.clientX - overlayRect.left}px`;
         signatureField.style.top = `${e.clientY - overlayRect.top}px`;
         signatureField.value = draggableElement.textContent;
+        signatureField.style.fontFamily = 'Parisienne';
+        signatureField.style.fontSize = '24px';
         // signatureField.style.backgroundColor = 'blue';
         // signatureField.style.border = 'solid red';
     } else {
@@ -393,6 +397,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
         signatureField.style.top = `${y}px`;
         signatureField.value = text;
         signatureField.style.fontFamily = font_family;
+        signatureField.style.fontSize = `${font_size}px`;
         // signatureField.style.backgroundColor = background_color;
         // signatureField.style.borderColor = border_color;
     }

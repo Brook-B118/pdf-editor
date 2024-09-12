@@ -27,6 +27,7 @@ export function addsignatureFieldEventListeners(signatureFieldId) {
         signatureField.value = signatureInput.value;
         signatureField.style.textAlign = signaturePreview.style.textAlign;
         signatureField.style.fontFamily = signaturePreview.style.fontFamily;
+        signatureField.style.fontSize = signaturePreview.style.fontSize;
         autoSave(documentId);
     })
 
@@ -61,7 +62,7 @@ export function addsignatureFieldEventListeners(signatureFieldId) {
         fontSizeSelector.appendChild(option);
     });
 
-    fontSizeSelector.value = parseInt(window.getComputedStyle(signaturePreview).fontSize);
+    fontSizeSelector.value = parseInt(signaturePreview.style.fontSize);
 
     fontSizeSelector.addEventListener('change', function (event) {
         signaturePreview.style.fontSize = `${event.target.value}px`; // the fontSize expects a value with units like 'px'.

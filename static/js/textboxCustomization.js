@@ -43,6 +43,7 @@ export function addTextboxEventListeners(textboxContainerId) {
 
     fontSizeSelector.addEventListener('change', function (event) {
         textbox.style.fontSize = `${event.target.value}px`; // the fontSize expects a value with units like 'px'.
+        autoSave(documentId);
     });
 
     document.getElementById('delete-element').addEventListener('click', function () {

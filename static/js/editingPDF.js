@@ -26,11 +26,11 @@ function addEventListeners() {
             console.log("draggable element =", draggableElement)
 
             if (draggableElement && draggableElement.id === 'new-text-box-block') {
-                createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
+                createTextBox(e, null, null, null, null, draggableElement, null, `overlay-${i}`, null, null);
             } else if (draggableElement && draggableElement.id === 'new-shape-block') {
                 createShape(e, null, null, null, null, `overlay-${i}`);
             } else if (draggableElement && draggableElement.id === 'new-signatureField-block') {
-                createSignatureField(e, null, null, null, null, draggableElement, null, `overlay-${i}`);
+                createSignatureField(e, null, null, null, null, draggableElement, null, `overlay-${i}`, null, null);
             } else {
                 // Handle moving the existing element
                 const overlayRect = overlay.getBoundingClientRect();
@@ -77,7 +77,7 @@ displayPDF(url).then(() => {
 function createTextBoxWithSavedData(change) {
     console.log("change:", change);
     // Create the textbox element
-    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family);
+    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size);
     // Reposition the element
     // let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
     // console.log("element in createTextBoxWithSavedData():", element);
@@ -88,7 +88,7 @@ function createShapeWithSavedData(change) {
 }
 
 function createSignatureFieldWithSavedData(change) {
-    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family)
+    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size)
 }
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY

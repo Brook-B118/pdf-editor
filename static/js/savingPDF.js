@@ -6,7 +6,7 @@ const scale = 1.5;
 const dpi = 96;
 const padding = 2; // padding in pixels for the textarea element
 const border = 2; // border in pixels for the textbox container element (the border for the textarea is irrelevant since it is hidden behind the border of the container)
-const fontSize = 16;
+let fontSizeScaled = 16;
 const lineHeight = 1; // lineHeight in pixels for the textarea element (this ends up being that space between the top of the container and the top of the text inside);
 
 let saveQueue = Promise.resolve();
@@ -31,6 +31,7 @@ export function autoSave(documentId) {
             let elementType;
             let content = '';
             let font_family = '';
+            let font_size = '';
 
             if (element.classList.contains('textboxContainer')) {
                 elementType = 'textboxContainer';
@@ -42,12 +43,14 @@ export function autoSave(documentId) {
                 elementType = 'signatureField';
                 content = element.value;
                 font_family = element.style.fontFamily;
+                font_size = parseInt(element.style.fontSize);
             }
 
             if (nestedInputElement) {
                 if (nestedInputElement.tagName.toLocaleLowerCase() === 'textarea') {
                     content = nestedInputElement.value;
                     font_family = nestedInputElement.style.fontFamily;
+                    font_size = parseInt(nestedInputElement.style.fontSize);
                 } else {
                     content = nestedInputElement.value;
                 }
@@ -65,7 +68,8 @@ export function autoSave(documentId) {
                 overlayId: element.getAttribute('data-overlay-id'),
                 background_color: background_color,
                 border_color: border_color,
-                font_family: font_family
+                font_family: font_family,
+                font_size: font_size,
             });
 
         });
@@ -135,6 +139,19 @@ document.getElementById('save-button').addEventListener('click', async () => {
         let borderWidth = '';
         let content = '';
         let font_family = '';
+        let font_size = '';
+
+        if (nestedInputElement) {
+            if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
+                content = DOMPurify.sanitize(nestedInputElement.value);
+                font_family = nestedInputElement.style.fontFamily;
+                fontSizeScaled = parseInt(nestedInputElement.style.fontSize);
+                font_size = parseInt(nestedInputElement.style.fontSize) / scale;
+                console.log("font size for textbox:", nestedInputElement.style.fontSize)
+            } else {
+                content = DOMPurify.sanitize(nestedInputElement.value);
+            }
+        }
 
 
         if (element.classList.contains('textboxContainer')) {
@@ -142,7 +159,7 @@ document.getElementById('save-button').addEventListener('click', async () => {
             // For the offsetX value, we need to add the padding and the two borders one time each because we are only worried about the space between the left of the container and the left of the text.
             offsetX = (parseFloat(element.style.left) + padding + border + border) / scale; // I think this makes more sense, the value becomes 6 which adds up to the 2px border on the container, 2px border on the textarea, and 2px padding in the textarea.
             // In order to get the position of the top of the text, we needed to set a lineHeight which not only changes the space from the top of the textbox to the first line of text, but also the space between the following lines of text. If we add padding + border + lineHeight, we get the accurate position of the text compared to its container.
-            offsetY = (parseFloat(element.style.top) + fontSize + lineHeight + padding + border + border) / scale; // This also makes more sense, two 2px borders and 2px padding and 1px lineheight.
+            offsetY = (parseFloat(element.style.top) + fontSizeScaled + padding + border + border + lineHeight) / scale; // This also makes more sense, two 2px borders and 2px padding. Changed fontSize to fontSizeScaled to get the elements scaled font size dynamically and then scale it back. LineHeight is the 1px I set when creating a textbox.
             width = ((element.getBoundingClientRect().width)) / scale;
             height = ((element.getBoundingClientRect().height)) / scale; // the 2 * padding and border is to account for the padding and border top and bottom being the same. The double lineHeight is to consider the top and bottom space from lineHeight.
             elementType = 'textboxContainer';
@@ -161,6 +178,8 @@ document.getElementById('save-button').addEventListener('click', async () => {
             content = DOMPurify.sanitize(element.value); // Ensure you get the value directly from the element
             // in order to center text in a input field for pdf-lib to understand
             // step 1: get width of field
+            font_family = element.style.fontFamily;
+            font_size = parseInt(element.style.fontSize) / scale;
             let signatureFieldWidth = element.getBoundingClientRect().width;
             // step 2: get pixel width of text
             console.log("content length:", content.length);
@@ -176,29 +195,20 @@ document.getElementById('save-button').addEventListener('click', async () => {
             let halvedTextWidth = textWidth / 2;
             console.log("halvedTextWidth:", halvedTextWidth);
 
-            width = (element.getBoundingClientRect().width + 2 * (padding - border)) / scale;
-            height = (element.getBoundingClientRect().height + 2 * (padding + border)) / scale;
+            width = (element.getBoundingClientRect().width) / scale;
+            height = (element.getBoundingClientRect().height) / scale;
             // step 5: add the amount of pixels it would take to get to middle of field width and then subtract the half of textWidth
             offsetX = ((parseFloat(element.style.left)) + (halvedFieldWidth - halvedTextWidth) - (2 * (padding + border))) / scale;
             console.log("signature offsetX:", offsetX);
             // In order to fix the height, I need to find the textHeight and add it back to the offset or else the top of the text will be written below the baseline (height/2)
             let metrics = context.measureText(content);
-            let textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+            let textHeight = metrics.actualBoundingBoxAscent;
+            // I actually did not need to add the Descent, since what I am looking for is the middle of the text (ascent/2). The baseline is inbetween the descent and ascent (ascent is distance from top of text to baseline and descent is distance from baseline to bottomt of text if its a lower case y for example), however when using pdf-lib drawText we are drawing from the baseline not the Descent line. Adding ascent and descent gives you the descent line which would cause the text to be written lower than it should be. Although, to ge the text to center vertically, we need to take the ascent and divide it by 2, this allows the middle of the container to align with the middle of the text. Remember, the middle of the text is what we need, not the baseline.
             console.log("textHeight:", textHeight);
-            offsetY = (parseFloat(element.style.top) + (((element.getBoundingClientRect().height - textHeight) / 2)) + (2 * (padding + border))) / scale;
+            offsetY = ((parseFloat(element.style.top) + (element.getBoundingClientRect().height) / 2) + (textHeight / 2)) / scale;
             elementType = 'signatureField';
             console.log("Element:", element); // Debug statement
-            font_family = element.style.fontFamily;
             console.log("signatureField font family:", font_family);
-        }
-
-        if (nestedInputElement) {
-            if (nestedInputElement.tagName.toLowerCase() === 'textarea') {
-                content = DOMPurify.sanitize(nestedInputElement.value);
-                font_family = nestedInputElement.style.fontFamily;
-            } else {
-                content = DOMPurify.sanitize(nestedInputElement.value);
-            }
         }
 
         let fontFamilyBytes;
@@ -223,6 +233,7 @@ document.getElementById('save-button').addEventListener('click', async () => {
             y: offsetY,
             overlayId: element.getAttribute('data-overlay-id'),
             font_family: fontFamilyBytes,
+            font_size: font_size,
         });
     });
     applyChangesToPdf(pdfDoc, changes);
@@ -275,24 +286,24 @@ async function applyChangesToPdf(pdfDoc, changes) {
 
         const adjustedY = pageHeight - (change.y);
         console.log("adjustedY:", adjustedY);
+        console.log("change.font_size:", change.font_size);
 
         if (change.type === 'textboxContainer') {
             page.drawText(change.text, {
                 x: change.x,
                 y: adjustedY,
-                size: 10,
+                size: change.font_size,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 10, // set this to the size of the font for 1x lineHeight maybe
+                lineHeight: change.font_size, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'signatureField') {
             page.drawText(change.text, {
                 x: change.x,
                 y: adjustedY,
-                size: 12,
+                size: change.font_size,
                 color: PDFLib.rgb(0, 0, 0),
                 font: change.font_family,
-                lineHeight: 12, // set this to the size of the font for 1x lineHeight maybe
             });
         } else if (change.type === 'shape') {
             // Add logic to draw shapes here, e.g., drawRectangle, drawEllipse, etc.

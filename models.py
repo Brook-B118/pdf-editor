@@ -64,6 +64,7 @@ class Element(db.Model):
     background_color = db.Column(db.String, nullable=True)
     border_color = db.Column(db.String, nullable=True)
     font_family = db.Column(db.String, nullable=True)
+    font_size = db.Column(db.Integer, nullable=True)
 
 
 def update_timestamp(mapper, connection, target):
