@@ -47,7 +47,27 @@ export const displayPDF = function (url) {
     });
 };
 
+export function invertColors() {
+    const canvases = document.querySelectorAll('canvas');
 
+    canvases.forEach(canvas => {
+        const context = canvas.getContext('2d');
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        console.log("image data:", imageData);
+
+        for (let i = 0; i < data.length; i += 4) {
+            data[i] = 255 - data[i];       // Red
+            data[i + 1] = 255 - data[i + 1]; // Green
+            data[i + 2] = 255 - data[i + 2]; // Blue
+        }
+        context.putImageData(imageData, 0, 0);
+    });
+}
+
+document.getElementById('pdf-color-toggle').addEventListener('click', function () {
+    invertColors();
+})
 
 // The offsetTop and offsetLeft properties give the distance between the element and its offset parent, not the browser's edge. The offset parent is usually the nearest positioned ancestor. In this case, it should be the pdf-display div.
 
