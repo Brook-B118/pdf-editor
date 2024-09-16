@@ -211,7 +211,7 @@ def upload_documents():
 @login_required
 def editDocument(hex_filename):
     document = Document.query.filter_by(filename=hex_filename).first()
-    print(document)
+    print(document.edited_filename)
     if document:
         user_id = document.user_id
     else:
@@ -388,6 +388,28 @@ def get_changes():
     
     return jsonify({'changes': changes_data})
 
+@app.route('/update-filename', methods=['POST'])
+@login_required
+def update_filename():
+    data=request.get_json()
+    document_id = data['document_id']
+    new_filename = data['filename']
+
+    document = Document.query.filter_by(id=document_id).first()
+    if document and document.user_id == session['user_id']:
+        document.edited_filename = new_filename
+        try:
+            db.session.commit()
+            return jsonify({"status": "success"}), 200
+        except SQLAlchemyError as e:
+            print(e)
+            db.session.rollback()
+            return jsonify({"error": "Database error"}), 500
+    elif document.user_id != session['user_id']:
+        logout()
+        return jsonify({"error": "Unauthorized"}), 403
+    else:
+        return jsonify({"error": "Document not found"}), 403
 
 
 # Runner and Debugger
