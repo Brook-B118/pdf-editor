@@ -6,14 +6,17 @@ Documents
 
 {% block main %}
 <div class="container-fluid mb-4">
-    <h5>Supported files include: PDF and Word</h5>
+    <h5>Supported files include: PDF</h5>
 </div>
 <div class="container-fluid mb-4">
     <form id="uploadDocumentsForm" action="/uploadDocuments" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <label for="document" class="btn btn-success btn-lg">Upload</label>
-        {{ form.file(style="display: none;", accept=".pdf,.doc,.docx", id="document") }}
+        {{ form.file(style="display: none;", accept=".pdf", id="document") }}
     </form>
+    {% for error in form.file.errors %}
+    <div class="error">{{ error }}</div>
+    {% endfor %}
 </div>
 <div class="container-fluid mb-4">
     {% if files %}
@@ -30,10 +33,8 @@ Documents
                         {{ file.edited_filename }}
                     </a></td>
                 <td class="text-end">
-                    <a href="{{ url_for('editDocument', hex_filename=file.filename) }}"
-                        class="btn btn-success btn-sm me-2">Edit</a>
-                    <button class="btn btn-danger btn-sm remove-btn"
-                        data-file-filename="{{ file.filename }}">Remove</button>
+                    <a href="{{ url_for('editDocument', hex_filename=file.filename) }}" class="btn btn-success btn-sm me-2">Edit</a>
+                    <button class="btn btn-danger btn-sm remove-btn" data-file-filename="{{ file.filename }}">Remove</button>
                 </td>
             </tr>
             {% endfor %}

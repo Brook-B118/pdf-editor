@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block main %}
+<div class="profile-header container mb-4">
+    <h1 class="display-4">Profile</h1>
+</div>
+<div class="container">
+    <form id="delete-account-form" action="/profile" method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-danger") }}
+        </div>
+        <div class="mb-3">
+            <h5>Clicking "Delete My Account" will remove all of your saved documents from the database as well as your account information.</h5>
+        </div>
+    </form>
+</div>
+{% endblock %}

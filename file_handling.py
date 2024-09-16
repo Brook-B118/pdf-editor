@@ -40,8 +40,8 @@ def check_temp_file_mime(file_info):
     # Check the MIME type of the file
     mime = magic.from_file(os.path.join(temp_file_location), mime=True) # This returns the "MIME" of the file, the MIME for pdfs is 'application/pdf'. To see the MIME for other files you have to search it up.
 
-    if mime in ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
-        # The file is a PDF or Word doc
+    if mime in ['application/pdf']:
+        # The file is a PDF
         # Officially save the file, first create official folder then move file to folder.
         upload_folder = (f'static/uploaded_files/{user_id}') # Creates the folder to send uploads to (this is local for now)
 
@@ -58,7 +58,7 @@ def check_temp_file_mime(file_info):
         shutil.rmtree(temp_upload_folder)
         return True
     else:
-        # The file is not a PDF or Word doc
+        # The file is not a PDF
         os.remove(temp_file_location)
         shutil.rmtree(temp_upload_folder)
         return False

@@ -13,7 +13,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
 from models import db, Users, Document, Element # Database models sheet
-from forms import RegistrationForm, LoginForm, UploadForm
+from forms import RegistrationForm, LoginForm, UploadForm, DeleteAccountForm
 from dotenv import load_dotenv
 from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
 
@@ -150,6 +150,34 @@ def register():
     return redirect("/login")
 
 
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    form = DeleteAccountForm(request.form)
+    if form.validate_on_submit():
+        user_id = session['user_id']
+        user = Users.query.filter_by(id=user_id).first()
+
+        existing_documents = Document.query.filter_by(user_id=user_id).all()
+        existing_elements = Element.query.filter_by(user_id=user_id).all()
+
+        if user:
+            for element in existing_elements:
+                db.session.delete(element)
+            for document in existing_documents:
+                db.session.delete(document)
+            db.session.delete(user)
+            try:
+                db.session.commit()
+                logout()
+                return redirect(url_for('register')) 
+            except SQLAlchemyError as e:
+                print(e)
+                db.session.rollback()
+    else:
+        return render_template("profile.html", form=form)
+
+
 
 @app.route("/uploadDocuments", methods=["GET", "POST"])
 @login_required
@@ -225,6 +253,7 @@ def editDocument(hex_filename):
             return render_template('editDocument.html', document=document, folder=user_id)
         else:
             logout()
+            return redirect(url_for('register')) 
     
 
 @app.route('/remove/<filename>', methods=['POST'])
