@@ -1,6 +1,7 @@
 // let changes = [];
 // let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
 // let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes)
+let filename = document.getElementById('edit-filename').value;
 
 const scale = 1.5;
 const dpi = 96;
@@ -326,7 +327,7 @@ async function savePdf(pdfDoc) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'document.pdf';
+    a.download = filename + '.pdf';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
