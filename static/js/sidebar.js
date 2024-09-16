@@ -11,9 +11,6 @@ document.querySelector('.collapsed-sidebar').addEventListener('click', function 
 // When the elements icon is clicked in the sidebar, the sidepanel inner html will display the element blocks
 document.querySelector(".show-element-blocks-bar").addEventListener("click", function () {
     document.querySelector(".sidepanel").innerHTML = `
-        <div class="edit-document">
-            <button id="save-button">Save and Download</button>
-        </div>
         <div id="elements-container" class="elements-section">
             <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text Block</div>
             <div class="element-block new-shape-block" id="new-shape-block" data-type="shape-block">Shape Block</div>
