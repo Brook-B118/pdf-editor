@@ -19,4 +19,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class UploadForm(FlaskForm):
-    file = FileField('document', validators=[FileAllowed(['pdf', 'doc', 'docx'], 'PDFs and Word documents only!')])
+    file = FileField('document', validators=[FileAllowed(['pdf'], 'PDFs only!')])
+
+class DeleteAccountForm(FlaskForm):
+    submit = SubmitField('Delete My Account')
