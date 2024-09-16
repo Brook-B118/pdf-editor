@@ -148,6 +148,50 @@ canvas {
     z-index: 50;
 }
 
+.horizontal-column-left-section {
+    background-color: rgb(2, 85, 85);
+    display: flex;
+    flex-direction: column;
+    z-index: 51;
+    flex: 1;
+}
+
+.horizontal-column-middle-section {
+    background-color: #790000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 51;
+    width: 375px;
+}
+
+.horizontal-column-right-section {
+    background-color: #0080ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 51;
+    width: 375px;
+}
+
+#pdf-color-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 75%;
+}
+
+#save-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
 .vertical-column-link {
     background-color: #2b3035;
     height: 90px;
@@ -181,12 +225,12 @@ canvas {
 }
 
 /* .toolbox {} */
-
+/* 
 .edit-document {
     position: absolute;
     top: 5px;
     right: 30%;
-}
+} */
 
 #elements-container {
     background-color: blueviolet;
@@ -195,7 +239,6 @@ canvas {
     flex-direction: row;
     flex: 1;
     flex-wrap: wrap;
-    top: 40px;
     justify-content: center;
     align-content: flex-start;
     padding-top: 25px;

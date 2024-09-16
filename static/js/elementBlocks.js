@@ -54,7 +54,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textboxContainer.classList.add("newElement", "resizable", "textboxContainer", "draggable"); // add .newEelement to all new elements to be able to save them.
     textboxContainer.setAttribute("draggable", "true");
     textboxContainer.style.position = 'absolute';
-    textboxContainer.style.border = '2px solid red';
+    textboxContainer.style.border = '2px solid green';
     textboxContainer.setAttribute("tabindex", "0"); // Divs are not normally focusable but input and textarea fields are. This line makes the div textboxContainer focusable as well as tabable with the tab button.
 
     if (e) {
@@ -181,7 +181,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     });
 
     textboxContainer.addEventListener("focus", (e) => {
-        textboxContainer.style.border = '2px solid green';
+        textboxContainer.style.border = '2px solid rgb(0, 128, 192)';
         // Change sidepanel for textbox customization:
         document.querySelector(".sidepanel").innerHTML = `
           <div id="text-box-customize-container" class="textbox-customize-section">
@@ -205,7 +205,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     });
 
     textboxContainer.addEventListener("blur", (e) => {
-        textboxContainer.style.border = '2px solid red';
+        textboxContainer.style.border = '2px solid green';
     });
 };
 
@@ -303,7 +303,8 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
     });
 
     shape.addEventListener("focus", (e) => {
-        // shape.style.border = '2px solid green';
+        shape.style.boxShadow = '0 0 8px 4px rgba(0, 128, 192, 1)';
+        // 0 0 10px is 0 horizontal offset, 0 vertical offset, blur radius of 0, and 2px spread radius. The spread radius makes sure the shadow extends 2px outward on all sides.
         // Change sidepanel for textbox customization:
         document.querySelector(".sidepanel").innerHTML = `
           <div id="shape-customize-container" class="shape-customize-section">
@@ -322,6 +323,10 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
         // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
         addShapeEventListeners(shape.id);
     });
+
+    shape.addEventListener("blur", (e) => {
+        shape.style.boxShadow = '0 0 0 0 rgb(0, 0, 0, 1)';
+    })
 
 };
 
