@@ -8,7 +8,7 @@ Edit document here
 
 <div class="horizontal-column-home">
     <div class="horizontal-column-left-section">
-        test 1
+        <input type="text" id="edit-filename" value="{{ document.edited_filename }}">
     </div>
     <div class="horizontal-column-middle-section">
         <button id="pdf-color-toggle">Toggle Accessibility Mode</button>
@@ -88,4 +88,5 @@ Edit document here
 <script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
 <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sanitize.js') }}"></script>
+<script src="{{ url_for('static', filename='js/editFilename.js') }}"></script>
 {% endblock %}

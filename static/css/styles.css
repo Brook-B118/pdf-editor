@@ -152,6 +152,7 @@ canvas {
     background-color: rgb(2, 85, 85);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     z-index: 51;
     flex: 1;
 }
@@ -174,6 +175,14 @@ canvas {
     align-items: center;
     z-index: 51;
     width: 375px;
+}
+
+#edit-filename {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 50%;
+    left: 8px;
 }
 
 #pdf-color-toggle {
