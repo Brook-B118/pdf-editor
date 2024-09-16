@@ -6,59 +6,34 @@ Home
 
 {% block main %}
 
-<div class="horizontal-column-home">
-    <div>
-        test 1
+<div id="features-container" class="features-section">
+    <div class="features-block">
+        <h1 class="feature-header">Cybersecurity</h4>
+            <img src="https://placehold.co/550x225" class="feature-image" alt="Placeholder Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">Learned server side & front end authentication.</li>
+                <li class="list-group-item">Learned how to protect agianst CSRF and XSS attacks.</li>
+                <li class="list-group-item">Learned how to protect against HTML/JS injection attacks</li>
+                <li class="list-group-item">Learned to check MIME type of files to ensure only appropriate file types are being uploaded and stored in database with a sanitized filename.</li>
+                <li class="list-group-item">Learned to use a .env file for sensitive information (such as API keys) that should not be included in version control.</li>
+            </ul>
     </div>
+    <div class="features-block">
+        <h1 class="feature-header">Languages and Frameworks</h4>
+            <img src="https://placehold.co/550x225" class="feature-image" alt="Placeholder Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">Utilized my python knowledge gained from CS50 as well as asking the AI for extra lessons to improve my flask setup.</li>
+                <li class="list-group-item">Used Bootstrap for a few things such as the navbar and dark theme, however I ended up watching tutorials and asked the AI for extra lessons to gain a better
+                    understanding of flexboxes, grids,
+                    nested layouts, position and display attributes, etc.</li>
+                <li class="list-group-item">In order to understand the PDF libraries I was using, I watched tutorials, read documentation, and asked AI for extra lessons in Javascript to improve my
+                    skills greatly since learning the basics in CS50. Thanks to this, I was able to make use of async/await, promises, and was able to use this to create a RESTful API structure for my
+                    web app.</li>
+            </ul>
+    </div>
+    <div class="features-block">Version Control</div>
+    <div class="features-block">Solving a Problem</div>
+    <!-- Add more blocks as needed -->
 </div>
 
-<div class="vertical-column-wrapper">
-
-    <div class="vertical-column-home">
-        <div class="vertical-column-link collapsed-sidebar">
-            <i class='bx bx-menu bx-md' style='color:#ffffff'></i>
-        </div>
-        <div class="vertical-column-link">
-            <i class='bx bx-grid-alt bx-md' style='color:#ffffff'></i>
-            <div>Elements</div>
-        </div>
-        <div class="vertical-column-link">
-            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
-            <div>Test</div>
-        </div>
-        <div class="vertical-column-link">
-            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
-            <div>Test</div>
-        </div>
-        <div class="vertical-column-link">
-            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
-            <div>Test</div>
-        </div>
-    </div>
-    <div class="sidepanel">
-        <!-- <div id="toolbox" class="toolbox"> -->
-        <div class="edit-document ">
-            <button id="save-button">Save and Download</button>
-        </div>
-        <div id="elements-container" class="elements-section">
-            <!-- <div class=""> -->
-            <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text Block
-            </div>
-            <div class="element-block" data-type="text-block">Example Block</div>
-            <div class="element-block" data-type="text-block">Example Block</div>
-            <div class="element-block" data-type="text-block">Example Block</div>
-            <!-- Add more blocks as needed -->
-            <!-- </div> -->
-        </div>
-        <!-- </div> -->
-    </div>
-</div>
-<div style="height:3000px">
-
-</div>
-
-
-
-
-<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 {% endblock %}

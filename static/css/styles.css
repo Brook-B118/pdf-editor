@@ -435,3 +435,47 @@ textarea {
     font-family: 'Parisienne';
     src: url('/static/fonts/Parisienne-Regular.ttf') format('truetype');
 }
+
+
+#features-container {
+    background-color: rgb(226, 43, 217);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.features-block {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    flex: 0 0 600px;
+    margin: 5px;
+    /* padding: 10px; */
+    background-color: #00796f;
+    cursor: pointer;
+    height: 700px;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-header {
+    position: absolute;
+    top: 10px;
+}
+
+.feature-image {
+    position: absolute;
+    top: 78px;
+}
+
+.custom-list-group {
+    position: absolute;
+    top: 340px;
+    max-width: 550px;
+}
