@@ -470,9 +470,9 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
             </div>
             <div class="signatureField-customize-row">
                 <label for="fill-color-selector">Fill Color:</label>
-                <input type="color" id="fill-color-selector" class="signatureField-customize-option">
+                <input type="color" id="fill-color-selector" class="signatureField-customize-option" disabled>
                 <label for="border-color-selector">Border Color:</label>
-                <input type="color" id="border-color-selector" class="signatureField-customize-option">
+                <input type="color" id="border-color-selector" class="signatureField-customize-option" disabled>
             </div>
             <div class="signatureField-customize-row">
                 <button id="delete-element" class="signatureField-customize-option">Delete</button>

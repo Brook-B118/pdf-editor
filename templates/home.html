@@ -6,6 +6,61 @@ Home
 
 {% block main %}
 
+
+<div id="main-features-header">
+    <h1>Project Features</h1>
+</div>
+
+<div id="main-features-container">
+    <div class="main-features-block">
+        <h5 class="main-feature-header">Account Creation & Deletion</h5>
+        <img src="{{ url_for('static', filename='images/Login.jpg') }}" class="main-feature-image" alt="Placeholder Image">
+        <ul class="main-features-custom-list-group list-group">
+            <li class="list-group-item">Register for an account to store your editable documents. You can also delete your account in the profile page.</li>
+            <li class="list-group-item">If you delete your account, your editable documents and their elements will be removed from the
+                database as well.</li>
+        </ul>
+    </div>
+    <div class="main-features-block">
+        <h5 class="main-feature-header">PDF Upload & Download</h5>
+        <img src="{{ url_for('static', filename='images/upload files.jpg') }}" class="main-feature-image" alt="Placeholder Image">
+        <ul class="main-features-custom-list-group list-group">
+            <li class="list-group-item">Upload your pdf files and begin editing! You can also view or delete your files in the documents page.</li>
+            <li class="list-group-item">When you are finished editing, clicking the save and download button will download your edited pdf for you.</li>
+        </ul>
+    </div>
+    <div class="main-features-block">
+        <h5 class="main-feature-header">Drag & Drop PDF Editing</h5>
+        <img src="{{ url_for('static', filename='images/drag and drop.gif') }}" class="main-feature-image" alt="Placeholder Image">
+        <ul class="main-features-custom-list-group list-group">
+            <li class="list-group-item">Drag and drop elements from the containers sidepanel that you wish to add to your PDF!</li>
+            <li class="list-group-item">Clicking an element on the page opens their customization sidepanel!</li>
+        </ul>
+    </div>
+    <div class="main-features-block">
+        <h5 class="main-feature-header">Autosave</h5>
+        <img src="{{ url_for('static', filename='images/autosave.gif') }}" class="main-feature-image" alt="Placeholder Image">
+        <ul class="main-features-custom-list-group list-group">
+            <li class="list-group-item">Any changes you make (adding a new element to a page, editing the element, moving the element, etc) will call the autosave function. This way you can pause your
+                work and pick up where you left off whenever!</li>
+        </ul>
+    </div>
+    <div class="main-features-accessability-block">
+        <h3 class="main-features-accessability-header">Accessibility</h3>
+        <img src="{{ url_for('static', filename='images/accessibility mode.gif') }}" class="main-features-accessability-image" alt="Placeholder Image">
+        <ul class="main-features-accessability-custom-list-group list-group">
+            <li class="list-group-item">Having a hard time reading the pdf because the white background is too bright? Click the toggle accessibility mode button! This will change the pdf
+                background from white to black and the text from black to white, making it easier on the eyes.</li>
+            <li class="list-group-item">When you download the pdf, it will always download with a white background and black font so no need to worry!</li>
+        </ul>
+    </div>
+</div>
+
+
+<div id="features-container-header">
+    <h1>What I Learned From This Project</h1>
+</div>
+
 <div id="features-container" class="features-section">
     <div class="features-block">
         <h1 class="feature-header">Cybersecurity</h4>
@@ -43,9 +98,9 @@ Home
                     queries.</li>
                 <li class="list-group-item">SQL Alchemy also lead me to practicing an object oriented programming approach instead of my current structured approach when
                     writing my python code. I ended up refactoring my backend, improving readbility.</li>
-                <li class="list-group-item">I had to recreate my elements database to add another column for a feature I implemented when editing pdfs. I
+                <li class="list-group-item">I had to recreate my elements table to add another column for a feature I implemented when editing pdfs. I
                     realized if this were an actual product, deleting user data to update a table would not be okay. This lead me to learning a Datbase Migration Tool called Alembic, where I
-                    learned how to easily update my database without losing current data.</li>
+                    learned how to easily update my tables without losing current data.</li>
             </ul>
     </div>
     <div class="features-block">
@@ -80,7 +135,7 @@ Home
                     editor or an E-sign service that allowed users to change the actual pdf to dark mode, not just the website layout.</li>
                 <li class="list-group-item">I decided to implement this idea into my final project. Originally I only wanted to change only the white and black part of the document (this way I could
                     preserve any other colors and users could download the edited pdf expecting the white and black to go back to normal). However, I could not do this without causing the text to
-                    become pixelated so currently all colors on the pdf will invert when accessiblity mode is toggled. In the future, I would like to enchance it by only targeting black and white.
+                    become pixelated so currently all colors on the pdf will invert when accessibility mode is toggled. In the future, I would like to enchance it by only targeting black and white.
                     This will at least solve the struggle of reading pdfs with a white background.
                 </li>
             </ul>
