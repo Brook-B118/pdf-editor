@@ -156,19 +156,22 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     textboxContainer.id = `text-box-${text_box_counter}`;
 
     // Add event listeners to container so click doesn't access the input field, dblclick accesses input field, and container can reposition with drag/drop
-
-    textboxContainer.addEventListener("click", (e) => {
+    // Created functions for the event listeners so I could remove them when textbox is in focus. This way we can drag the cursor or click inside the textbox without blurring it.
+    function handleClick(e) {
         textbox.classList.add("readonly");
         textbox.blur();
         textboxContainer.focus();
-    });
+    }
 
-    textboxContainer.addEventListener("dblclick", (e) => {
+    function handleDblClick(e) {
         textbox.classList.remove("readonly");
         textboxContainer.blur();
         textbox.focus();
+    }
 
-    });
+    // Add event listeners
+    textboxContainer.addEventListener("click", handleClick);
+    textboxContainer.addEventListener("dblclick", handleDblClick);
 
     textboxContainer.addEventListener("dragstart", (e) => {
         textbox.classList.add("readonly");
@@ -179,6 +182,18 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
         textbox.blur();
         e.preventDefault();
     });
+
+    textbox.addEventListener("focus", () => {
+        textboxContainer.setAttribute("draggable", "false"); // This way dragging the cursor to highlight text won't drag the container instead.
+        textboxContainer.removeEventListener("click", handleClick);
+        textboxContainer.removeEventListener("dblclick", handleDblClick);
+    })
+
+    textbox.addEventListener("blur", () => {
+        textboxContainer.setAttribute("draggable", "true"); // Give the draggability back when done with textbox.
+        textboxContainer.addEventListener("click", handleClick);
+        textboxContainer.addEventListener("dblclick", handleDblClick);
+    })
 
     textboxContainer.addEventListener("focus", (e) => {
         textboxContainer.style.border = '2px solid rgb(0, 128, 192)';
