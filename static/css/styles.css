@@ -79,7 +79,7 @@ canvas {
 }
 
 .vertical-column-wrapper {
-    background-color: #60d3e7;
+    /* background-color: #60d3e7; */
     display: flex;
     flex-direction: row;
     width: 475px;
@@ -117,7 +117,7 @@ canvas {
 }
 
 .collapsed {
-    background-color: #60d3e7;
+    /* background-color: #60d3e7; */
     display: flex;
     flex-direction: row;
     width: 475px;
@@ -152,7 +152,7 @@ canvas {
 }
 
 .horizontal-column-left-section {
-    background-color: rgb(2, 85, 85);
+    /* background-color: rgb(2, 85, 85); */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -161,17 +161,18 @@ canvas {
 }
 
 .horizontal-column-middle-section {
-    background-color: #790000;
+    /* background-color: #790000; */
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
     z-index: 51;
     width: 375px;
 }
 
 .horizontal-column-right-section {
-    background-color: #0080ff;
+    /* background-color: #0080ff; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -190,10 +191,12 @@ canvas {
 
 #pdf-color-toggle {
     display: flex;
+    position: absolute;
+    left: 70px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 75%;
+    width: 55%;
 }
 
 #save-button {
@@ -228,7 +231,7 @@ canvas {
 }
 
 .sidepanel {
-    background-color: rgb(104, 255, 44);
+    /* background-color: rgb(104, 255, 44); */
     display: flex;
     flex: 1;
     position: relative;
@@ -245,7 +248,7 @@ canvas {
 } */
 
 #elements-container {
-    background-color: blueviolet;
+    /* background-color: blueviolet; */
     position: relative;
     display: flex;
     flex-direction: row;
@@ -292,7 +295,7 @@ textarea {
 }
 
 #text-box-customize-container {
-    background-color: rgb(43, 46, 226);
+    /* background-color: rgb(43, 46, 226); */
     position: relative;
     display: flex;
     flex-direction: row;
@@ -322,7 +325,7 @@ textarea {
 }
 
 #shape-customize-container {
-    background-color: rgb(226, 43, 144);
+    /* background-color: rgb(226, 43, 144); */
     position: relative;
     display: flex;
     flex-direction: row;
@@ -365,7 +368,7 @@ textarea {
 }
 
 #signatureField-customize-container {
-    background-color: rgb(233, 92, 26);
+    /* background-color: rgb(233, 92, 26); */
     position: relative;
     display: flex;
     flex-direction: row;
@@ -438,7 +441,7 @@ textarea {
 
 
 #features-container {
-    background-color: rgb(226, 43, 217);
+    background-color: rgb(0, 0, 0);
     position: relative;
     display: flex;
     flex-direction: row;
@@ -446,18 +449,18 @@ textarea {
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .features-block {
     display: flex;
     position: relative;
     flex-direction: column;
-    flex: 0 0 600px;
+    flex: 0 0 630px;
     margin: 5px;
     /* padding: 10px; */
-    background-color: #00796f;
+    background-color: #212529;
     cursor: pointer;
     height: 700px;
     align-items: center;
@@ -466,16 +469,18 @@ textarea {
 
 .feature-header {
     position: absolute;
-    top: 10px;
+    top: 0px;
 }
 
 .feature-image {
     position: absolute;
-    top: 78px;
+    top: 60px;
+    height: 250px;
+    width: 600px;
 }
 
 .custom-list-group {
     position: absolute;
-    top: 340px;
-    max-width: 550px;
+    top: 325px;
+    max-width: 600px;
 }
