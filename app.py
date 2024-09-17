@@ -60,7 +60,6 @@ def after_request(response): # The @app.after_request part means this code runs 
     return response # return response sends these instructions back to the browser.
 
 @app.route("/")
-@login_required
 def index():
     return render_template("home.html")
 
