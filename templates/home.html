@@ -9,30 +9,82 @@ Home
 <div id="features-container" class="features-section">
     <div class="features-block">
         <h1 class="feature-header">Cybersecurity</h4>
-            <img src="https://placehold.co/550x225" class="feature-image" alt="Placeholder Image">
+            <img src="{{ url_for('static', filename='images/cybersecurity.jpg') }}" class="feature-image" alt="Cybersecurity Image">
             <ul class="custom-list-group list-group">
                 <li class="list-group-item">Learned server side & front end authentication.</li>
                 <li class="list-group-item">Learned how to protect agianst CSRF and XSS attacks.</li>
                 <li class="list-group-item">Learned how to protect against HTML/JS injection attacks</li>
                 <li class="list-group-item">Learned to check MIME type of files to ensure only appropriate file types are being uploaded and stored in database with a sanitized filename.</li>
                 <li class="list-group-item">Learned to use a .env file for sensitive information (such as API keys) that should not be included in version control.</li>
+                <l1 class="list-group-item">To further imrove security, when users edit their pdfs, I decided to store the changes made in the database rather than local storage to prevent potential
+                    sensitive info from being stored in the browser.</l1>
             </ul>
     </div>
     <div class="features-block">
         <h1 class="feature-header">Languages and Frameworks</h4>
-            <img src="https://placehold.co/550x225" class="feature-image" alt="Placeholder Image">
+            <img src="{{ url_for('static', filename='images/framework.jpg') }}" class="feature-image" alt="Framework Image">
             <ul class="custom-list-group list-group">
                 <li class="list-group-item">Utilized my python knowledge gained from CS50 as well as asking the AI for extra lessons to improve my flask setup.</li>
                 <li class="list-group-item">Used Bootstrap for a few things such as the navbar and dark theme, however I ended up watching tutorials and asked the AI for extra lessons to gain a better
                     understanding of flexboxes, grids,
                     nested layouts, position and display attributes, etc.</li>
-                <li class="list-group-item">In order to understand the PDF libraries I was using, I watched tutorials, read documentation, and asked AI for extra lessons in Javascript to improve my
+                <li class="list-group-item">In order to understand the JavaScript libraries I was using, I watched tutorials, read documentation, and asked AI for extra lessons in JavaScript to
+                    improve my
                     skills greatly since learning the basics in CS50. Thanks to this, I was able to make use of async/await, promises, and was able to use this to create a RESTful API structure for my
                     web app.</li>
             </ul>
     </div>
-    <div class="features-block">Version Control</div>
-    <div class="features-block">Solving a Problem</div>
+    <div class="features-block">
+        <h1 class="feature-header">Database Management</h4>
+            <img src="{{ url_for('static', filename='images/database.jpg') }}" class="feature-image" alt="Database Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">Started off using cs50 SQL library for my sqlite3 database. However I felt that this was another set of "training wheels" I needed to remove so I looked up
+                    tutorials and asked the duck AI for lessons with SQL Alchemy. This taught me what an ORM was and allowed me to perform CRUD operations using python methods instead of SQL
+                    queries.</li>
+                <li class="list-group-item">SQL Alchemy also lead me to practicing an object oriented programming approach instead of my current structured approach when
+                    writing my python code. I ended up refactoring my backend, improving readbility.</li>
+                <li class="list-group-item">I had to recreate my elements database to add another column for a feature I implemented when editing pdfs. I
+                    realized if this were an actual product, deleting user data to update a table would not be okay. This lead me to learning a Datbase Migration Tool called Alembic, where I
+                    learned how to easily update my database without losing current data.</li>
+            </ul>
+    </div>
+    <div class="features-block">
+        <h1 class="feature-header">Version Control</h4>
+            <img src="{{ url_for('static', filename='images/git and github.png') }}" class="feature-image" alt="Version Control Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">Learned how to setup git on my computer as well as how to use git for local version control.</li>
+                <li class="list-group-item">Learned how to use github to compliment using git. This improved my ability to visually keep track of the changes and also reassured me my work was saved
+                    online incase anything happened to my local device.</li>
+                <li class="list-group-item">Learning git and github overall improved my workflow as I learned to branch and edit locally, push and merge online, and then update my local main with git
+                    pull from my online main. I also learned how to discard changes if I needed to start fresh to reset my thinking. This also helped me dive deeper into my work as I knew my project
+                    always had a back up I could revert to in the worst case scenario.</li>
+            </ul>
+    </div>
+    <div class="features-block">
+        <h1 class="feature-header">Lucid Chart</h4>
+            <img src="{{ url_for('static', filename='images/my lucid chart.jpg') }}" class="feature-image" alt="Version Control Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">Originally I was writing down my notes and my thought process in word documents, however I found it to be hindering as I had to keep tabbing between word
+                    docs while working on my code to find specific notes I needed.</li>
+                <li class="list-group-item">When I found LucidChart, I created columns for sticky notes called project ideas, potential issues and risks, currently working on, current issues/thoughts,
+                    and completed. This helped me organize my thoughts and not lose them while working as I could easily categorize them. I was also able to write my notes here as I could link them
+                    with my columns via arrows. No more alt tabbing through multiple word docs.</li>
+            </ul>
+    </div>
+    <div class="features-block">
+        <h1 class="feature-header">Solving a Problem</h4>
+            <img src="{{ url_for('static', filename='images/accessibility mode.gif') }}" class="feature-image" alt="Version Control Image">
+            <ul class="custom-list-group list-group">
+                <li class="list-group-item">While working on my project, a family member mentioned to me that their co worker was unable to read documents that had white backgrounds. This posed a
+                    problem for her team as she had to wait for them to explain what was on the document before proceeding with the meeting. This is when I realized that I have not come across a PDF
+                    editor or an E-sign service that allowed users to change the actual pdf to dark mode, not just the website layout.</li>
+                <li class="list-group-item">I decided to implement this idea into my final project. Originally I only wanted to change only the white and black part of the document (this way I could
+                    preserve any other colors and users could download the edited pdf expecting the white and black to go back to normal). However, I could not do this without causing the text to
+                    become pixelated so currently all colors on the pdf will invert when accessiblity mode is toggled. In the future, I would like to enchance it by only targeting black and white.
+                    This will at least solve the struggle of reading pdfs with a white background.
+                </li>
+            </ul>
+    </div>
     <!-- Add more blocks as needed -->
 </div>
 
