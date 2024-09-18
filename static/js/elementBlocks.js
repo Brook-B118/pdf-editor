@@ -42,6 +42,7 @@ interact('.resizable').resizable({
 
 
 let text_box_counter = 0;
+console.log("text_box_counter:", text_box_counter);
 
 export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size) {
     let overlayRect;
@@ -153,6 +154,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     }
     console.log("Textbox container appended to overlay");
     text_box_counter++;
+    console.log("inside function text_box_counter:", text_box_counter);
     textboxContainer.id = `text-box-${text_box_counter}`;
 
     // Add event listeners to container so click doesn't access the input field, dblclick accesses input field, and container can reposition with drag/drop
@@ -320,7 +322,7 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
     shape.addEventListener("focus", (e) => {
         shape.style.boxShadow = '0 0 8px 4px rgba(0, 128, 192, 1)';
         // 0 0 10px is 0 horizontal offset, 0 vertical offset, blur radius of 0, and 2px spread radius. The spread radius makes sure the shadow extends 2px outward on all sides.
-        // Change sidepanel for textbox customization:
+        // Change sidepanel for shape customization:
         document.querySelector(".sidepanel").innerHTML = `
           <div id="shape-customize-container" class="shape-customize-section">
             <p class="shape-customize-header">Shape Customization here</p>
@@ -335,7 +337,7 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
             </div>
           </div>
           `;
-        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
+        // Add event listeners to customization buttons and pass the specific shape that should be impacted as an argument"
         addShapeEventListeners(shape.id);
     });
 
@@ -452,7 +454,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
 
     signatureField.addEventListener("click", () => {
         // signatureField.style.border = '2px solid green';
-        // Change sidepanel for textbox customization:
+        // Change sidepanel for signatureField customization:
         document.querySelector(".sidepanel").innerHTML = `
           <div id="signatureField-customize-container" class="signatureField-customize-section">
             <div class="signatureField-customize-row">
@@ -494,7 +496,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
             </div>
           </div>
           `;
-        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
+        // Add event listeners to customization buttons and pass the specific signatureField that should be impacted as an argument"
         addsignatureFieldEventListeners(signatureField.id);
     });
 

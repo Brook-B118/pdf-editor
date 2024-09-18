@@ -65,7 +65,7 @@ export function addShapeEventListeners(shapeId) {
                     document.getElementById(shapeId).remove();
                     console.log('Sucess:', data);
                 } else {
-                    alert('Error removing Textbox container element')
+                    alert('Error removing Shape element')
                 }
             })
             .catch((error) => {

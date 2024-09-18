@@ -1,5 +1,18 @@
+os
+magic
+bleach
+secrets
+sqlalchemy.exc
 Flask
+flask_session
+flask_wtf.csrf
 gunicorn # This is what you use as a production server for flask apps apparently
-cs50
-werkzeug
+werkzeug.security
+werkzeug.utils
 python-magic
+dotenv
+shutil
+functools
+flask_wtforms
+flask_wtf.recaptcha
+flask_wtf.file
