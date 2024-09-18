@@ -21,6 +21,7 @@ function addEventListeners() {
         document.getElementById(`overlay-${i}`).addEventListener("drop", e => {
             e.preventDefault();
             const id = e.dataTransfer.getData("text/plain");
+            console.log("id", id);
             const draggableElement = document.getElementById(id);
 
             console.log("draggable element =", draggableElement)
@@ -77,18 +78,18 @@ displayPDF(url).then(() => {
 function createTextBoxWithSavedData(change) {
     console.log("change:", change);
     // Create the textbox element
-    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size);
+    createTextBox(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size, change.element_id);
     // Reposition the element
     // let element = document.querySelector(`[data-overlay-id="${change.overlayId}"]`);
     // console.log("element in createTextBoxWithSavedData():", element);
 }
 
 function createShapeWithSavedData(change) {
-    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId, change.background_color, change.border_color)
+    createShape(null, change.position_x, change.position_y, change.width, change.height, change.overlayId, change.background_color, change.border_color, change.element_id);
 }
 
 function createSignatureFieldWithSavedData(change) {
-    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size)
+    createSignatureField(null, change.position_x, change.position_y, change.width, change.height, null, change.content, change.overlayId, change.font_family, change.font_size, change.element_id);
 }
 
 // besides just chatting with duck about draggable and droppable elements, this video helped as well: https://www.youtube.com/watch?v=OHTudicK7nY
