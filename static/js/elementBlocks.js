@@ -44,7 +44,7 @@ interact('.resizable').resizable({
 let text_box_counter = 0;
 console.log("text_box_counter:", text_box_counter);
 
-export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size) {
+export function createTextBox(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size, element_id) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -148,14 +148,22 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     // Append the new textbox container to the overlay
     if (e) {
         e.target.appendChild(textboxContainer);
+        console.log("Textbox container appended to overlay");
+        text_box_counter++;
+        console.log("inside function text_box_counter if e:", text_box_counter);
+        textboxContainer.id = `text-box-${text_box_counter}`;
     }
     else {
         document.getElementById(overlayId).appendChild(textboxContainer);
+        console.log("Textbox container appended to overlay");
+        text_box_counter = parseInt(element_id.match(/\d+/));
+        console.log("inside function text_box_counter no e:", text_box_counter);
+        textboxContainer.id = `text-box-${text_box_counter}`;
     }
-    console.log("Textbox container appended to overlay");
-    text_box_counter++;
-    console.log("inside function text_box_counter:", text_box_counter);
-    textboxContainer.id = `text-box-${text_box_counter}`;
+    // console.log("Textbox container appended to overlay");
+    // text_box_counter++;
+    // console.log("inside function text_box_counter:", text_box_counter);
+    // textboxContainer.id = `text-box-${text_box_counter}`;
 
     // Add event listeners to container so click doesn't access the input field, dblclick accesses input field, and container can reposition with drag/drop
     // Created functions for the event listeners so I could remove them when textbox is in focus. This way we can drag the cursor or click inside the textbox without blurring it.
@@ -262,7 +270,7 @@ interact('.resizable-shape').resizable({
 
 let shape_counter = 0;
 
-export function createShape(e, x, y, width, height, overlayId, background_color, border_color) {
+export function createShape(e, x, y, width, height, overlayId, background_color, border_color, element_id) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -300,13 +308,21 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
     // Append the new shape to the overlay
     if (e) {
         e.target.appendChild(shape);
+        console.log("Shape appended to overlay");
+        shape_counter++;
+        console.log("Shape_counter if e:", shape_counter);
+        shape.id = `shape-${shape_counter}`;
     }
     else {
         document.getElementById(overlayId).appendChild(shape);
+        console.log("Shape appended to overlay");
+        shape_counter = parseInt(element_id.match(/\d+/));
+        console.log("Shape_counter no e:", shape_counter);
+        shape.id = `shape-${shape_counter}`;
     }
     console.log("Shape appended to overlay");
-    shape_counter++;
-    shape.id = `shape-${shape_counter}`;
+    // shape_counter++;
+    // shape.id = `shape-${shape_counter}`;
 
     // Add event listeners to enable repositioning drag and drop
 
@@ -383,7 +399,7 @@ interact('.resizable-signatureField').resizable({
 
 let signatureField_counter = 0;
 
-export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size) {
+export function createSignatureField(e, x, y, width, height, draggableElement, text, overlayId, font_family, font_size, element_id) {
     let overlayRect;
     if (e) {
         overlayRect = e.target.getBoundingClientRect();
@@ -432,13 +448,21 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     // Append the new signatureField to the overlay
     if (e) {
         e.target.appendChild(signatureField);
+        console.log("signatureField appended to overlay");
+        signatureField_counter++;
+        console.log("signatureField_counter with e:", signatureField_counter);
+        signatureField.id = `signatureField-${signatureField_counter}`;
     }
     else {
         document.getElementById(overlayId).appendChild(signatureField);
+        console.log("signatureField appended to overlay");
+        signatureField_counter = parseInt(element_id.match(/\d+/));
+        console.log("signatureField_counter no e:", signatureField_counter);
+        signatureField.id = `signatureField-${signatureField_counter}`;
     }
-    console.log("signatureField appended to overlay");
-    signatureField_counter++;
-    signatureField.id = `signatureField-${signatureField_counter}`;
+    // console.log("signatureField appended to overlay");
+    // signatureField_counter++;
+    // signatureField.id = `signatureField-${signatureField_counter}`;
 
     // Add event listeners to enable repositioning drag and drop
 
