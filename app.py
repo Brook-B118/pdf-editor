@@ -15,6 +15,7 @@ from helpers import login_required, apology
 from models import db, Users, Document, Element # Database models sheet
 from forms import RegistrationForm, LoginForm, UploadForm, DeleteAccountForm
 from dotenv import load_dotenv
+import shutil
 from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
 
 load_dotenv()
@@ -168,6 +169,7 @@ def profile():
             db.session.delete(user)
             try:
                 db.session.commit()
+                shutil.rmtree(f'static/uploaded_files/{user_id}')
                 logout()
                 return redirect(url_for('register')) 
             except SQLAlchemyError as e:
