@@ -1,18 +1,17 @@
 import os
 import magic
-import bleach # Used to sanitize the user input before you use it in your application to prevent XSS (Cross-site scripting) attacks:
-import secrets # Used to generate a text string in hexadecimal
+import bleach 
+import secrets 
 
 from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
-# from sqlalchemy.orm import sessionmaker
 from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
 from flask_session import Session
-from flask_wtf.csrf import CSRFProtect # To initialize CSRF protection for app
+from flask_wtf.csrf import CSRFProtect 
 
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
-from models import db, Users, Document, Element # Database models sheet
+from models import db, Users, Document, Element 
 from forms import RegistrationForm, LoginForm, UploadForm, DeleteAccountForm
 from dotenv import load_dotenv
 import shutil
@@ -25,40 +24,28 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 csrf = CSRFProtect(app)
 app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_PUBLIC_KEY')
 app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_PRIVATE_KEY')
-app.config['TESTING'] = True # Let's flask_wtf know that I am testing my app (not running in a development env) so I don't have to submit the recaptcha everytime
+app.config['TESTING'] = True 
+app.config["SESSION_PERMANENT"] = False 
+app.config["SESSION_TYPE"] = "filesystem" 
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False # This is setting the session to not be permanent, meaning it will end when the browser is closed.
-
-app.config["SESSION_TYPE"] = "filesystem" # This is setting the session type to "filesystem". This means that session data will be stored on the server's file system. This is a simple and effective way to handle session data, but it wouldn't be suitable for a large-scale application. When you're running your application on a development server, the session data is stored on the file system of the machine where the server is running. This could be your local machine if you're running the server locally, or a remote server if you're running it there.
-
-
-Session(app) # This is initializing the session with your Flask application. This is necessary for the session to work.
+Session(app) 
 
 
 # Configure SQL ALchemy
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # This is just so if you change for example a user's email in user database, sql alchemy won't track this and send a signal saying "users email was changed". The email will still be updated, there just wont be a signal for it. Turning this to True is resource intensive and generally it is a good idea to keep this off. 
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  
 db.init_app(app)
-# db = SQL("sqlite:///final_project.db")
-
-# If you have a "remember me" feature on your site, you might set SESSION_PERMANENT to True for users who check that box. This would make their session survive even if they close their browser. However, you'd also need to set PERMANENT_SESSION_LIFETIME to specify how long the session should last.
-
 
 
 @app.after_request
-def after_request(response): # The @app.after_request part means this code runs after the server gets a request.
-    # Ensure responses aren't cached 
-    # (This part of the code is telling the browser not to remember (or "cache") any information from the server. This is done so that every time a user makes a request, they get the most up-to-date information from the server. Example: if you want to update number of users on your site, a cached webpage would show old information. Therefore this is common practice to ensure up to date information is displayed.)
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" # tells the client's browser not to cache the response, not to store it, and to validate it every time before using it.
+def after_request(response): 
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" 
 
-    response.headers["Expires"] = 0 # tells the browser that the response is already expired and should not be cached
+    response.headers["Expires"] = 0 
 
-    response.headers["Pragma"] = "no-cache" # This is an older directive to prevent caching, mostly for older HTTP 1.0 servers.
+    response.headers["Pragma"] = "no-cache" 
 
-    # The response.headers lines are instructions to the browser. They all say in different ways, "Don't remember this information for next time."
-
-    return response # return response sends these instructions back to the browser.
+    return response 
 
 @app.route("/")
 def index():
@@ -69,31 +56,21 @@ def index():
 def login():
     """Log user in"""
 
-    # User reached route via POST (as by submitting a form via POST)
     form = LoginForm(request.form)
-    if form.validate_on_submit(): # shortcut for if request.method == "POST" and form.validate():
+    if form.validate_on_submit(): 
         username = bleach.clean(form.username.data)
         password = form.password.data
 
-        # Query database for username
-        user = Users.query.filter_by(username=username).first() # SQL Alchemy: This will return the first Users object (i.e., row from the users table) where the username matches the username from the form.
-        # Then, you can access the hash and id attributes of the user object directly, like user.hash and user.id.
+        user = Users.query.filter_by(username=username).first() 
 
-        # Ensure username exists and password is correct
         if user is None or not check_password_hash(user.hash, password):
             return apology("invalid username and/or password", 403)
-        # In this case, user is not a list or a result set like rows was. It's a single instance of the Users class (representing a single row from the users table) or None. So, you can't use len(user) because user isn't a collection of items. Instead, you can simply check if user is None to see if a user was found.
 
-         # Forget any user_id
         session.clear()
 
-        # Remember which user has logged in
         session["user_id"] = user.id 
 
-        # Redirect user to home page
         return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -227,15 +204,6 @@ def upload_documents():
         return render_template("documents.html", form=form, files=userDocuments)
         
 
-
-# @app.route("/doc_name/<hex_filename>")
-# @login_required
-# def docName(doc_id):
-#     document = Document.query.get(doc_id)
-#     filename = document.filename
-#     return jsonify(filename=filename)
-
-
 @app.route("/documents/edit/<hex_filename>", methods=["GET", "POST"])
 @login_required
 def editDocument(hex_filename):
@@ -247,7 +215,7 @@ def editDocument(hex_filename):
         return apology("document is None", 403)
     # Now you can use document.id, document.filename, etc.
     if request.method == "POST": # do not need this im pretty sure
-        return apology("TODO", 403) # do not need
+        return apology("TODO", 403) 
     
     else:
         if session['user_id'] == user_id: 
