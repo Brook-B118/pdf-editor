@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Edit document here
+{% endblock %}
+
+{% block main %}
+
+<div class="horizontal-column-home">
+    <div class="horizontal-column-left-section">
+        <input type="text" id="edit-filename" value="{{ document.edited_filename }}">
+    </div>
+    <div class="horizontal-column-middle-section">
+        <button id="pdf-color-toggle">Toggle Accessibility Mode</button>
+    </div>
+    <div class="horizontal-column-right-section">
+        <button id="save-button">Save and Download</button>
+    </div>
+</div>
+
+<div class="pdf-container">
+    <div class="row">
+        <div class="pdf-viewer container-fluid">
+            <div id="pdf-display" class="pdf-section">
+                <!-- PDF pages will be rendered here -->
+                <!-- <div id="overlay" class="overlay"> -->
+                <!-- Draggable and editable elements will go here -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="vertical-column-wrapper">
+
+    <div class="vertical-column-home">
+        <div class="vertical-column-link collapsed-sidebar">
+            <i class='bx bx-menu bx-md' style='color:#ffffff'></i>
+        </div>
+        <div class="vertical-column-link show-element-blocks-bar">
+            <i class='bx bx-grid-alt bx-md' style='color:#ffffff'></i>
+            <div>Elements</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+        <div class="vertical-column-link">
+            <i class='bx bx-test-tube bx-md' style='color:#ffffff'></i>
+            <div>Test</div>
+        </div>
+    </div>
+    <div class="sidepanel">
+        <div id="elements-container" class="elements-section">
+            <div class="element-block new-text-box-block" id="new-text-box-block" data-type="text-block">Text Block</div>
+            <div class="element-block new-shape-block" id="new-shape-block" data-type="shape-block">Shape Block</div>
+            <div class="element-block new-signatureField-block" id="new-signatureField-block" data-type="signatureField-block">Signature Block</div>
+            <div class="element-block" data-type="text-block">Example Block</div>
+            <!-- Add more blocks as needed -->
+        </div>
+    </div>
+</div>
+
+
+<!-- <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> -->
+<script>
+    var csrfToken = "{{ csrf_token() }}";
+</script>
+<script>
+    var documentId = '{{ document.id }}'
+</script>
+<script>
+    var url = 'http://127.0.0.1:5000/static/uploaded_files/' + "{{ folder }}" + '/' + '{{ document.filename }}' + '.pdf';
+</script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+<script src="https://unpkg.com/@pdf-lib/fontkit/dist/fontkit.umd.min.js"></script>
+<!-- <script src="https://unpkg.com/@pdf-lib/fontkit@1.0.0"></script> -->
+<script src="{{ url_for('static', filename='js/displayingPDF.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/editingPDF.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/savingPDF.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/elementBlocks.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sanitize.js') }}"></script>
+<script src="{{ url_for('static', filename='js/editFilename.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,595 @@
+body {
+    padding-top: 60px;
+    background-color: #212529;
+}
+
+.navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 100;
+}
+
+#recaptcha-container {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-header {
+    margin-bottom: 25px;
+}
+
+.pdf-container {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    flex: 1;
+    margin-top: 60px;
+    /* padding-top: 125px; */
+    overflow-y: auto;
+    overflow-x: auto;
+    /* Enable vertical scrolling */
+    max-height: 80vh;
+    right: 480px;
+    left: 0px;
+    /* Adjust height as needed */
+    transition: all 0.75s;
+}
+
+.extended {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    /* Enable vertical scrolling */
+    max-height: 80vh;
+    right: 110px;
+    left: 0px;
+    /* Adjust height as needed */
+    transition: all 0.75s;
+}
+
+#pdf-display {
+    position: relative;
+    display: block;
+}
+
+.overlay {
+    border: 2px dashed red;
+    /* Temporary for visualization */
+    z-index: 10;
+    /* Ensure it's on top */
+}
+
+canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    /* Ensure it's below the overlay */
+    margin-bottom: 15px;
+    /* Add space between pages */
+}
+
+
+.non-interactive {
+    pointer-events: none;
+}
+
+.vertical-column-wrapper {
+    /* background-color: #60d3e7; */
+    display: flex;
+    flex-direction: row;
+    width: 475px;
+    bottom: 0;
+    position: fixed;
+    top: 119px;
+    right: 0px;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+    transition: all 0.75s;
+    flex-shrink: 0;
+}
+
+.vertical-column-home {
+    background-color: #2b3035;
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    bottom: 0;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+    transition: all 0.75s;
+    /* margin-right: 10px; */
+}
+
+.collapsed {
+    /* background-color: #60d3e7; */
+    display: flex;
+    flex-direction: row;
+    width: 475px;
+    bottom: 0;
+    position: fixed;
+    /* top: 139px; */
+    right: -375px;
+    border-top-style: solid;
+    border-top-color: #2b3035;
+    border-left-style: solid;
+    border-left-color: white;
+    border-width: 1px;
+    z-index: 55;
+    transition: all 0.75s;
+}
+
+
+.horizontal-column-home {
+    background-color: #2b3035;
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    height: 55px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-color: white;
+    border-width: 1px;
+    z-index: 50;
+}
+
+.horizontal-column-left-section {
+    /* background-color: rgb(2, 85, 85); */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 51;
+    flex: 1;
+}
+
+.horizontal-column-middle-section {
+    /* background-color: #790000; */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    z-index: 51;
+    width: 375px;
+}
+
+.horizontal-column-right-section {
+    /* background-color: #0080ff; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 51;
+    width: 375px;
+}
+
+#edit-filename {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 50%;
+    left: 8px;
+}
+
+#pdf-color-toggle {
+    display: flex;
+    position: absolute;
+    left: 70px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 55%;
+}
+
+#save-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.vertical-column-link {
+    background-color: #2b3035;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.vertical-column-link:hover {
+    background-color: #790000;
+}
+
+/* .vertical-column-link i {
+    font-size: 15;
+} */
+
+.vertical-column-link div {
+    font-size: 14;
+}
+
+.sidepanel {
+    /* background-color: rgb(104, 255, 44); */
+    display: flex;
+    flex: 1;
+    position: relative;
+    top: 0;
+    height: 100vh;
+}
+
+/* .toolbox {} */
+/* 
+.edit-document {
+    position: absolute;
+    top: 5px;
+    right: 30%;
+} */
+
+#elements-container {
+    /* background-color: blueviolet; */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+#elements-container .element-block {
+    flex: 0 0 150px;
+    margin: 5px;
+    /* padding: 10px; */
+    background-color: #790000;
+    cursor: pointer;
+    height: 70px;
+}
+
+.readonly {
+    pointer-events: none;
+}
+
+
+
+
+.resize-handle {
+    width: 15px;
+    height: 15px;
+    background-color: blue;
+    /* or any color you prefer */
+    border-radius: 50%;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+}
+
+textarea {
+    width: 100%;
+    /* or a fixed width like 300px */
+    box-sizing: border-box;
+    resize: none;
+}
+
+#text-box-customize-container {
+    /* background-color: rgb(43, 46, 226); */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.text-box-customize-header {
+    position: absolute;
+    top: 5px;
+    align-self: center;
+    margin: 0px;
+}
+
+.text-box-customize-option {
+    flex: 0 0 150px;
+    margin-top: 10px;
+    margin: 5px;
+}
+
+.align-option {
+    flex: 0 0 75px;
+    margin: 10px;
+}
+
+#shape-customize-container {
+    /* background-color: rgb(226, 43, 144); */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.shape-customize-header {
+    position: absolute;
+    top: 5px;
+    align-self: center;
+    margin: 0px;
+    margin-bottom: 11px;
+}
+
+.shape-customize-row {
+    display: flex;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+    width: 100%;
+}
+
+.shape-customize-option {
+    flex: 0 0 75px;
+    margin: 10px;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+}
+
+.shape-customize-row label {
+    padding-bottom: 4px;
+    /* used this to align the label text with the input box, the elements were alligned but the positioning of the text itself was a bit too low.*/
+}
+
+#signatureField-customize-container {
+    /* background-color: rgb(233, 92, 26); */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 25px;
+}
+
+.signatureField-customize-header {
+    align-self: center;
+    margin: 0;
+}
+
+.signatureField-customize-row {
+    display: flex;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+    width: 100%;
+}
+
+.signatureField-customize-option {
+    flex: 0 0 75px;
+    margin: 10px;
+    align-items: center;
+    /* Center items vertically */
+    justify-content: center;
+    /* Center items horizontally */
+}
+
+.signatureField-customize-row label {
+    padding-bottom: 4px;
+    /* used this to align the label text with the input box, the elements were alligned but the positioning of the text itself was a bit too low.*/
+}
+
+#signature-preview {
+    width: 90%;
+    height: auto;
+    min-height: 70px;
+    /* Allow height to adjust based on content */
+    box-sizing: border-box;
+    display: grid;
+    align-items: center;
+    /* Center vertically */
+    padding: 10px;
+    /* Add some padding for better appearance */
+    background-color: white;
+    margin-bottom: 10px;
+    color: black;
+    /* changes text color inside a div apparently */
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+}
+
+#signature-content {
+    width: 100%;
+    text-align: center;
+    /* Default to center horizontally */
+}
+
+
+@font-face {
+    font-family: 'Parisienne';
+    src: url('/static/fonts/Parisienne-Regular.ttf') format('truetype');
+}
+
+#main-features-header {
+    border-bottom-style: solid;
+    border-color: rgb(0, 0, 0);
+    position: relative;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+#main-features-container {
+    /* background-color: rgb(0, 0, 0); */
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.main-features-block {
+    display: flex;
+    position: relative;
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    flex-direction: column;
+    flex: 0 0 620px;
+    margin: 10px;
+    /* padding: 10px; */
+    background-color: #212529;
+    cursor: pointer;
+    height: 425px;
+    /* width: 200px; */
+    align-items: center;
+    justify-content: center;
+}
+
+.main-feature-header {
+    position: absolute;
+    top: 10px;
+}
+
+.main-feature-image {
+    position: absolute;
+    top: 50px;
+    height: 225px;
+    width: 550px;
+}
+
+.main-features-custom-list-group {
+    position: absolute;
+    top: 280px;
+    max-width: 550px;
+    font-size: 15px;
+    /* text-align: left; */
+}
+
+.main-features-accessability-block {
+    display: flex;
+    position: relative;
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    flex-direction: column;
+    flex: 0 0 950px;
+    margin: 10px;
+    /* padding: 10px; */
+    background-color: #212529;
+    cursor: pointer;
+    height: 470px;
+    /* width: 200px; */
+    align-items: center;
+    justify-content: center;
+}
+
+.main-features-accessability-header {
+    position: absolute;
+    top: 7px;
+}
+
+.main-features-accessability-image {
+    position: absolute;
+    top: 55px;
+    height: 250px;
+    width: 600px;
+}
+
+.main-features-accessability-custom-list-group {
+    position: absolute;
+    top: 317px;
+    max-width: 800px;
+    font-size: 15px;
+    /* text-align: left; */
+}
+
+
+#features-container-header {
+    background-color: rgb(0, 0, 0);
+    position: relative;
+    top: 40px;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#features-container {
+    background-color: rgb(0, 0, 0);
+    position: relative;
+    top: 90px;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.features-block {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    flex: 0 0 630px;
+    margin: 5px;
+    /* padding: 10px; */
+    background-color: #212529;
+    cursor: pointer;
+    height: 700px;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-header {
+    position: absolute;
+    top: 0px;
+}
+
+.feature-image {
+    position: absolute;
+    top: 60px;
+    height: 250px;
+    width: 600px;
+}
+
+.custom-list-group {
+    position: absolute;
+    top: 325px;
+    max-width: 600px;
+}
