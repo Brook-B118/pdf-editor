@@ -17,6 +17,7 @@ This is a web-based document upload and editing tool built using Flask, SQLAlche
 
 ## 📁 Folder Structure
 
+```
 project_root/
 │
 ├── app.py # Main Flask app
@@ -29,6 +30,7 @@ project_root/
 ├── static/ # Uploaded files and CSS
 ├── templates/ # HTML templates (not included here)
 └── .gitignore # Prevents sensitive files from being committed
+```
 
 ---
 

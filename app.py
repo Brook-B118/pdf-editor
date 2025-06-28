@@ -409,6 +409,7 @@ def update_filename():
     else:
         return jsonify({"error": "Document not found"}), 403
 
+print("app.py is being executed")
 
 # Runner and Debugger
 if __name__ == "__main__":
