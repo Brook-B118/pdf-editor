@@ -45,6 +45,20 @@ def after_request(response):
 
     response.headers["Pragma"] = "no-cache" 
 
+    # Security Headers:
+
+    # HSTS should only be enabled in production
+
+    # response.headers['Content-Security-Policy'] = (
+    # "default-src 'self'; "
+    # "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+    # "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;"
+    # "img-src 'self' data:; "
+    # "font-src 'self'; "
+    # "connect-src 'self'; "
+    # "frame-src 'none';"
+    # )
+
     return response 
 
 @app.route("/")
@@ -290,6 +304,11 @@ def autosave_elements():
     # Extract data from the request
     user_id = session['user_id']  # Get user ID from session
     document_id = data['document_id']
+
+    document = Document.query.filter_by(id=document_id, user_id=session['user_id']).first()
+    if not document:
+        return jsonify({"error": "Unauthorized"}), 403
+
     elements = data['changes']
 
     if not document_id or not isinstance(elements, list):
