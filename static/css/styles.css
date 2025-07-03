@@ -239,6 +239,11 @@ canvas {
     height: 100vh;
 }
 
+.white-icon {
+  color: #ffffff;
+}
+
+
 /* .toolbox {} */
 /* 
 .edit-document {
@@ -592,4 +597,8 @@ textarea {
     position: absolute;
     top: 325px;
     max-width: 600px;
+}
+
+.hidden-input {
+  display: none;
 }

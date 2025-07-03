@@ -4,7 +4,7 @@ import bleach
 import secrets 
 
 from sqlalchemy.exc import IntegrityError, DataError, SQLAlchemyError
-from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for
+from flask import Flask, flash, redirect, render_template, request, session, jsonify, url_for, g
 from flask_session import Session
 from flask_wtf.csrf import CSRFProtect 
 
@@ -36,6 +36,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  
 db.init_app(app)
 
+@app.before_request
+# before_request runs its functions before every single incoming HTTP request, no matter what route is being accessed. For example, when the user opens "/", set_nonce() runs first. Then when they POST to "/login", it runs again.
+def set_nonce():
+    g.csp_nonce = secrets.token_urlsafe(16)
 
 @app.after_request
 def after_request(response): 
@@ -49,15 +53,19 @@ def after_request(response):
 
     # HSTS should only be enabled in production
 
-    # response.headers['Content-Security-Policy'] = (
-    # "default-src 'self'; "
-    # "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
-    # "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com;"
-    # "img-src 'self' data:; "
-    # "font-src 'self'; "
-    # "connect-src 'self'; "
-    # "frame-src 'none';"
-    # )
+    nonce = getattr(g, "csp_nonce", "")
+    # getattr() is a built-in Python function that tries to access an attribute of an object and returns a default value if it doesn't exist. The third argument is an empty string to say "Try to get g.csp_nonce. If it doesn't exist, return an empty string instead of crashing with an AttributeError."
+    csp_policy = (
+        "default-src 'self'; "
+        "script-src 'self' 'nonce-{nonce}' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+        "worker-src 'self' blob:; "
+        "style-src 'self' https://cdn.jsdelivr.net https://unpkg.com; "
+        "font-src 'self' https://unpkg.com; "
+        "object-src 'none';"
+    ).format(nonce=nonce)
+
+    response.headers["Content-Security-Policy"] = csp_policy
+
 
     return response 
 
