@@ -8,3 +8,7 @@ uploaded_files/
 alembic.ini
 
 
+# Virtual environments
+env/
+venv/
+.venv/

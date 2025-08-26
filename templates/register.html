@@ -1,44 +1,39 @@
-{% extends "layout.html" %}
-
-{% block title %}
-Register
-{% endblock %}
-
-{% block main %}
+{% extends "layout.html" %} {% block title %} Register {% endblock %} {% block
+main %}
 <div class="container mb-4">
-    <h1 class="display-4">Register</h1>
+  <h1 class="display-4">Register</h1>
 </div>
 <div class="container">
-    <form id="register-form" action="/register" method="post">
-        {{ form.hidden_tag() }}
-        <div class="mb-3">
-            {{ form.username(id="register-username", autofocus=True, class="form-control mx-auto w-auto",
-            placeholder="Username") }}
-            <!-- <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username"
+  <form id="register-form" action="/register" method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.username(id="register-username", autofocus=True,
+      class="form-control mx-auto w-auto", placeholder="Username") }}
+      <!-- <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username"
                 placeholder="Username" type="text"> -->
-        </div>
-        <div class="mb-3">
-            {{ form.password(id="register-password", class="form-control mx-auto w-auto", placeholder="Password")}}
-            <!-- <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password"> -->
-        </div>
-        <div class="mb-3">
-            {% set placeholder_text = "Confirm password" %}
-            {{ form.confirm(id="register-confirm", class="form-control mx-auto w-auto", placeholder=placeholder_text)}}
-            <!-- <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm Password"
+    </div>
+    <div class="mb-3">
+      {{ form.password(id="register-password", class="form-control mx-auto
+      w-auto", placeholder="Password")}}
+      <!-- <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password"> -->
+    </div>
+    <div class="mb-3">
+      {% set placeholder_text = "Confirm password" %} {{
+      form.confirm(id="register-confirm", class="form-control mx-auto w-auto",
+      placeholder=placeholder_text)}}
+      <!-- <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm Password"
                 type="password"> -->
-        </div>
-        <div class="mb-3">
-            {{ form.submit(class="btn btn-primary") }}
-            <!-- <button class="btn btn-primary" type="submit">Register</button> -->
-        </div>
-    </form>
+    </div>
+    <div class="mb-3">
+      {{ form.submit(class="btn btn-primary") }}
+      <!-- <button class="btn btn-primary" type="submit">Register</button> -->
+    </div>
+  </form>
 </div>
 <div class="container">
-    <p id="register-error-message"></p>
+  <p id="register-error-message"></p>
 </div>
-<div id="recaptcha-container" class="container">
-    {{ form.recaptcha }}
-</div>
+<div id="recaptcha-container" class="container">{{ form.recaptcha }}</div>
 <script src="{{ url_for('static', filename='js/formValidation.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
 <script src="{{ url_for('static', filename='js/sanitize.js') }}"></script>

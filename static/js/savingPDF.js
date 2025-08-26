@@ -117,7 +117,7 @@ function cssColorToRgb(color) {
 // Change this to download button
 document.getElementById('save-button').addEventListener('click', async () => {
     let changes = [];
-    let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+    let existingPdfBytes = await fetch(pdfUrl).then(res => res.arrayBuffer());
     let pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
     const fontkit = window.fontkit;
     pdfDoc.registerFontkit(fontkit);
