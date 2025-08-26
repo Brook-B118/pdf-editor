@@ -58,7 +58,7 @@ def after_request(response):
     csp_policy = (
         "default-src 'self'; "
         "script-src 'self' 'nonce-{nonce}' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
-        "worker-src 'self' blob:; "
+        "worker-src 'self' blob: https://unpkg.com; "
         "style-src 'self' https://cdn.jsdelivr.net https://unpkg.com; "
         "font-src 'self' https://unpkg.com; "
         "object-src 'none';"

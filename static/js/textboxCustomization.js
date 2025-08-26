@@ -19,6 +19,15 @@ export function addTextboxEventListeners(textboxContainerId) {
     });
 
     const fontSelector = document.getElementById('font-selector');
+    const fonts = ["Arial", "Times New Roman"];
+    
+    fonts.forEach(font => {
+    const option = document.createElement('option');
+    option.value = font;
+    option.textContent = font;
+    fontSelector.appendChild(option);
+    });
+
     fontSelector.value = window.getComputedStyle(textbox).fontFamily;
 
     document.getElementById('font-selector').addEventListener('change', function (event) {

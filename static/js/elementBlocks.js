@@ -206,80 +206,54 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     })
 
     textboxContainer.addEventListener("focus", (e) => {
-        textboxContainer.style.border = "2px solid rgb(0, 128, 192)";
-        const sidepanel = document.querySelector(".sidepanel");
-        // Clear existing sidepanel without using .innerHTML:
-        while (sidepanel.firstChild) {
-            sidepanel.removeChild(sidepanel.firstChild);
-            }
+    textboxContainer.style.border = "2px solid rgb(0, 128, 192)";
+    const sidepanel = document.querySelector(".sidepanel");
+    while (sidepanel.firstChild) {
+        sidepanel.removeChild(sidepanel.firstChild);
+    }
 
-        const container = document.createElement("div");
-        container.id = "text-box-customize-container";
-        container.classList.add("textbox-customize-section");
+    const container = document.createElement("div");
+    container.id = "text-box-customize-container";
+    container.classList.add("textbox-customize-section");
 
-        // Header
-        const header = document.createElement("p");
-        header.classList.add("text-box-customize-header");
-        header.textContent = "Textbox Customization here";
-        container.appendChild(header);
+    const header = document.createElement("p");
+    header.classList.add("text-box-customize-header");
+    header.textContent = "Textbox Customization here";
+    container.appendChild(header);
 
-        // Alignment buttons
-        const alignments = [
+    [
         { id: "align-left", label: "Left" },
         { id: "align-center", label: "Center" },
-        { id: "align-right", label: "Right" }
-        ];
-
-        alignments.forEach(alignment => {
+        { id: "align-right", label: "Right" },
+    ].forEach((alignment) => {
         const btn = document.createElement("button");
         btn.id = alignment.id;
         btn.textContent = alignment.label;
         btn.classList.add("text-box-customize-option", "align-option");
         btn.disabled = true;
         container.appendChild(btn);
-        });
-
-        // Font selector
-        const fontSelector = document.createElement("select");
-        fontSelector.id = "font-selector";
-        fontSelector.classList.add("text-box-customize-option");
-
-        ["Arial", "Times New Roman"].forEach(font => {
-        const option = document.createElement("option");
-        option.value = font;
-        option.textContent = font;
-        fontSelector.appendChild(option);
-        });
-
-        container.appendChild(fontSelector);
-
-        // Font size selector
-        const fontSizeSelector = document.createElement("select");
-        fontSizeSelector.id = "font-size-selector";
-        fontSizeSelector.classList.add("text-box-customize-option");
-
-        [12, 14, 16, 18, 24, 32].forEach(size => {
-        const option = document.createElement("option");
-        option.value = size;
-        option.textContent = `${size}px`;
-        fontSizeSelector.appendChild(option);
-        });
-
-        container.appendChild(fontSizeSelector);
-
-        // Delete button
-        const deleteButton = document.createElement("button");
-        deleteButton.id = "delete-element";
-        deleteButton.textContent = "Delete";
-        deleteButton.classList.add("text-box-customize-option");
-        container.appendChild(deleteButton);
-
-        sidepanel.appendChild(container);
-
-        // Hook up events
-        addTextboxEventListeners(textboxContainer.id);
-
     });
+
+    const fontSelector = document.createElement("select");
+    fontSelector.id = "font-selector";
+    fontSelector.classList.add("text-box-customize-option");
+    container.appendChild(fontSelector);
+
+    const fontSizeSelector = document.createElement("select");
+    fontSizeSelector.id = "font-size-selector";
+    fontSizeSelector.classList.add("text-box-customize-option");
+    container.appendChild(fontSizeSelector);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "delete-element";
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("text-box-customize-option");
+    container.appendChild(deleteButton);
+
+    sidepanel.appendChild(container);
+    addTextboxEventListeners(textboxContainer.id);
+    });
+
 
     textboxContainer.addEventListener("blur", (e) => {
         textboxContainer.style.border = '2px solid green';
