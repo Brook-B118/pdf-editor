@@ -53,7 +53,7 @@ function addEventListeners() {
 
 
 // Ensure this function is called after displayPDF is done
-displayPDF(url).then(() => {
+displayPDF(pdfUrl).then(() => {
     fetch(`/get_changes?document_id=${documentId}`)
         .then(response => response.json())
         .then(data => {

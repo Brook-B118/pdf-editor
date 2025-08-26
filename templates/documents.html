@@ -1,53 +1,66 @@
-{% extends "layout.html" %}
-
-{% block title %}
-Documents
-{% endblock %}
-
-{% block main %}
+{% extends "layout.html" %} {% block title %} Documents {% endblock %} {% block
+main %}
 <div class="container-fluid mb-4">
-    <h5>Supported files include: PDF</h5>
+  <h5>Supported files include: PDF</h5>
 </div>
 <div class="container-fluid mb-4">
-    <form id="uploadDocumentsForm" action="/uploadDocuments" method="post" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <label for="document" class="btn btn-success btn-lg">Upload</label>
-        {{ form.file(style="display: none;", accept=".pdf", id="document") }}
-    </form>
-    {% for error in form.file.errors %}
-    <div class="error">{{ error }}</div>
-    {% endfor %}
+  <form
+    id="uploadDocumentsForm"
+    action="/uploadDocuments"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    {{ form.hidden_tag() }}
+    <label for="document" class="btn btn-success btn-lg">Upload</label>
+    {{ form.file(class="hidden-input", accept=".pdf", id="document") }}
+  </form>
+  {% for error in form.file.errors %}
+  <div class="error">{{ error }}</div>
+  {% endfor %}
 </div>
 <div class="container-fluid mb-4">
-    {% if files %}
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th class="text-center" colspan="2">Your documents</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in files %}
-            <tr id="file-{{ file.filename }}">
-                <td><a href="{{ url_for('editDocument', hex_filename=file.filename) }}">
-                        {{ file.edited_filename }}
-                    </a></td>
-                <td class="text-end">
-                    <a href="{{ url_for('editDocument', hex_filename=file.filename) }}" class="btn btn-success btn-sm me-2">Edit</a>
-                    <button class="btn btn-danger btn-sm remove-btn" data-file-filename="{{ file.filename }}">Remove</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <h4>Your documents will appear here</h4>
-    {% endif %}
-
+  {% if files %}
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="text-center" colspan="2">Your documents</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for file in files %}
+      <tr id="file-{{ file.filename }}">
+        <td>
+          <a href="{{ url_for('editDocument', hex_filename=file.filename) }}">
+            {{ file.edited_filename }}
+          </a>
+        </td>
+        <td class="text-end">
+          <a
+            href="{{ url_for('editDocument', hex_filename=file.filename) }}"
+            class="btn btn-success btn-sm me-2"
+            >Edit</a
+          >
+          <button
+            class="btn btn-danger btn-sm remove-btn"
+            data-file-filename="{{ file.filename }}"
+          >
+            Remove
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <h4>Your documents will appear here</h4>
+  {% endif %}
 </div>
 <script src="{{ url_for('static', filename='js/uploadDocument.js') }}"></script>
-<script>
-    var csrfToken = "{{ csrf_token() }}";
+<script nonce="{{ g.csp_nonce }}">
+  window.csrfToken = "{{ csrf_token() }}";
 </script>
+<!-- <script>
+    var csrfToken = "{{ csrf_token() }}";
+</script> -->
 <script src="{{ url_for('static', filename='js/deleteDocument.js') }}"></script>
 {% endblock %}

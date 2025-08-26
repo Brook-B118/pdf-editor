@@ -7,6 +7,7 @@ export let pages = 0;
 
 export const displayPDF = function (url) {
     return new Promise((resolve, reject) => {
+        
         var loadingTask = pdfjsLib.getDocument(url);
         loadingTask.promise.then(function (pdf) {
             console.log("pdf is loaded")
@@ -47,7 +48,7 @@ export const displayPDF = function (url) {
     });
 };
 
-export function invertColors() {
+function invertColors() {
     const canvases = document.querySelectorAll('canvas');
 
     canvases.forEach(canvas => {

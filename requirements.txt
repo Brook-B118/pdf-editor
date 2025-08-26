@@ -9,3 +9,5 @@ SQLAlchemy-Utils==0.41.2
 sqlparse==0.5.1
 Werkzeug==3.0.3
 python-dotenv==1.0.0
+python-magic-bin==0.4.14
+requests

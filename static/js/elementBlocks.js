@@ -130,7 +130,7 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     if (e) {
         textbox.style.left = `${e.clientX - overlayRect.left}px`;
         textbox.style.top = `${e.clientY - overlayRect.top}px`;
-        textbox.value = draggableElement.textContent;
+        textbox.value = draggableElement.textContent.trim();
         textbox.style.fontFamily = 'Arial';
         textbox.style.fontSize = `${16}px`;
     } else {
@@ -206,28 +206,54 @@ export function createTextBox(e, x, y, width, height, draggableElement, text, ov
     })
 
     textboxContainer.addEventListener("focus", (e) => {
-        textboxContainer.style.border = '2px solid rgb(0, 128, 192)';
-        // Change sidepanel for textbox customization:
-        document.querySelector(".sidepanel").innerHTML = `
-          <div id="text-box-customize-container" class="textbox-customize-section">
-              <p class="text-box-customize-header">Textbox Customization here</p>
-              <button id="align-left" class="text-box-customize-option align-option" disabled>Left</button>
-              <button id="align-center" class="text-box-customize-option align-option" disabled>Center</button>
-              <button id="align-right" class="text-box-customize-option align-option" disabled>Right</button>
-              <select id="font-selector" class="text-box-customize-option">
-                <option value="Arial">Arial</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <!-- Add more font options here -->
-              </select>
-              <select id="font-size-selector" class="text-box-customize-option">
-                <!-- Add font size options here -->
-              </select>
-              <button id="delete-element" class="text-box-customize-option">Delete</button>
-          </div>
-          `;
-        // Add event listeners to customization buttons and pass the specific textbox that should be impacted as an argument"
-        addTextboxEventListeners(textboxContainer.id);
+    textboxContainer.style.border = "2px solid rgb(0, 128, 192)";
+    const sidepanel = document.querySelector(".sidepanel");
+    while (sidepanel.firstChild) {
+        sidepanel.removeChild(sidepanel.firstChild);
+    }
+
+    const container = document.createElement("div");
+    container.id = "text-box-customize-container";
+    container.classList.add("textbox-customize-section");
+
+    const header = document.createElement("p");
+    header.classList.add("text-box-customize-header");
+    header.textContent = "Textbox Customization here";
+    container.appendChild(header);
+
+    [
+        { id: "align-left", label: "Left" },
+        { id: "align-center", label: "Center" },
+        { id: "align-right", label: "Right" },
+    ].forEach((alignment) => {
+        const btn = document.createElement("button");
+        btn.id = alignment.id;
+        btn.textContent = alignment.label;
+        btn.classList.add("text-box-customize-option", "align-option");
+        btn.disabled = true;
+        container.appendChild(btn);
     });
+
+    const fontSelector = document.createElement("select");
+    fontSelector.id = "font-selector";
+    fontSelector.classList.add("text-box-customize-option");
+    container.appendChild(fontSelector);
+
+    const fontSizeSelector = document.createElement("select");
+    fontSizeSelector.id = "font-size-selector";
+    fontSizeSelector.classList.add("text-box-customize-option");
+    container.appendChild(fontSizeSelector);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "delete-element";
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("text-box-customize-option");
+    container.appendChild(deleteButton);
+
+    sidepanel.appendChild(container);
+    addTextboxEventListeners(textboxContainer.id);
+    });
+
 
     textboxContainer.addEventListener("blur", (e) => {
         textboxContainer.style.border = '2px solid green';
@@ -336,25 +362,73 @@ export function createShape(e, x, y, width, height, overlayId, background_color,
     });
 
     shape.addEventListener("focus", (e) => {
-        shape.style.boxShadow = '0 0 8px 4px rgba(0, 128, 192, 1)';
-        // 0 0 10px is 0 horizontal offset, 0 vertical offset, blur radius of 0, and 2px spread radius. The spread radius makes sure the shadow extends 2px outward on all sides.
-        // Change sidepanel for shape customization:
-        document.querySelector(".sidepanel").innerHTML = `
-          <div id="shape-customize-container" class="shape-customize-section">
-            <p class="shape-customize-header">Shape Customization here</p>
-            <div class="shape-customize-row">
-            <label for="fill-color-selector">Fill Color:</label>
-            <input type="color" id="fill-color-selector" class="shape-customize-option">
-            <label for="border-color-selector">Border Color:</label>
-            <input type="color" id="border-color-selector" class="shape-customize-option">
-            </div>
-            <div class="shape-customize-row">
-            <button id="delete-element" class="shape-customize-option">Delete</button>
-            </div>
-          </div>
-          `;
-        // Add event listeners to customization buttons and pass the specific shape that should be impacted as an argument"
+        shape.style.boxShadow = "0 0 8px 4px rgba(0, 128, 192, 1)";
+
+        const sidepanel = document.querySelector(".sidepanel");
+        // Clear sidepanel content without using innerHTML
+        while (sidepanel.firstChild) {
+        sidepanel.removeChild(sidepanel.firstChild);
+        }
+
+        // Create outer container
+        const container = document.createElement("div");
+        container.id = "shape-customize-container";
+        container.classList.add("shape-customize-section");
+
+        // Header
+        const header = document.createElement("p");
+        header.classList.add("shape-customize-header");
+        header.textContent = "Shape Customization here";
+        container.appendChild(header);
+
+        // First row (fill + border color)
+        const colorRow = document.createElement("div");
+        colorRow.classList.add("shape-customize-row");
+
+        // Fill color
+        const fillLabel = document.createElement("label");
+        fillLabel.setAttribute("for", "fill-color-selector");
+        fillLabel.textContent = "Fill Color:";
+        colorRow.appendChild(fillLabel);
+
+        const fillInput = document.createElement("input");
+        fillInput.type = "color";
+        fillInput.id = "fill-color-selector";
+        fillInput.classList.add("shape-customize-option");
+        colorRow.appendChild(fillInput);
+
+        // Border color
+        const borderLabel = document.createElement("label");
+        borderLabel.setAttribute("for", "border-color-selector");
+        borderLabel.textContent = "Border Color:";
+        colorRow.appendChild(borderLabel);
+
+        const borderInput = document.createElement("input");
+        borderInput.type = "color";
+        borderInput.id = "border-color-selector";
+        borderInput.classList.add("shape-customize-option");
+        colorRow.appendChild(borderInput);
+
+        container.appendChild(colorRow);
+
+        // Second row (delete button)
+        const buttonRow = document.createElement("div");
+        buttonRow.classList.add("shape-customize-row");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.id = "delete-element";
+        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("shape-customize-option");
+
+        buttonRow.appendChild(deleteButton);
+        container.appendChild(buttonRow);
+
+        // Add everything to sidepanel
+        sidepanel.appendChild(container);
+
+        // Hook up the event logic
         addShapeEventListeners(shape.id);
+
     });
 
     shape.addEventListener("blur", (e) => {
@@ -423,7 +497,7 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
         signatureField.style.height = '100px';
         signatureField.style.left = `${e.clientX - overlayRect.left}px`;
         signatureField.style.top = `${e.clientY - overlayRect.top}px`;
-        signatureField.value = draggableElement.textContent;
+        signatureField.value = draggableElement.textContent.trim();
         signatureField.style.fontFamily = 'Parisienne';
         signatureField.style.fontSize = '24px';
         // signatureField.style.backgroundColor = 'blue';
@@ -479,49 +553,152 @@ export function createSignatureField(e, x, y, width, height, draggableElement, t
     signatureField.addEventListener("click", () => {
         // signatureField.style.border = '2px solid green';
         // Change sidepanel for signatureField customization:
-        document.querySelector(".sidepanel").innerHTML = `
-          <div id="signatureField-customize-container" class="signatureField-customize-section">
-            <div class="signatureField-customize-row">
-                <div id="signature-preview">
-                    <div id="signature-content">Your text here</div>
-                </div>
-            </div>
-            <div class="signatureField-customize-row">
-                <p class="signatureField-customize-header">signatureField Customization here</p>
-            </div>
-            <div class="signatureField-customize-row">
-                <input id="type-signature" class="signatureField-customize-option" maxlength="100">
-                <button id="submit-signature" class="signatureField-customize-option">Sign</button>
-            </div>
-            <div class="signatureField-customize-row">
-                <button id="align-left" class="signatureField-customize-option align-option" disabled>Left</button>
-                <button id="align-center" class="signatureField-customize-option align-option" disabled>Center</button>
-                <button id="align-right" class="signatureField-customize-option align-option" disabled>Right</button>
-            </div>
-            <div class="signatureField-customize-row">
-                <select id="font-selector" class="signatureField-customize-option">
-                    <option value="Arial">Arial</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                    <option value="Parisienne">Parisienne</option>
-                    <!-- Add more font options here -->
-                </select>
-                <select id="font-size-selector" class="signatureField-customize-option">
-                    <!-- Add font size options here -->
-                </select>
-            </div>
-            <div class="signatureField-customize-row">
-                <label for="fill-color-selector">Fill Color:</label>
-                <input type="color" id="fill-color-selector" class="signatureField-customize-option" disabled>
-                <label for="border-color-selector">Border Color:</label>
-                <input type="color" id="border-color-selector" class="signatureField-customize-option" disabled>
-            </div>
-            <div class="signatureField-customize-row">
-                <button id="delete-element" class="signatureField-customize-option">Delete</button>
-            </div>
-          </div>
-          `;
-        // Add event listeners to customization buttons and pass the specific signatureField that should be impacted as an argument"
+        const sidepanel = document.querySelector(".sidepanel");
+        // Clear contents safely
+        while (sidepanel.firstChild) {
+        sidepanel.removeChild(sidepanel.firstChild);
+        }
+
+        // Container
+        const container = document.createElement("div");
+        container.id = "signatureField-customize-container";
+        container.classList.add("signatureField-customize-section");
+
+        // Preview row
+        const previewRow = document.createElement("div");
+        previewRow.classList.add("signatureField-customize-row");
+
+        const previewWrapper = document.createElement("div");
+        previewWrapper.id = "signature-preview";
+
+        const previewContent = document.createElement("div");
+        previewContent.id = "signature-content";
+        previewContent.textContent = "Your text here";
+
+        previewWrapper.appendChild(previewContent);
+        previewRow.appendChild(previewWrapper);
+        container.appendChild(previewRow);
+
+        // Header row
+        const headerRow = document.createElement("div");
+        headerRow.classList.add("signatureField-customize-row");
+
+        const header = document.createElement("p");
+        header.classList.add("signatureField-customize-header");
+        header.textContent = "signatureField Customization here";
+        headerRow.appendChild(header);
+        container.appendChild(headerRow);
+
+        // Input + sign button row
+        const inputRow = document.createElement("div");
+        inputRow.classList.add("signatureField-customize-row");
+
+        const input = document.createElement("input");
+        input.id = "type-signature";
+        input.classList.add("signatureField-customize-option");
+        input.setAttribute("maxlength", "100");
+
+        const signBtn = document.createElement("button");
+        signBtn.id = "submit-signature";
+        signBtn.textContent = "Sign";
+        signBtn.classList.add("signatureField-customize-option");
+
+        inputRow.appendChild(input);
+        inputRow.appendChild(signBtn);
+        container.appendChild(inputRow);
+
+        // Alignment buttons row
+        const alignRow = document.createElement("div");
+        alignRow.classList.add("signatureField-customize-row");
+
+        ["Left", "Center", "Right"].forEach(align => {
+        const btn = document.createElement("button");
+        btn.id = `align-${align.toLowerCase()}`;
+        btn.textContent = align;
+        btn.classList.add("signatureField-customize-option", "align-option");
+        btn.disabled = true;
+        alignRow.appendChild(btn);
+        });
+
+        container.appendChild(alignRow);
+
+        // Font + size selectors row
+        const fontRow = document.createElement("div");
+        fontRow.classList.add("signatureField-customize-row");
+
+        const fontSelector = document.createElement("select");
+        fontSelector.id = "font-selector";
+        fontSelector.classList.add("signatureField-customize-option");
+
+        ["Arial", "Times New Roman", "Parisienne"].forEach(font => {
+        const option = document.createElement("option");
+        option.value = font;
+        option.textContent = font;
+        fontSelector.appendChild(option);
+        });
+
+        const fontSizeSelector = document.createElement("select");
+        fontSizeSelector.id = "font-size-selector";
+        fontSizeSelector.classList.add("signatureField-customize-option");
+
+        [12, 14, 16, 18, 24, 32].forEach(size => {
+        const option = document.createElement("option");
+        option.value = size;
+        option.textContent = `${size}px`;
+        fontSizeSelector.appendChild(option);
+        });
+
+        fontRow.appendChild(fontSelector);
+        fontRow.appendChild(fontSizeSelector);
+        container.appendChild(fontRow);
+
+        // Color pickers row
+        const colorRow = document.createElement("div");
+        colorRow.classList.add("signatureField-customize-row");
+
+        const fillLabel = document.createElement("label");
+        fillLabel.setAttribute("for", "fill-color-selector");
+        fillLabel.textContent = "Fill Color:";
+
+        const fillInput = document.createElement("input");
+        fillInput.type = "color";
+        fillInput.id = "fill-color-selector";
+        fillInput.classList.add("signatureField-customize-option");
+        fillInput.disabled = true;
+
+        const borderLabel = document.createElement("label");
+        borderLabel.setAttribute("for", "border-color-selector");
+        borderLabel.textContent = "Border Color:";
+
+        const borderInput = document.createElement("input");
+        borderInput.type = "color";
+        borderInput.id = "border-color-selector";
+        borderInput.classList.add("signatureField-customize-option");
+        borderInput.disabled = true;
+
+        colorRow.appendChild(fillLabel);
+        colorRow.appendChild(fillInput);
+        colorRow.appendChild(borderLabel);
+        colorRow.appendChild(borderInput);
+
+        container.appendChild(colorRow);
+
+        // Delete button row
+        const deleteRow = document.createElement("div");
+        deleteRow.classList.add("signatureField-customize-row");
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.id = "delete-element";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.classList.add("signatureField-customize-option");
+
+        deleteRow.appendChild(deleteBtn);
+        container.appendChild(deleteRow);
+
+        // Final append
+        sidepanel.appendChild(container);
+
+        // Attach logic
         addsignatureFieldEventListeners(signatureField.id);
     });
-
 };
