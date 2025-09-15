@@ -4,6 +4,8 @@ uploaded_pdfs/
 flask_session/
 instance/
 .env
+.env.dev
+.env.*
 uploaded_files/
 alembic.ini
 

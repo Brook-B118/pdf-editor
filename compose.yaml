@@ -1,0 +1,24 @@
+services:
+  web:
+    build: .
+    image: myflask:dev-0.2.2
+    ports:
+      - "8000:8000"              # host:container
+    env_file:
+      - .env.dev                 # dev env vars
+    volumes:
+      - instance_data:/app/instance
+      - session_data:/app/flask_session
+      - uploads_data:/app/static/uploaded_files
+      - temp_data:/app/static/temp_uploaded_files
+      # Mounts code
+      - ./:/app
+volumes:
+  instance_data:
+    name: pdf_flask_app_dev_storage
+  session_data:
+    name: pdf_flask_app_dev_session
+  uploads_data:
+    name: pdf_flask_app_uploads
+  temp_data:
+    name: pdf_flask_app_temp

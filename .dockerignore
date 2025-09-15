@@ -1,0 +1,36 @@
+# Python build junk
+__pycache__/
+*.py[cod]
+*.log
+
+# Local virtual envs
+.venv/
+venv/
+env/
+
+# Secrets & local config
+.env
+.env.dev
+
+# Git metadata
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+
+# Flask runtime data 
+instance/*
+flask_session/*
+
+# DB
+*.sqlite3
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+
+# Alembic compiled junk
+migrations/**/__pycache__/

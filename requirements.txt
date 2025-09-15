@@ -12,3 +12,5 @@ python-dotenv==1.0.0
 # python-magic-bin==0.4.14
 python-magic==0.4.27
 requests
+#testing
+Flask-Migrate==4.0.7

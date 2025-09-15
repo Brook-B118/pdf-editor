@@ -8,6 +8,8 @@ from flask import Flask, flash, redirect, render_template, request, session, jso
 from flask_session import Session
 from flask_wtf.csrf import CSRFProtect 
 
+from flask_migrate import Migrate
+
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import login_required, apology
@@ -17,6 +19,7 @@ from dotenv import load_dotenv
 import shutil
 from file_handling import save_temp_file, check_temp_file_mime, add_file_to_db
 
+# load_dotenv() will look for `.env` file by default
 load_dotenv()
 
 app = Flask(__name__)
@@ -35,6 +38,7 @@ Session(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  
 db.init_app(app)
+migrate = Migrate(app, db)
 
 @app.before_request
 # before_request runs its functions before every single incoming HTTP request, no matter what route is being accessed. For example, when the user opens "/", set_nonce() runs first. Then when they POST to "/login", it runs again.
@@ -444,7 +448,7 @@ def update_filename():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
     # debug=True enables debug mode which provides more detailed error messages when something goes wrong. Also allows for "hot-reloading" which means the server will automatically update when making changes to the code. It is important to turn this off when the project is finished and we are ready to deploy.
 
     # debug=True was not working so using the unix command export FLASK_DEBUG=1 turns debugger on and unset FLASK_DEBUG turns it off.
