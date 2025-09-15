@@ -11,7 +11,7 @@
 - Multiple documents per user
 - Document and account deletion
 - Dockerized setup with named volumes for persistence (optional bind mounts for live code edits)
-- (Optional) Database migrations via Alembic/Flask-Migrate
+- Database migrations via Alembic/Flask-Migrate
 
 ---
 
