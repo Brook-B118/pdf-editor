@@ -1,4 +1,4 @@
-# Flask Document Editor
+# Flask PDF-Editor 
 
 ## This is a web-based document upload and editing tool built using Flask, SQLAlchemy, and WTForms. Users can register, log in, upload PDF files, and overlay editable elements such as text boxes onto their documents. Data is stored in a relational database.
 
