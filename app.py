@@ -175,8 +175,12 @@ def profile():
             db.session.delete(user)
             try:
                 db.session.commit()
-                shutil.rmtree(f'static/uploaded_files/{user_id}')
-                logout()
+                folder_path = f'static/uploaded_files/{user_id}'
+                if os.path.isdir(folder_path):
+                    shutil.rmtree(folder_path)
+                    logout()
+                else:
+                    logout()
                 return redirect(url_for('register')) 
             except SQLAlchemyError as e:
                 print(e)
